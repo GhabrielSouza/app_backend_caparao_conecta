@@ -3,5 +3,11 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/status', function () {
-    return 'Status OK';
+    return response()->json(
+        [
+            'status' => 'ok',
+            'message' => 'API is runing'
+        ],
+        200
+    );
 });
