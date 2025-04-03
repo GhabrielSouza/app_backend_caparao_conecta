@@ -20,22 +20,6 @@ class VagaController extends Controller
      */
     public function store(Request $request)
     {
-        // Validação dos dados recebidos? vai precisar?
-        // $request->validate([
-        //     'titulo_vaga' => 'required|string|max:255',
-        //     'descricao' => 'required|string',
-        //     'salario' => 'required|numeric',
-        //     'status' => 'required|string|max:50',
-        //     'data_criacao' => 'required|date',
-        //     'data_fechamento' => 'required|date',
-        //     'qtd_vaga' => 'required|integer',
-        //     'requisitos' => 'required|string',
-        //     'imagem' => 'nullable|image|max:2048',
-        //     'qtd_vagas_preenchidas' => 'nullable|integer',
-        //     'modalidade_da_vaga' => 'required|string|max:50',
-        //     'termo_de_prazo' => 'nullable|string|max:255',
-        //     'id_empresa' => 'required|integer'
-        // ]);
 
         $vaga = Vaga::create($request->all());
 
@@ -66,22 +50,6 @@ class VagaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //Validação dos dados recebidos? vai precisar?
-        // $request->validate([
-        //     'titulo_vaga' => 'required|string|max:255',
-        //     'descricao' => 'required|string',
-        //     'salario' => 'required|numeric',
-        //     'status' => 'required|string|max:50',
-        //     'data_criacao' => 'required|date',
-        //     'data_fechamento' => 'required|date',
-        //     'qtd_vaga' => 'required|integer',
-        //     'requisitos' => 'required|string',
-        //     'imagem' => 'nullable|image|max:2048',
-        //     'qtd_vagas_preenchidas' => 'nullable|integer',
-        //     'modalidade_da_vaga' => 'required|string|max:50',
-        //     'termo_de_prazo' => 'nullable|string|max:255',
-        //     'id_empresa' => 'required|integer'
-        // ]);
 
         $vaga = Vaga::find($id);
         if (!$vaga) {

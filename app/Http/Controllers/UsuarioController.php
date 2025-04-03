@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Usuario;
+
 class UsuarioController extends Controller
 {
     /**
@@ -27,15 +29,33 @@ class UsuarioController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $usuario = new Usuario;
+
+        $usuario->id_pessoas = $request->id_pessoas;
+        $usuario->email = $request->email;
+        $usuario->senha = $request->senha;
+        $usuario->id_tipo_usuarios = $request->id_tipo_usuarios;
+
+        $usuario->save();
+
+        return response()->json([
+            'mensage' => 'Usuario cadastrado com sucesso',
+            'data' => $usuario
+        ], 200);
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id_pessoas)
     {
-        //
+        
+        $usuario = Usuario::findOrFail($id_pessoas);
+
+        return $usuario; //retorna a variável para o controller de pessoas
+       
     }
 
     /**

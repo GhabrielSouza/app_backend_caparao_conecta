@@ -13,6 +13,11 @@ class Usuario extends Model
         'id_pessoas',
     ];
 
-    protected $primaryKey = 'id_usuarios';
+    protected $primaryKey = 'id_pessoas';
     public $timestamps = false;
+
+    public function pessoa(){
+        return $this->belongsTo('App\Models\Pessoa');
+    }
+
 }
