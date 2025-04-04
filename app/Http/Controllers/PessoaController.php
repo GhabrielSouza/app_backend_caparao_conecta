@@ -65,7 +65,7 @@ class PessoaController extends Controller
      */
     public function show(string $id_pessoas)
     {
-
+        //vagas = Vaga::with("habilidades")->find($id_pessoas);
         $pessoa = Pessoa::find($id_pessoas);
         $empresa = app('App\Http\Controllers\EmpresaController')->show($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
         $usuario = app('App\Http\Controllers\UsuarioController')->show($id_pessoas); //manda a variável id_pessoas para a função show() do controller de usuario, que também retorna as colunas da tabela

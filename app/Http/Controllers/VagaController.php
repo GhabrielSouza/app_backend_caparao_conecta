@@ -24,7 +24,7 @@ class VagaController extends Controller
         $vaga = Vaga::create($request->all());
 
         return response()->json([
-            'mensage' => 'Cliente criado com sucesso',
+            'mensage' => 'Vaga criada com sucesso',
             'data' => $vaga
         ], 200);
     }

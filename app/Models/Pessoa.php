@@ -26,4 +26,7 @@ class Pessoa extends Model
     public function usuario(){ // Relação um pra um de pessoa com usuário
         return $this->hasOne('App\Models\Usuario');
     }
+    public function endereco(){ // uma pessoa tem N endereços
+        return $this->hasMany('App\Models\Endereco'); 
+    }
 }
