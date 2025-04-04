@@ -56,7 +56,7 @@ Route::apiResource('endereco', EnderecoController::class);
 
 Route::post('/cadEnderecos', [EnderecoController::class,'store']);
 Route::get('/enderecos/{id_enderecos}', [EnderecoController::class,'show']);
-Route::delete('/enderecos/{id_enderecos}', [EnderecoController::class,'delete']);
+Route::delete('/enderecos/{id_enderecos}', [EnderecoController::class,'destroy']);
 Route::put('/enderecos/{id_enderecos}', [EnderecoController::class,'update']);
 
 

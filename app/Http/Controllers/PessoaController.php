@@ -36,6 +36,12 @@ class PessoaController extends Controller
             "senha": "123456",
             "id_tipo_usuarios": 3
 
+            "cep": "aaaaa",
+            "id_cidades": 1,
+            "bairro": "Lot Nasc",
+            "id_pessoas": 6,
+            "estado": "São Paulo"
+
         */
         
         $pessoa = new Pessoa;

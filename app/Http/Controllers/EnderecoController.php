@@ -27,8 +27,11 @@ class EnderecoController extends Controller
         /*
             Estilo de envio dos dados
 
-            "cep": "Alegre",
-            "id_pais": 1
+            "cep": "aaaaa",
+            "id_cidades": 1,
+            "bairro": "Lot Nasc",
+            "id_pessoas": 6,
+            "estado": "São Paulo"
 
         */
 
