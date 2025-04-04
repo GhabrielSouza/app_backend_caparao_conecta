@@ -15,6 +15,8 @@ class Pessoa extends Model
     ];
 
     protected $primaryKey = 'id_pessoas';
+
+    public $autoincrement = true;
     public $timestamps = false;
 
     public function empresa(){ // Relação um pra um de pessoa com empresa

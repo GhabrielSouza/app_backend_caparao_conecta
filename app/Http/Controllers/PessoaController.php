@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Http\Controllers\EmpresaController;
-use App\Http\Controllers\UsuarioController;
 
 use Illuminate\Http\Request;
 
@@ -27,7 +25,7 @@ class PessoaController extends Controller
         /*
             Estilo de envio dos dados
 
-            "id_pessoas": 2,
+            "id_pessoas": 2, agora é auto increment
             "nome": "Cleiton",
             "telefone": "28992228225",
             "sobre": "Marceneiro",
@@ -42,7 +40,6 @@ class PessoaController extends Controller
         
         $pessoa = new Pessoa;
         
-        $pessoa->id_pessoas = $request->id_pessoas;
         $pessoa->nome = $request->nome;
         $pessoa->telefone = $request->telefone;
         $pessoa->sobre = $request->sobre;
@@ -50,12 +47,15 @@ class PessoaController extends Controller
 
         $pessoa->save();
 
+        $request->id_pessoas = $pessoa->id_pessoas; //passa o id_pessoas do auto increment pro request, que consegue levar o id para os outros controllers
+
         app('App\Http\Controllers\EmpresaController')->store($request); //manda a variável request para a função store() do controller da empresa
         app('App\Http\Controllers\UsuarioController')->store($request); //mesma coisa, só que pro controller do usuário
 
         return response()->json([
-            'mensage' => 'Pessoa cadastrada com sucesso',
-            'data' => $pessoa
+            'mensagem' => 'Pessoa, empresa e usuario cadastrado com sucesso',
+            'data - pessoa' => $pessoa
+            
         ], 200);
 
     }
@@ -81,9 +81,28 @@ class PessoaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id_pessoas)
     {
-        //
+        
+        $pessoa = Pessoa::findOrFail($id_pessoas);
+
+        $pessoa->nome = $request->nome;
+        $pessoa->telefone = $request->telefone;
+        $pessoa->sobre = $request->sobre;
+        $pessoa->imagem = $request->imagem;
+
+        $pessoa->save();
+
+        $empresa = app('App\Http\Controllers\EmpresaController')->update($request, $id_pessoas); //
+        $usuario = app('App\Http\Controllers\UsuarioController')->update($request, $id_pessoas); //
+
+        return response()->json([
+            'mensage' => 'Dados da pessoa jurídica, empresa e usuário foram atualizados com sucesso',
+            'data - pessoa' => $pessoa,
+            'data - empresa' => $empresa,
+            'data - usuario' => $usuario
+        ], 200);
+
     }
 
     /**
@@ -92,7 +111,7 @@ class PessoaController extends Controller
     public function destroy(string $id_pessoas)
     {
         
-        Pessoa::findOrFail( $id_pessoas )->deleteOnCascade();
+        Pessoa::findOrFail( $id_pessoas )->delete();
 
         return response()->json([
             'mensage' => 'Pessoa, empresa e usuário deletada com sucesso',

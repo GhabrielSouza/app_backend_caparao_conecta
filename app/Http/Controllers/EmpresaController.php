@@ -29,10 +29,7 @@ class EmpresaController extends Controller
 
         $empresa->save();
 
-        return response()->json([
-            'mensage' => 'Empresa cadastrada com sucesso',
-            'data' => $empresa
-        ], 200);
+        return $empresa;
 
     }
 
@@ -55,14 +52,12 @@ class EmpresaController extends Controller
     {
         
         $empresa = Empresa::findOrFail($id_pessoas);
+
         $empresa->cnpj = $request->cnpj;
 
         $empresa->save();
 
-        return response()->json([
-            'mensage' => 'Dados da empresa foram atualizados com sucesso',
-            'data' => $empresa
-        ], 200);
+        return $empresa;
 
     }
 
@@ -71,12 +66,6 @@ class EmpresaController extends Controller
      */
     public function destroy(string $id_pessoas)
     {
-        
-        Empresa::findOrFail( $id_pessoas )->delete();
-
-        return response()->json([
-            'mensage' => 'Empresa deletada com sucesso',
-        ], 200);
 
     }
 }

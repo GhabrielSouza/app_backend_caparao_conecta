@@ -39,10 +39,7 @@ class UsuarioController extends Controller
 
         $usuario->save();
 
-        return response()->json([
-            'mensage' => 'Usuario cadastrado com sucesso',
-            'data' => $usuario
-        ], 200);
+        return $usuario;
 
     }
 
@@ -69,9 +66,20 @@ class UsuarioController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id_pessoas)
     {
-        //
+        
+        $usuario = Usuario::findOrFail($id_pessoas);
+
+        $usuario->id_pessoas = $request->id_pessoas;
+        $usuario->email = $request->email;
+        $usuario->senha = $request->senha;
+        $usuario->id_tipo_usuarios = $request->id_tipo_usuarios;
+
+        $usuario->save();
+
+        return $usuario;
+
     }
 
     /**
