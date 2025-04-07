@@ -37,17 +37,49 @@ class EnderecoController extends Controller
 
         $endereco = new Endereco;
 
-        $endereco->fill($request->all());
+        $endereco->cep = $request->cep;
+        $endereco->id_cidades = $request->id_cidades;
+        $endereco->bairro = $request->bairro;
+        $endereco->id_pessoas = $request->id_pessoas;
+        $endereco->estado = $request->estado;
+
+        $endereco->save();
+
+        return $endereco;
+
+    }
+
+    /*public function storeSozinho(Request $request)
+    {
+
+        /*
+            Estilo de envio dos dados
+
+            "cep": "aaaaa",
+            "id_cidades": 1,
+            "bairro": "Lot Nasc",
+            "id_pessoas": 6,
+            "estado": "São Paulo"
+
+        
+
+        $endereco = new Endereco;
+
+        $endereco->cep = $request->cep;
+        $endereco->id_cidades = $request->id_cidades;
+        $endereco->bairro = $request->bairro;
+        $endereco->id_pessoas = $request->id_pessoas;
+        $endereco->estado = $request->estado;
 
         $endereco->save();
 
         return response()->json([
             'mensagem' => 'Endereço cadastrado com sucesso',
-            'data - Endereço' => $endereco
+            'data - endereço' => $endereco
             
         ], 200);
 
-    }
+    } */
 
     /**
      * Display the specified resource.
@@ -55,6 +87,7 @@ class EnderecoController extends Controller
     public function show(string $id_enderecos)
     {
         $endereco = Endereco::find($id_enderecos);
+        
         $cidade = Cidade::where('id_cidades', $endereco->id_cidades)->first()->toArray();
         $pessoa = Pessoa::where('id_pessoas', $endereco->id_pessoas)->first()->toArray();
         
@@ -69,19 +102,19 @@ class EnderecoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id_endereco)
+    public function update(Request $request, string $id_pessoas)
     {
         
-        $endereco = Endereco::findOrFail($id_endereco);
+        $endereco = Endereco::where('id_pessoas', $id_pessoas)->first();
 
-        $endereco->fill($request->all());
+        $endereco->cep = $request->cep;
+        $endereco->id_cidades = $request->id_cidades;
+        $endereco->bairro = $request->bairro;
+        $endereco->estado = $request->estado;
 
         $endereco->save();
 
-        return response()->json([
-            'mensage' => 'Dados do endereço foram atualizados com sucesso',
-            'data - pessoa' => $endereco
-        ], 200);
+        return $endereco;
 
     }
 

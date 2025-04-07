@@ -24,8 +24,8 @@ class EmpresaController extends Controller
         
         $empresa = new Empresa;
 
-        $empresa->id_pessoas = $request->id_pessoas;
         $empresa->cnpj = $request->cnpj;
+        $empresa->id_pessoas = $request->id_pessoas;
 
         $empresa->save();
 

@@ -52,13 +52,13 @@ Route::put('/cidades/{id_cidades}', [CidadeController::class,'update']);
 
 
 
-Route::apiResource('endereco', EnderecoController::class);
+/*Route::apiResource('endereco', EnderecoController::class);
 
 Route::post('/cadEnderecos', [EnderecoController::class,'store']);
 Route::get('/enderecos/{id_enderecos}', [EnderecoController::class,'show']);
 Route::delete('/enderecos/{id_enderecos}', [EnderecoController::class,'destroy']);
 Route::put('/enderecos/{id_enderecos}', [EnderecoController::class,'update']);
-
+*/
 
 
 Route::apiResource('pessoa', PessoaController::class);
