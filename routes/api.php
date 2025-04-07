@@ -30,6 +30,9 @@ Route::apiResource('empresas',EmpresaController::class);
 Route::apiResource('vaga',VagaController::class);
 
 Route::post('/cadVagas', [VagaController::class, 'store']);
+Route::get('/vagas/{id_vagas}', [VagaController::class, 'show']);
+Route::delete('/vagas/{id_vagas}', [VagaController::class,'destroy']);
+Route::put('/vagas/{id_vagas}', [VagaController::class,'update']);
 
 
 

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Vaga extends Model
 {
     protected $filable = [
-        'id-vagas',
+        'id_vagas',
         'titulo_vaga',
         'descricao',
         'salario',
@@ -15,14 +15,15 @@ class Vaga extends Model
         'data_criacao',
         'data_fechamento',
         'qtd_vaga',
-        'requisitos',
-        'imagem',
         'qtd_vagas_preenchidas',
         'modalidade_da_vaga',
-        'termo_de_prazo',
-        'id_empresa',
+        'id_empresas',
     ];
 
     protected $primaryKey = 'id_vagas';
     public $timestamps = false;
+
+    public function empresa(){
+        return $this->belongsTo('App\Models\Empresa');
+    }
 }

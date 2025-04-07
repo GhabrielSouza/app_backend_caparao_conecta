@@ -21,10 +21,38 @@ class VagaController extends Controller
     public function store(Request $request)
     {
 
-        $vaga = Vaga::create($request->all());
+        /*
+
+            "titulo_vaga": "Teste",
+            "descricao": "Gerente de estoque",
+            "salario": 10250.99,
+            "status": "ativo",
+            "data_criacao": "2006-07-02",
+            "data_fechamento": "2006-07-02",
+            "qtd_vaga": 20,
+            "qtd_vagas_preenchidas": 12,
+            "modalidade_da_vaga": "presencial",
+            "id_empresas": 16
+
+        */
+
+        $vaga = new Vaga;
+
+        $vaga->titulo_vaga = $request->titulo_vaga;
+        $vaga->descricao = $request->descricao;
+        $vaga->salario = $request->salario;
+        $vaga->status = $request->status;
+        $vaga->data_criacao = $request->data_criacao;
+        $vaga->data_fechamento = $request->data_fechamento;
+        $vaga->qtd_vaga = $request->qtd_vaga;
+        $vaga->qtd_vagas_preenchidas = $request->qtd_vagas_preenchidas;
+        $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
+        $vaga->id_empresas = $request->id_empresas;
+
+        $vaga->save();
 
         return response()->json([
-            'mensage' => 'Vaga criada com sucesso',
+            'mensagem' => 'Vaga criada com sucesso',
             'data' => $vaga
         ], 200);
     }
@@ -52,13 +80,25 @@ class VagaController extends Controller
     {
 
         $vaga = Vaga::find($id);
+
+        $vaga->titulo_vaga = $request->titulo_vaga;
+        $vaga->descricao = $request->descricao;
+        $vaga->salario = $request->salario;
+        $vaga->status = $request->status;
+        $vaga->data_criacao = $request->data_criacao;
+        $vaga->data_fechamento = $request->data_fechamento;
+        $vaga->qtd_vaga = $request->qtd_vaga;
+        $vaga->qtd_vagas_preenchidas = $request->qtd_vagas_preenchidas;
+        $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
+        $vaga->id_empresas = $request->id_empresas;
+
         if (!$vaga) {
             return response()->json([
                 'mensage' => 'Vaga não encontrada'
             ], 404);
         }
 
-        $vaga->update($request->all());
+        $vaga->save();
 
         return response()->json([
             'mensage' => 'Vaga atualizada com sucesso',
