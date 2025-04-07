@@ -32,13 +32,12 @@ class HabilidadeController extends Controller
     public function show(string $id_habilidades)
     {
 
-        
+        $habilidade = Habilidade::find($id_habilidades);
 
-        /*return response()->json([
-            'data - pessoa' => $pessoa,
-            'data - empresa' => $empresa,
-            'data - usuario' => $usuario
-        ], 200); */
+        return response()->json([
+            'data - habilidades' => $habilidade
+        ], 200);
+
 
     }
 
@@ -72,14 +71,10 @@ class HabilidadeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id_pessoas)
+    public function destroy(string $id_habilidades)
     {
         
-        Pessoa::findOrFail( $id_pessoas )->delete();
-
-        return response()->json([
-            'mensage' => 'Pessoa, empresa e usuário deletada com sucesso',
-        ], 200);
+        
 
     }
 }
