@@ -59,19 +59,31 @@ class PessoaController extends Controller
 
         $request->id_pessoas = $pessoa->id_pessoas; //passa o id_pessoas do auto increment pro request, que consegue levar o id para os outros controllers
 
-        $empresa = app('App\Http\Controllers\EmpresaController')->store($request); //manda a variável request para a função store() do controller da empresa
-        $usuario = app('App\Http\Controllers\UsuarioController')->store($request); //mesma coisa, só que pro controller do usuário
-        $endereco = app('App\Http\Controllers\EnderecoController')->store($request); //mesma coisa, só que pro controller do usuário
+        if ($request->id_tipo_usuario == 3) {
 
-        return response()->json([
-            'mensagem' => 'Pessoa, empresa e usuario cadastrado com sucesso',
-            'data - pessoa' => $pessoa,
-            'data - endereço' => $endereco,
-            'data - empresa' => $empresa,
-            'data - usuario' => $usuario
+            $empresa = app('App\Http\Controllers\EmpresaController')->store($request); //manda a variável request para a função store() do controller da empresa
+            $usuario = app('App\Http\Controllers\UsuarioController')->store($request); //mesma coisa, só que pro controller do usuário
+            $endereco = app('App\Http\Controllers\EnderecoController')->store($request); //mesma coisa, só que pro controller do usuário
 
-            
-        ], 200);
+        
+
+            return response()->json([
+                'mensagem' => 'Pessoa, empresa e usuario cadastrado com sucesso',
+                'data - pessoa' => $pessoa,
+                'data - endereço' => $endereco,
+                'data - empresa' => $empresa,
+                'data - usuario' => $usuario
+
+                
+            ], 200);
+
+        }
+
+        //else if ($request->id_tipo_usuario == 2) {
+
+
+
+        //}
 
     }
 

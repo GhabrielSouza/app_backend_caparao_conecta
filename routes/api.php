@@ -34,6 +34,9 @@ Route::get('/vagas/{id_vagas}', [VagaController::class, 'show']);
 Route::delete('/vagas/{id_vagas}', [VagaController::class,'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class,'update']);
 
+Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class,'adicionarHabilidades']); //vai pro controller das vagas
+Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
+
 
 
 Route::apiResource('candidato',CandidatoController::class);

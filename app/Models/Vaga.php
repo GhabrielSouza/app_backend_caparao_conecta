@@ -26,4 +26,8 @@ class Vaga extends Model
     public function empresa(){
         return $this->belongsTo('App\Models\Empresa');
     }
+
+    public function vagaOnHabilidade(){
+        return $this->belongsToMany('App\Models\Habilidade', 'vagas_habilidades', 'id_vagas' , 'id_habilidades');
+    }
 }

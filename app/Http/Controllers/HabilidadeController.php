@@ -47,24 +47,7 @@ class HabilidadeController extends Controller
     public function update(Request $request, string $id_pessoas)
     {
         
-        $pessoa = Pessoa::findOrFail($id_pessoas);
-
-        $pessoa->nome = $request->nome;
-        $pessoa->telefone = $request->telefone;
-        $pessoa->sobre = $request->sobre;
-        $pessoa->imagem = $request->imagem;
-
-        $pessoa->save();
-
-        $empresa = app('App\Http\Controllers\EmpresaController')->update($request, $id_pessoas); //
-        $usuario = app('App\Http\Controllers\UsuarioController')->update($request, $id_pessoas); //
-
-        return response()->json([
-            'mensage' => 'Dados da pessoa jurídica, empresa e usuário foram atualizados com sucesso',
-            'data - pessoa' => $pessoa,
-            'data - empresa' => $empresa,
-            'data - usuario' => $usuario
-        ], 200);
+        //se pá que vai ser no BD direto, não sei se vai ter update
 
     }
 
@@ -74,7 +57,7 @@ class HabilidadeController extends Controller
     public function destroy(string $id_habilidades)
     {
         
-        
+        //vai ser pelo deleted at, deixar inativo
 
     }
 }

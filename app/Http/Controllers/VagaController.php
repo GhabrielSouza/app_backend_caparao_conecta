@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Habilidade;
 use App\Models\Vaga;
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Arr;
 
 class VagaController extends Controller
 {
@@ -124,4 +127,39 @@ class VagaController extends Controller
             'mensage' => 'Vaga deletada com sucesso'
         ], 200);
     }
+
+    public function adicionarHabilidades($id_habilidades, $id_vagas){
+
+        $habilidade = Habilidade::find($id_habilidades);
+        
+        $habilidade->habilidadeOnVaga()->attach($id_vagas);
+
+        $vaga = Vaga::find($id_vagas);
+
+        return response()->json([
+            'mensagem' => 'Habilidade colocada na vaga com sucesso!',
+            'data - habilidade' => $habilidade,
+            'data - vaga' => $vaga
+        ], 200); 
+
+    }
+
+    public function verHabilidades($id_vagas){
+
+        $vagas = Vaga::find($id_vagas);
+        $habilidades = $vagas->vagaOnHabilidade;
+        $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot']);
+
+        return response()->json([
+            'data - vaga' => $vagas,
+            'data - habilidades' => $nome_habilidades
+            
+        ], 200); 
+
+        /*foreach ($vaga->Habilidade as $habilidade) {
+            Habilidade::find($habilidade->vagas_habilidades->id_habilidades);
+        } */
+
+    }
+
 }
