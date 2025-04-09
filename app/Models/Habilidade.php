@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Habilidade extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'id_habilidades',
         'nome',
@@ -16,8 +18,9 @@ class Habilidade extends Model
     protected $primaryKey = 'id_habilidades';
     public $timestamps = false;
 
-    public function habilidadeOnVaga(){
-        return $this->belongsToMany('App\Models\Vaga' ,'vagas_habilidades', 'id_habilidades', 'id_vagas');
+    public function habilidadeOnVaga()
+    {
+        return $this->belongsToMany('App\Models\Vaga', 'vagas_habilidades', 'id_habilidades', 'id_vagas');
     }
 
 }
