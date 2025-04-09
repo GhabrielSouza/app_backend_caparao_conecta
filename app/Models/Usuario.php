@@ -15,6 +15,8 @@ class Usuario extends Model
 
     protected $primaryKey = 'id_pessoas';
 
+    public $timestamps = false;
+
 
     public function pessoa()
     {

@@ -12,6 +12,8 @@ class Empresa extends Model
         'id_pessoas',
     ];
 
+    public $timestamps = false;
+
     protected $primaryKey = 'id_pessoas';
 
     public function pessoa()

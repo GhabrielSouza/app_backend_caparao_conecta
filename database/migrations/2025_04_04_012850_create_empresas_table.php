@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('empresas', function (Blueprint $table) {
-            $table->string('cnpj', 14)->unique();
+            $table->string('cnpj', 20)->unique();
             $table->unsignedBigInteger('id_pessoas')->primary();
             $table->softDeletes();
 

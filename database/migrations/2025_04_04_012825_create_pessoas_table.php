@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('pessoas', function (Blueprint $table) {
             $table->id('id_pessoas');
             $table->string('nome', 255);
-            $table->string('telefone', 11);
+            $table->string('telefone', 20);
             $table->text('sobre')->nullable();
             $table->string('imagem', 255)->nullable();
             $table->timestamps();

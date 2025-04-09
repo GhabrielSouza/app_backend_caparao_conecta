@@ -59,7 +59,7 @@ class PessoaController extends Controller
 
         $request->id_pessoas = $pessoa->id_pessoas; //passa o id_pessoas do auto increment pro request, que consegue levar o id para os outros controllers
 
-        if ($request->id_tipo_usuario == 3) {
+        if ($request->id_tipo_usuarios == 3) {
 
             $empresa = app('App\Http\Controllers\EmpresaController')->store($request); //manda a variável request para a função store() do controller da empresa
             $usuario = app('App\Http\Controllers\UsuarioController')->store($request); //mesma coisa, só que pro controller do usuário

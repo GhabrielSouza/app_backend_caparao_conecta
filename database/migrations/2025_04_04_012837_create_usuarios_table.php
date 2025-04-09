@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->string('senha', 512);
             $table->foreignId('id_tipo_usuarios')->constrained('tipo_usuarios', 'id_tipo_usuarios')->onDelete('cascade');
             $table->unsignedBigInteger('id_pessoas')->primary();
-            $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('id_pessoas')
