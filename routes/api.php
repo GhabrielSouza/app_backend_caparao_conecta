@@ -8,7 +8,7 @@ Route::get('/status', function () {
 });
 
 
-//Rotas de experiencias
+//Rotas de formacoes academicas
 Route::get('/formacoes_academicas', [Formacao_AcademicaController::class,'all']);
 Route ::get('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'show']);
 Route ::post('/formacoes_academicas', [Formacao_AcademicaController::class, 'store']);
