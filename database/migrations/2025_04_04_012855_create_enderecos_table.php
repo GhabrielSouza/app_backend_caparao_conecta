@@ -11,8 +11,6 @@ return new class extends Migration {
             $table->id('id_enderecos');
             $table->string('cep', 10);
             $table->foreignId('id_cidades')->constrained('cidades', 'id_cidades')->onDelete('cascade');
-            $table->string('bairro', 255)->nullable();
-            $table->string('endereco', 255)->nullable();
             $table->unsignedBigInteger('id_pessoas');
             $table->string('estado', 255);
             $table->timestamps();

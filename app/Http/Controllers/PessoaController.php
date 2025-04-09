@@ -46,7 +46,6 @@ class PessoaController extends Controller
 
             "cep": "aaaaa",
             "id_cidades": 1,
-            "bairro": "Lot Nasc",
             "estado": "São Paulo"
 
             -------------------------------------
