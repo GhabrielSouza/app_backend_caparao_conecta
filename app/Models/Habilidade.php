@@ -16,7 +16,6 @@ class Habilidade extends Model
     ];
 
     protected $primaryKey = 'id_habilidades';
-    public $timestamps = false;
 
     public function habilidadeOnVaga()
     {

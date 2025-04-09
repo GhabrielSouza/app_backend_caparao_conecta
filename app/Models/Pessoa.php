@@ -17,16 +17,19 @@ class Pessoa extends Model
     protected $primaryKey = 'id_pessoas';
 
     public $autoincrement = true;
-    public $timestamps = false;
 
-    public function empresa(){ // Relação um pra um de pessoa com empresa
+
+    public function empresa()
+    { // Relação um pra um de pessoa com empresa
         return $this->hasOne('App\Models\Empresa');
     }
 
-    public function usuario(){ // Relação um pra um de pessoa com usuário
+    public function usuario()
+    { // Relação um pra um de pessoa com usuário
         return $this->hasOne('App\Models\Usuario');
     }
-    public function endereco(){ // uma pessoa tem N endereços
-        return $this->hasOne('App\Models\Endereco'); 
+    public function endereco()
+    { // uma pessoa tem N endereços
+        return $this->hasOne('App\Models\Endereco');
     }
 }

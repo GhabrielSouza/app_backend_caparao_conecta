@@ -25,21 +25,21 @@ Route::get('/status', function () {
     );
 });
 
-Route::apiResource('empresas',EmpresaController::class);
+Route::apiResource('empresas', EmpresaController::class);
 
-Route::apiResource('vaga',VagaController::class);
+Route::apiResource('vaga', VagaController::class);
 
 Route::post('/cadVagas', [VagaController::class, 'store']);
 Route::get('/vagas/{id_vagas}', [VagaController::class, 'show']);
-Route::delete('/vagas/{id_vagas}', [VagaController::class,'destroy']);
-Route::put('/vagas/{id_vagas}', [VagaController::class,'update']);
+Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
+Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
 
-Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class,'adicionarHabilidades']); //vai pro controller das vagas
+Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); //vai pro controller das vagas
 Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
 
 
-Route::apiResource('candidato',CandidatoController::class);
+Route::apiResource('candidato', CandidatoController::class);
 
 Route::apiResource('usuario', UsuarioController::class);
 
@@ -51,10 +51,10 @@ Route::post('/cadHabilidades', [HabilidadeController::class, 'store']);
 
 Route::apiResource('cidade', CidadeController::class);
 
-Route::post('/cadCidades', [CidadeController::class,'store']);
-Route::get('/cidades/{id_cidades}', [CidadeController::class,'show']);
-Route::delete('/cidades/{id_cidades}', [CidadeController::class,'destroy']);
-Route::put('/cidades/{id_cidades}', [CidadeController::class,'update']);
+Route::post('/cadCidades', [CidadeController::class, 'store']);
+Route::get('/cidades/{id_cidades}', [CidadeController::class, 'show']);
+Route::delete('/cidades/{id_cidades}', [CidadeController::class, 'destroy']);
+Route::put('/cidades/{id_cidades}', [CidadeController::class, 'update']);
 
 
 
@@ -70,7 +70,7 @@ Route::put('/enderecos/{id_enderecos}', [EnderecoController::class,'update']);
 Route::apiResource('pessoa', PessoaController::class);
 
 Route::post('/cadPessoas', [PessoaController::class, 'store']); //o controller de pessoas faz o store de pessoas, empresas e usuários
-Route::get ('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); //o controller de pessoas faz o show de pessoas, empresas e usuários
-Route::delete ('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); //o controller de pessoas faz o delete de pessoas, empresas e usuários
-Route::put('/pessoas/{id_pessoas}', [PessoaController::class,'update']);  //o controller de pessoas faz o update de pessoas, empresas e usuários
+Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); //o controller de pessoas faz o show de pessoas, empresas e usuários
+Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); //o controller de pessoas faz o delete de pessoas, empresas e usuários
+Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);  //o controller de pessoas faz o update de pessoas, empresas e usuários
 

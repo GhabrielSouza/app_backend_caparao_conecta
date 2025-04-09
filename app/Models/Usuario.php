@@ -14,9 +14,10 @@ class Usuario extends Model
     ];
 
     protected $primaryKey = 'id_pessoas';
-    public $timestamps = false;
 
-    public function pessoa(){
+
+    public function pessoa()
+    {
         return $this->belongsTo('App\Models\Pessoa');
     }
 

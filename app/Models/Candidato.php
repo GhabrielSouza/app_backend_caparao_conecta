@@ -16,7 +16,6 @@ class Candidato extends Model
     ];
 
     protected $primaryKey = 'id_pessoasFisicas';
-    public $timestamps = false;
 
     protected $table = 'pessoas_fisicas';
 }
