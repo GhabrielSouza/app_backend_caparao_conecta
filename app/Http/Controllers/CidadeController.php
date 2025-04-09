@@ -63,6 +63,17 @@ class CidadeController extends Controller
         
     }
 
+    public function showAll(){
+        
+        $cidade = Cidade::all();
+
+        return response()->json([
+            'data - todas cidades' => $cidade
+            
+        ], 200); 
+
+    }
+
     /**
      * Update the specified resource in storage.
      */

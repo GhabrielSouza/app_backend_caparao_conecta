@@ -25,12 +25,9 @@ Route::get('/status', function () {
     );
 });
 
-Route::apiResource('empresas',EmpresaController::class);
-
-Route::apiResource('vaga',VagaController::class);
-
 Route::post('/cadVagas', [VagaController::class, 'store']);
 Route::get('/vagas/{id_vagas}', [VagaController::class, 'show']);
+Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
 Route::delete('/vagas/{id_vagas}', [VagaController::class,'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class,'update']);
 
@@ -39,35 +36,23 @@ Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
 
 
-Route::apiResource('candidato',CandidatoController::class);
-
-Route::apiResource('usuario', UsuarioController::class);
-
-Route::apiResource('habilidade', HabilidadeController::class);
-
 Route::post('/cadHabilidades', [HabilidadeController::class, 'store']);
-
-
-
-Route::apiResource('cidade', CidadeController::class);
-
 Route::post('/cadCidades', [CidadeController::class,'store']);
 Route::get('/cidades/{id_cidades}', [CidadeController::class,'show']);
+Route::get('/cidadesShowAll', [CidadeController::class, 'showAll']);
 Route::delete('/cidades/{id_cidades}', [CidadeController::class,'destroy']);
 Route::put('/cidades/{id_cidades}', [CidadeController::class,'update']);
 
 
-
-/*Route::apiResource('endereco', EnderecoController::class);
-
+/*
 Route::post('/cadEnderecos', [EnderecoController::class,'store']);
 Route::get('/enderecos/{id_enderecos}', [EnderecoController::class,'show']);
 Route::delete('/enderecos/{id_enderecos}', [EnderecoController::class,'destroy']);
 Route::put('/enderecos/{id_enderecos}', [EnderecoController::class,'update']);
 */
 
+Route::get('/enderecoShowAll', [EnderecoController::class, 'showAll']);
 
-Route::apiResource('pessoa', PessoaController::class);
 
 Route::post('/cadPessoas', [PessoaController::class, 'store']); //o controller de pessoas faz o store de pessoas, empresas e usuários
 Route::get ('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); //o controller de pessoas faz o show de pessoas, empresas e usuários

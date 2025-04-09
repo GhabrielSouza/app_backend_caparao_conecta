@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Empresa;
 use App\Models\Endereco;
+use App\Models\Pessoa_Fisica;
 use App\Models\Usuario;
 use App\Models\Cidade;
 
@@ -30,6 +31,8 @@ class PessoaController extends Controller
         /*
             Estilo de envio dos dados
 
+            Se for empresa:
+
             "id_pessoas": 2, agora é auto increment
             "nome": "Cleiton",
             "telefone": "28992228225",
@@ -44,6 +47,29 @@ class PessoaController extends Controller
             "cep": "aaaaa",
             "id_cidades": 1,
             "bairro": "Lot Nasc",
+            "estado": "São Paulo"
+
+            -------------------------------------
+
+            Se for pessoa física:
+
+            "id_pessoas": 2, agora é auto increment
+            "nome": "Cleiton",
+            "sobrenome": "Castro Fernandes",
+            "data_de_nascimento": "02-07-2006",
+            "genero": "Masculino"
+
+            "telefone": "28992228225",
+            "sobre": "Marceneiro",
+
+            "cpf": "174.629.527-93",
+
+            "email": "cleiton@gmail.com",
+            "senha": "123456",
+            "id_tipo_usuarios": 2,
+
+            "cep": "aaaaa",
+            "id_cidades": "Cariacica",
             "estado": "São Paulo"
 
         */
@@ -79,11 +105,23 @@ class PessoaController extends Controller
 
         }
 
-        //else if ($request->id_tipo_usuario == 2) {
+        else if ($request->id_tipo_usuario == 2) {
 
+            $usuario = app('App\Http\Controllers\UsuarioController')->store($request); //mesma coisa, só que pro controller do usuário
+            $endereco = app('App\Http\Controllers\EnderecoController')->store($request); //mesma coisa, só que pro controller do usuário
+            $pessoa_fisica = app('App\Http\Controllers\Pessoa_FisicaController')->store($request); //mesma coisa, só que pro controller do usuário
 
+            return response()->json([
+                'mensagem' => 'Pessoa, empresa e usuario cadastrado com sucesso',
+                'data - pessoa' => $pessoa,
+                'data - endereço' => $endereco,
+                'data - empresa' => $pessoa_fisica,
+                'data - usuario' => $usuario
 
-        //}
+                
+            ], 200);
+
+        }
 
     }
 
@@ -94,19 +132,37 @@ class PessoaController extends Controller
     {
         //vagas = Vaga::with("habilidades")->find($id_pessoas);
         $pessoa = Pessoa::find($id_pessoas);
-
-        $empresa = Empresa::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
         $usuario = Usuario::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller de usuario, que também retorna as colunas da tabela
         $endereco = Endereco::where('id_pessoas', $pessoa->id_pessoas)->first();
         $cidade = Cidade::where('id_cidades', $endereco->id_cidades)->first();
 
-        return response()->json([
-            'data - pessoa' => $pessoa,
-            'data - empresa' => $empresa,
-            'data - usuario' => $usuario,
-            'data - endereço'=> $endereco,
-            'data - cidade' => $cidade
-        ], 200);
+        if ($usuario->id_tipo_usuarios == 3) {
+
+            $empresa = Empresa::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
+
+            return response()->json([
+                'data - pessoa' => $pessoa,
+                'data - empresa' => $empresa,
+                'data - usuario' => $usuario,
+                'data - endereço'=> $endereco,
+                'data - cidade' => $cidade
+            ], 200);
+
+        }
+
+        if ($usuario->id_tipo_usuarios == 2) {
+            
+            $pessoa_fisica = Pessoa_Fisica::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
+
+            return response()->json([
+                'data - pessoa' => $pessoa,
+                'data - pessoa física' => $pessoa_fisica,
+                'data - usuario' => $usuario,
+                'data - endereço'=> $endereco,
+                'data - cidade' => $cidade
+            ], 200);
+
+        }
 
     }
 

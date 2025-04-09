@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cidade extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'id_cidades',
         'nome_cidade',
@@ -16,7 +18,6 @@ class Cidade extends Model
     protected $primaryKey = 'id_cidades';
 
     public $autoincrement = true;
-    public $timestamps = false;
 
     public function endereco(){ // uma cidade tem N endereços
         return $this->hasMany('App\Models\Endereco');

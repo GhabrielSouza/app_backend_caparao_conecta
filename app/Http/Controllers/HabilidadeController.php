@@ -41,6 +41,17 @@ class HabilidadeController extends Controller
 
     }
 
+    public function showAll(){
+        
+        $habilidades = Habilidade::all();
+
+        return response()->json([
+            'data - todas habilidades' => $habilidades
+            
+        ], 200); 
+
+    }
+
     /**
      * Update the specified resource in storage.
      */

@@ -33,7 +33,7 @@ class UsuarioController extends Controller
         $usuario = new Usuario;
 
         $usuario->email = $request->email;
-        $usuario->senha = $request->senha;
+        $usuario->senha = bcrypt( $request->senha);
         $usuario->id_tipo_usuarios = $request->id_tipo_usuarios;
         $usuario->id_pessoas = $request->id_pessoas;
 

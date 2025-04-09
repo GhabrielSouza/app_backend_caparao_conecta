@@ -99,6 +99,17 @@ class EnderecoController extends Controller
 
     }
 
+    public function showAll(){
+        
+        $endereco = Endereco::all();
+
+        return response()->json([
+            'data - todos endereços' => $endereco
+            
+        ], 200); 
+
+    }
+
     /**
      * Update the specified resource in storage.
      */

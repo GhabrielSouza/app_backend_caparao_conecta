@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Endereco extends Model
 {
+
+    use SoftDeletes;
     protected $fillable = [
         'id_enderecos',
         'cep',
@@ -19,7 +22,6 @@ class Endereco extends Model
     protected $primaryKey = 'id_enderecos';
 
     public $autoincrement = true;
-    public $timestamps = false;
 
     public function pessoas(){ // uma pessoa tem N endereços
         return $this->belongsTo('App\Models\Pessoa');

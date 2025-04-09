@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Vaga extends Model
 {
+    use SoftDeletes;
     protected $filable = [
         'id_vagas',
         'titulo_vaga',
@@ -21,7 +23,7 @@ class Vaga extends Model
     ];
 
     protected $primaryKey = 'id_vagas';
-    public $timestamps = false;
+
 
     public function empresa(){
         return $this->belongsTo('App\Models\Empresa');

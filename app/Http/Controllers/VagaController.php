@@ -33,31 +33,41 @@ class VagaController extends Controller
             "data_criacao": "2006-07-02",
             "data_fechamento": "2006-07-02",
             "qtd_vaga": 20,
-            "qtd_vagas_preenchidas": 12,
             "modalidade_da_vaga": "presencial",
             "id_empresas": 16
 
+            "qtd_vagas_preenchidas": 12, //NÃO PRECISA de colocar no store, já que sempre vai ser 0 quando criar a vaga
+
         */
 
-        $vaga = new Vaga;
+        if ($request->data_criacao > $request->data_fechamento) {
 
-        $vaga->titulo_vaga = $request->titulo_vaga;
-        $vaga->descricao = $request->descricao;
-        $vaga->salario = $request->salario;
-        $vaga->status = $request->status;
-        $vaga->data_criacao = $request->data_criacao;
-        $vaga->data_fechamento = $request->data_fechamento;
-        $vaga->qtd_vaga = $request->qtd_vaga;
-        $vaga->qtd_vagas_preenchidas = $request->qtd_vagas_preenchidas;
-        $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
-        $vaga->id_empresas = $request->id_empresas;
+            $vaga = new Vaga;
 
-        $vaga->save();
+            $vaga->titulo_vaga = $request->titulo_vaga;
+            $vaga->descricao = $request->descricao;
+            $vaga->salario = $request->salario;
+            $vaga->status = $request->status;
+            $vaga->data_criacao = $request->data_criacao;
+            $vaga->data_fechamento = $request->data_fechamento;
+            $vaga->qtd_vaga = $request->qtd_vaga;
+            $vaga->qtd_vagas_preenchidas = 0; //como a vaga está sendo criada, ela vai sempre estar zerada.
+            $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
+            $vaga->id_empresas = $request->id_empresas;
 
-        return response()->json([
-            'mensagem' => 'Vaga criada com sucesso',
-            'data' => $vaga
-        ], 200);
+            $vaga->save();
+
+            return response()->json([
+                'mensagem' => 'Vaga criada com sucesso',
+                'data' => $vaga
+            ], 200);
+        }
+
+        else {
+            return response()->json([
+                'mensagem' => 'Data de criação não pode ser menor do que a data de fechamento.'
+            ], 200);
+        }
     }
 
     /**
@@ -75,6 +85,18 @@ class VagaController extends Controller
 
         return response()->json($vaga, 200);
     }
+    
+    public function showAll(){
+        
+        $vagas = Vaga::all();
+
+        return response()->json([
+            'data - todas vagas' => $vagas
+            
+        ], 200); 
+
+    }
+
 
     /**
      * Update the specified resource in storage.
@@ -161,5 +183,4 @@ class VagaController extends Controller
         } */
 
     }
-
 }

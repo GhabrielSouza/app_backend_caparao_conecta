@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Usuario extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'email',
         'senha',
@@ -14,7 +17,6 @@ class Usuario extends Model
     ];
 
     protected $primaryKey = 'id_pessoas';
-    public $timestamps = false;
 
     public function pessoa(){
         return $this->belongsTo('App\Models\Pessoa');

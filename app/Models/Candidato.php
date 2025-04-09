@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Candidato extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'id_pessoas',
         'cpf',
@@ -16,7 +18,6 @@ class Candidato extends Model
     ];
 
     protected $primaryKey = 'id_pessoasFisicas';
-    public $timestamps = false;
 
     protected $table = 'pessoas_fisicas';
 }

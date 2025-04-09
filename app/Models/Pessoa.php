@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pessoa extends Model
 {
+
+    use SoftDeletes;
     protected $fillable = [
         'id_pessoas',
         'nome',
@@ -17,10 +20,13 @@ class Pessoa extends Model
     protected $primaryKey = 'id_pessoas';
 
     public $autoincrement = true;
-    public $timestamps = false;
 
     public function empresa(){ // Relação um pra um de pessoa com empresa
         return $this->hasOne('App\Models\Empresa');
+    }
+
+    public function pessoa_fisica(){
+         return $this->hasOne('App\Models\Pessoa_Fisica'); 
     }
 
     public function usuario(){ // Relação um pra um de pessoa com usuário
