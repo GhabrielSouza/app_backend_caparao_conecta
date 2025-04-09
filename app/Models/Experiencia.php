@@ -11,7 +11,6 @@ class Experiencia extends Model
     public $timestamps = false;
     
     protected $fillable = [
-        'id_experiencias',
         'cargo',
         'nome_empresa',
         'comprovacao',
