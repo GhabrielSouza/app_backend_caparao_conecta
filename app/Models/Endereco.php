@@ -23,11 +23,13 @@ class Endereco extends Model
 
     public $autoincrement = true;
 
-    public function pessoas(){ // uma pessoa tem N endereços
+    public function pessoas()
+    { // uma pessoa tem N endereços
         return $this->belongsTo('App\Models\Pessoa');
     }
 
-    public function cidade(){ // uma cidade tem N endereços
+    public function cidade()
+    { // uma cidade tem N endereços
         return $this->belongsTo('App\Models\Cidade');
     }
 }

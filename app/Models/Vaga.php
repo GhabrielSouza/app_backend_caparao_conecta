@@ -25,11 +25,14 @@ class Vaga extends Model
     protected $primaryKey = 'id_vagas';
 
 
-    public function empresa(){
+
+    public function empresa()
+    {
         return $this->belongsTo('App\Models\Empresa');
     }
 
-    public function vagaOnHabilidade(){
-        return $this->belongsToMany('App\Models\Habilidade', 'vagas_habilidades', 'id_vagas' , 'id_habilidades');
+    public function vagaOnHabilidade()
+    {
+        return $this->belongsToMany('App\Models\Habilidade', 'vagas_habilidades', 'id_vagas', 'id_habilidades');
     }
 }

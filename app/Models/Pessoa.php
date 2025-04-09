@@ -21,7 +21,8 @@ class Pessoa extends Model
 
     public $autoincrement = true;
 
-    public function empresa(){ // Relação um pra um de pessoa com empresa
+    public function empresa()
+    { // Relação um pra um de pessoa com empresa
         return $this->hasOne('App\Models\Empresa');
     }
 
@@ -32,7 +33,8 @@ class Pessoa extends Model
     public function usuario(){ // Relação um pra um de pessoa com usuário
         return $this->hasOne('App\Models\Usuario');
     }
-    public function endereco(){ // uma pessoa tem N endereços
-        return $this->hasOne('App\Models\Endereco'); 
+    public function endereco()
+    { // uma pessoa tem N endereços
+        return $this->hasOne('App\Models\Endereco');
     }
 }

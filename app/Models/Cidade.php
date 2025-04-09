@@ -12,18 +12,20 @@ class Cidade extends Model
         'id_cidades',
         'nome_cidade',
         'id_pais'
-        
+
     ];
 
     protected $primaryKey = 'id_cidades';
 
     public $autoincrement = true;
 
-    public function endereco(){ // uma cidade tem N endereços
+    public function endereco()
+    { // uma cidade tem N endereços
         return $this->hasMany('App\Models\Endereco');
     }
 
-    public function pais(){ // um pais tem N cidades
+    public function pais()
+    { // um pais tem N cidades
         return $this->belongsTo('App\Models\Pais');
     }
 }

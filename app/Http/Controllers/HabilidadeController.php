@@ -57,7 +57,7 @@ class HabilidadeController extends Controller
      */
     public function update(Request $request, string $id_pessoas)
     {
-        
+
         //se pá que vai ser no BD direto, não sei se vai ter update
 
     }
@@ -67,8 +67,15 @@ class HabilidadeController extends Controller
      */
     public function destroy(string $id_habilidades)
     {
-        
-        //vai ser pelo deleted at, deixar inativo
+
+        $habilidade = Habilidade::find($id_habilidades);
+
+        if ($habilidade) {
+            $habilidade->delete();
+            return response()->json(['message' => 'Habilidade deletada com sucesso'], 200);
+        } else {
+            return response()->json(['message' => 'Habilidade não encontrada'], 404);
+        }
 
     }
 }

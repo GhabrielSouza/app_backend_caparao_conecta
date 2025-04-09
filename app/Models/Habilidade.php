@@ -17,8 +17,9 @@ class Habilidade extends Model
 
     protected $primaryKey = 'id_habilidades';
 
-    public function habilidadeOnVaga(){
-        return $this->belongsToMany('App\Models\Vaga' ,'vagas_habilidades', 'id_habilidades', 'id_vagas');
+    public function habilidadeOnVaga()
+    {
+        return $this->belongsToMany('App\Models\Vaga', 'vagas_habilidades', 'id_habilidades', 'id_vagas');
     }
 
 }

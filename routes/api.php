@@ -31,7 +31,7 @@ Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
 Route::delete('/vagas/{id_vagas}', [VagaController::class,'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class,'update']);
 
-Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class,'adicionarHabilidades']); //vai pro controller das vagas
+Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); //vai pro controller das vagas
 Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
 
@@ -55,7 +55,7 @@ Route::get('/enderecoShowAll', [EnderecoController::class, 'showAll']);
 
 
 Route::post('/cadPessoas', [PessoaController::class, 'store']); //o controller de pessoas faz o store de pessoas, empresas e usuários
-Route::get ('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); //o controller de pessoas faz o show de pessoas, empresas e usuários
-Route::delete ('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); //o controller de pessoas faz o delete de pessoas, empresas e usuários
-Route::put('/pessoas/{id_pessoas}', [PessoaController::class,'update']);  //o controller de pessoas faz o update de pessoas, empresas e usuários
+Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); //o controller de pessoas faz o show de pessoas, empresas e usuários
+Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); //o controller de pessoas faz o delete de pessoas, empresas e usuários
+Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);  //o controller de pessoas faz o update de pessoas, empresas e usuários
 

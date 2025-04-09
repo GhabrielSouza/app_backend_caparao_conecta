@@ -14,13 +14,17 @@ class Empresa extends Model
         'id_pessoas',
     ];
 
+    public $timestamps = false;
+
     protected $primaryKey = 'id_pessoas';
 
-    public function pessoa(){
+    public function pessoa()
+    {
         return $this->belongsTo('App\Models\Pessoa');
     }
 
-    public function vaga(){
+    public function vaga()
+    {
         return $this->hasMany('App\Models\Vaga');
     }
 
