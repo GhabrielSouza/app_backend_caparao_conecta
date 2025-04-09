@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ExperienciaController;
+use App\Http\Controllers\Formacao_AcademicaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/status', function () {
@@ -9,8 +9,8 @@ Route::get('/status', function () {
 
 
 //Rotas de experiencias
-Route::get('/experiencias', [ExperienciaController::class,'all']);
-Route ::get('/experiencias/{id_experiencia}', [ExperienciaController::class, 'show']);
-Route ::post('/experiencias', [ExperienciaController::class, 'store']);
-Route::put('/experiencias/{id_experiencia}', [ExperienciaController::class,'update']);
-Route::delete('/experiencias/{id_experiencias}', [ExperienciaController::class,'destroy']);
+Route::get('/formacoes_academicas', [Formacao_AcademicaController::class,'all']);
+Route ::get('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'show']);
+Route ::post('/formacoes_academicas', [Formacao_AcademicaController::class, 'store']);
+Route::put('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class,'update']);
+Route::delete('/formacoes_academicas/{id_experiencias}', [Formacao_AcademicaController::class,'destroy']);
