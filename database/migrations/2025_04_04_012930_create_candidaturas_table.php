@@ -17,15 +17,13 @@ return new class extends Migration {
 
             $table->foreign('id_vagas')
                 ->references('id_vagas')
-                ->on('vagas')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+                ->on('vagas');
+
 
             $table->foreign('id_pessoasFisicas')
                 ->references('id_pessoas')
-                ->on('pessoas_fisicas')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+                ->on('pessoas_fisicas');
+
         });
     }
 

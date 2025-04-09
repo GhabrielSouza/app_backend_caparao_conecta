@@ -15,15 +15,13 @@ return new class extends Migration {
             $table->softDeletes();
             $table->foreign('id_pessoasFisicas')
                 ->references('id_pessoas')
-                ->on('pessoas_fisicas')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+                ->on('pessoas_fisicas');
+
 
             $table->foreign('id_habilidades')
                 ->references('id_habilidades')
-                ->on('habilidades')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+                ->on('habilidades');
+
         });
     }
 
