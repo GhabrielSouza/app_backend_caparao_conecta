@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Habilidade;
+use App\Models\PessoasFisica;
 use App\Models\Vaga;
 use Illuminate\Http\Request;
 
@@ -40,7 +41,7 @@ class VagaController extends Controller
 
         */
 
-        if ($request->data_criacao > $request->data_fechamento) {
+        if ($request->data_criacao < $request->data_fechamento) {
 
             $vaga = new Vaga;
 
@@ -65,7 +66,7 @@ class VagaController extends Controller
 
         else {
             return response()->json([
-                'mensagem' => 'Data de criação não pode ser menor do que a data de fechamento.'
+                'mensagem' => 'Data de fechamento não pode ser antes da data de criação.'
             ], 200);
         }
     }
@@ -181,6 +182,22 @@ class VagaController extends Controller
         /*foreach ($vaga->Habilidade as $habilidade) {
             Habilidade::find($habilidade->vagas_habilidades->id_habilidades);
         } */
+
+    }
+
+    public function candidatarPessoas($id_pessoas, $id_vagas){
+
+        $pessoasFisica = PessoasFisica::find($id_pessoas);
+        
+        $pessoasFisica->candidato()->attach($id_vagas);
+
+        $vaga = Vaga::find($id_vagas);
+
+        return response()->json([
+            'mensagem' => 'Candidato cadastrado na vaga com sucesso!',
+            'data - pessoa física' => $pessoasFisica,
+            'data - vaga' => $vaga
+        ], 200); 
 
     }
 }

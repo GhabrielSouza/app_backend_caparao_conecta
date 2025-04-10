@@ -39,7 +39,6 @@ class EnderecoController extends Controller
 
         $endereco->cep = $request->cep;
         $endereco->id_cidades = $request->id_cidades;
-        $endereco->bairro = $request->bairro;
         $endereco->id_pessoas = $request->id_pessoas;
         $endereco->estado = $request->estado;
 
@@ -120,7 +119,6 @@ class EnderecoController extends Controller
 
         $endereco->cep = $request->cep;
         $endereco->id_cidades = $request->id_cidades;
-        $endereco->bairro = $request->bairro;
         $endereco->estado = $request->estado;
 
         $endereco->save();

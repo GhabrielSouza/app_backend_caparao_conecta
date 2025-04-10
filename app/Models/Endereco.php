@@ -13,8 +13,6 @@ class Endereco extends Model
         'id_enderecos',
         'cep',
         'id_cidades',
-        'bairro',
-        'endereco',
         'id_pessoas',
         'estado'
     ];

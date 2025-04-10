@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Models\Pessoa_Fisica;
+use App\Models\PessoasFisica;
 
-class Pessoa_FisicaController extends Controller
+class PessoasFisicaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,12 +22,14 @@ class Pessoa_FisicaController extends Controller
     public function store(Request $request)
     {
         
-        $pessoa_fisica = new Pessoa_Fisica;
+        $pessoa_fisica = new PessoasFisica;
 
         $pessoa_fisica->cpf = $request->cpf;
         $pessoa_fisica->id_pessoas = $request->id_pessoas;
         $pessoa_fisica->data_de_nascimento = $request->data_de_nascimento;
         $pessoa_fisica->sobrenome = $request->sobrenome;
+        $pessoa_fisica->cad_unico = $request->cad_unico;
+        $pessoa_fisica->genero = $request->genero;
 
         $pessoa_fisica->save();
 
@@ -41,7 +43,7 @@ class Pessoa_FisicaController extends Controller
     public function show(string $id_pessoas)
     {
         
-        $pessoa_fisica = Pessoa_Fisica::findOrFail($id_pessoas);
+        $pessoa_fisica = PessoasFisica::findOrFail($id_pessoas);
 
         return $pessoa_fisica; //retorna a variável para o controller de pessoas
 

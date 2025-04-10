@@ -35,4 +35,9 @@ class Vaga extends Model
     {
         return $this->belongsToMany('App\Models\Habilidade', 'vagas_habilidades', 'id_vagas', 'id_habilidades');
     }
+
+    public function candidato()
+    {
+        return $this->belongsToMany('App\Models\PessoasFisica', 'candidaturas', 'id_vagas', 'id_pessoasFisicas');
+    }
 }

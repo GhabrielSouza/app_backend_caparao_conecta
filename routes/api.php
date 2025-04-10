@@ -33,9 +33,12 @@ Route::delete('/vagas/{id_vagas}', [VagaController::class,'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class,'update']);
 
 //Route da habilidades + vagas (relação N pra N)
-Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); //vai pro controller das vagas
-Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
+Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); //adicionar habilidades nas vagas
+Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']); 
 
+//Route da pessoa fisica + vagas (relação N pra N)
+Route::post('/candidatar/{id_pessoas}/{id_vagas}', [VagaController::class, 'candidatarPessoas']); //adicionar pessoa fisica nas vagas
+Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']); 
 
 
 //Route de habiliades
