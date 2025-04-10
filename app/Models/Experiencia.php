@@ -1,14 +1,14 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Experiencia extends Model
 {
     protected $table = 'experiencias';
     protected $primaryKey = 'id_experiencias';
-    public $timestamps = false;
+    use SoftDeletes;
     
     protected $fillable = [
         'cargo',
