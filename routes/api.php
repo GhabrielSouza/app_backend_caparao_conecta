@@ -38,8 +38,8 @@ Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
 //Route da pessoa fisica + vagas (relação N pra N)
 Route::post('/candidatar/{id_pessoas}/{id_vagas}', [VagaController::class, 'candidatarPessoas']); //adicionar pessoa fisica nas vagas
+Route::get('/candidatosOnVagas/{id_vagas}', [VagaController::class, 'verCandidatos']);
 Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']); 
-
 
 //Route de habiliades
 Route::post('/cadHabilidades', [HabilidadeController::class, 'store']);

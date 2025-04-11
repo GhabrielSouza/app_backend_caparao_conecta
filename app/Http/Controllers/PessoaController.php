@@ -7,6 +7,7 @@ use App\Models\Endereco;
 use App\Models\PessoasFisica;
 use App\Models\Usuario;
 use App\Models\Cidade;
+use App\Models\Vaga;
 
 use Illuminate\Http\Request;
 
@@ -178,17 +179,38 @@ class PessoaController extends Controller
 
         $pessoa->save();
 
-        $empresa = app('App\Http\Controllers\EmpresaController')->update($request, $id_pessoas); //
+        $usuario = Usuario::find($id_pessoas);
+
         $usuario = app('App\Http\Controllers\UsuarioController')->update($request, $id_pessoas); //
         $endereco = app('App\Http\Controllers\EnderecoController')->update($request, $id_pessoas);
 
-        return response()->json([
-            'mensagem' => 'Dados da pessoa jurídica, empresa, usuário e endereço foram atualizados com sucesso',
-            'data - pessoa' => $pessoa,
-            'data - empresa' => $empresa,
-            'data - usuario' => $usuario,
-            'data - endereco'=> $endereco
-        ], 200);
+        if ($usuario->id_tipo_usuarios == 3) {
+
+            $empresa = app('App\Http\Controllers\EmpresaController')->update($request, $id_pessoas); //
+
+            return response()->json([
+                'mensagem' => 'Dados da pessoa jurídica, empresa, usuário e endereço foram atualizados com sucesso',
+                'data - pessoa' => $pessoa,
+                'data - empresa' => $empresa,
+                'data - usuario' => $usuario,
+                'data - endereco'=> $endereco
+            ], 200);
+        
+    }
+    
+        if ($usuario->id_tipo_usuarios == 2) {
+
+            $pessoaFisica = app('App\Http\Controllers\PessoasFisicaController')->update($request, $id_pessoas);
+
+            return response()->json([
+                'mensagem' => 'Dados da pessoa física, usuário e endereço foram atualizados com sucesso',
+                'data - pessoa' => $pessoa,
+                'data - empresa' => $pessoaFisica,
+                'data - usuario' => $usuario,
+                'data - endereco'=> $endereco
+            ], 200);
+
+        }
 
     }
 
@@ -200,9 +222,42 @@ class PessoaController extends Controller
         
         Pessoa::findOrFail( $id_pessoas )->delete();
 
-        return response()->json([
-            'mensage' => 'Pessoa, empresa, usuário e endereço deletada com sucesso',
-        ], 200);
+        Endereco::findOrFail( $id_pessoas )->delete();
+
+        if (Usuario::find($id_pessoas)->id_tipo_usuarios == 3){
+            Usuario::findOrFail( $id_pessoas )->delete();
+
+            Vaga::where('id_empresas', '=', $id_pessoas)->vagaOnHabilidade()->delete();
+
+            Vaga::where('id_empresas', '=', $id_pessoas)->candidato()->delete();
+
+            //AINDA NÃO DELETA OS CURSOS, vou fazer isso depois Do Chefe conversar com o flávio
+
+            Vaga::where('id_empresas', '=', $id_pessoas)->delete();
+
+            Empresa::findOrFail($id_pessoas)->delete();
+
+
+
+            return response()->json([
+                'mensage' => 'Tudo relacionado a essa pessoa foi desativado com sucesso',
+            ], 200);
+
+        }
+
+        if (Usuario::find($id_pessoas)->id_tipo_usuarios == 2){
+            Usuario::findOrFail( $id_pessoas )->delete();
+
+            PessoasFisica::where('id_pessoas','=', $id_pessoas)->candidato()->delete();
+
+            PessoasFisica::where('id_pessoas','=', $id_pessoas)->habilidades()->delete();
+
+            PessoasFisica::findOrFail($id_pessoas)->delete();
+
+            return response()->json([
+                'mensage' => 'Tudo relacionado a essa pessoa foi desativado com sucesso',
+            ], 200);
+        }       
 
     }
 }

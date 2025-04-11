@@ -19,6 +19,8 @@ class PessoasFisica extends Model
 
     protected $primaryKey = 'id_pessoas';
 
+    protected $foreingKey = 'id_pessoas';
+
     public $timestamps = false;
 
     public function pessoa(){
@@ -27,7 +29,11 @@ class PessoasFisica extends Model
 
     public function candidato()
     {
-        return $this->belongsToMany('App\Models\Vaga', 'candidaturas', 'id_pessoasFisicas', 'id_vagas');
+        return $this->belongsToMany('App\Models\Vaga', 'candidaturas', 'id_pessoasFisicas', 'id_vagas')->withTimestamps();
+    }
+
+    public function habilidades(){
+        return $this->belongsToMany('App\Models\Habilidade','pessoas_fisicas_habilidades','id_pessoasFisicas', 'id_habilidades')->withTimestamps();
     }
 
 }

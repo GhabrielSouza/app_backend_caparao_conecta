@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Habilidade;
+use App\Models\Pessoa;
 use App\Models\PessoasFisica;
 use App\Models\Vaga;
+use Carbon\Carbon;
+use Carbon\Traits\Timestamp;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Arr;
@@ -189,7 +192,13 @@ class VagaController extends Controller
 
         $pessoasFisica = PessoasFisica::find($id_pessoas);
         
-        $pessoasFisica->candidato()->attach($id_vagas);
+        $pessoasFisica->candidato()->attach($id_vagas, array('created_at' => Carbon::now(),'updated_at'=> Carbon::now()));
+
+        // $dataCandidatura = $pessoasFisica->candidato()::findOrFail($id_vagas);
+
+        // $dataCandidatura->data_candidatura = $request->data_candidatura;
+
+        // $dataCandidatura->save();
 
         $vaga = Vaga::find($id_vagas);
 
@@ -200,4 +209,26 @@ class VagaController extends Controller
         ], 200); 
 
     }
+
+    public function verCandidatos($id_vagas)
+{
+    $vagas = Vaga::findOrFail($id_vagas);
+    $candidatos = $vagas->candidato;
+
+    $pessoas = [];
+
+    foreach ($candidatos as $candidato) {
+        // Get Pessoa with pessoasFisica relationship
+        $pessoa = Pessoa::with('pessoasFisica')
+            ->find($candidato->id_pessoas);
+
+        if ($pessoa) {
+            $pessoas[] = $pessoa;
+        }
+    }
+
+    return response()->json([
+        'data' => $pessoas
+    ], 200);
+}
 }

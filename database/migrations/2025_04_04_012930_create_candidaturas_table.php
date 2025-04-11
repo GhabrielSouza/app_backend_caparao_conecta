@@ -10,7 +10,6 @@ return new class extends Migration {
         Schema::create('candidaturas', function (Blueprint $table) {
             $table->unsignedBigInteger('id_vagas');
             $table->unsignedBigInteger('id_pessoasFisicas');
-            $table->date('data_candidatura');
             $table->primary(['id_vagas', 'id_pessoasFisicas']);
             $table->timestamps();
             $table->softDeletes();

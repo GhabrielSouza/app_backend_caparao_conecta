@@ -52,24 +52,29 @@ class PessoasFisicaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    /*public function update(Request $request, string $id_pessoas)
+    public function update(Request $request, string $id_pessoas)
     {
         
-        $empresa = Empresa::findOrFail($id_pessoas);
+        $pessoaFisica = PessoasFisica::findOrFail($id_pessoas);
 
-        $empresa->cnpj = $request->cnpj;
+        $pessoaFisica->cpf = $request->cpf;
+        $pessoaFisica->id_pessoas = $request->id_pessoas;
+        $pessoaFisica->data_de_nascimento = $request->data_de_nascimento;
+        $pessoaFisica->sobrenome = $request->sobrenome;
+        $pessoaFisica->cad_unico = $request->cad_unico;
+        $pessoaFisica->genero = $request->genero;
 
-        $empresa->save();
+        $pessoaFisica->save();
 
-        return $empresa;
+        return $pessoaFisica;
 
     }
 
-    /**
+    /*
      * Remove the specified resource from storage.
      
     public function destroy(string $id_pessoas)
     {
-
+        //vai ter na pessoa fisica, mas como deleted at on cascade (passar o deleted at pra cá)
     } */
 }

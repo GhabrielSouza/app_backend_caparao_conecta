@@ -33,11 +33,11 @@ class Vaga extends Model
 
     public function vagaOnHabilidade()
     {
-        return $this->belongsToMany('App\Models\Habilidade', 'vagas_habilidades', 'id_vagas', 'id_habilidades');
+        return $this->belongsToMany('App\Models\Habilidade', 'vagas_habilidades', 'id_vagas', 'id_habilidades')->withTimestamps();
     }
 
     public function candidato()
     {
-        return $this->belongsToMany('App\Models\PessoasFisica', 'candidaturas', 'id_vagas', 'id_pessoasFisicas');
+        return $this->belongsToMany('App\Models\PessoasFisica', 'candidaturas', 'id_vagas', 'id_pessoasFisicas')->withTimestamps();
     }
 }
