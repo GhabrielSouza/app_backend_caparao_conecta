@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\PessoasFisica;
+use App\Models\Habilidade;
 
 class PessoasFisicaController extends Controller
 {
@@ -70,11 +71,44 @@ class PessoasFisicaController extends Controller
 
     }
 
+    public function adicionarHabilidades($id_habilidades, $id_pessoas){
+
+        $habilidade = Habilidade::find($id_habilidades);
+        
+        $habilidade->habilidadeOnCandidato()->attach($id_pessoas);
+
+        $pessoa = PessoasFisica::find($id_pessoas);
+
+        return response()->json([
+            'mensagem' => 'Habilidade atribuida ao candidato com sucesso!',
+            'data - habilidade' => $habilidade,
+            'data - vaga' => $pessoa
+        ], 200); 
+
+    }
+
+    public function verHabilidades($id_pessoas){
+
+        $pessoa = PessoasFisica::find($id_pessoas);
+        $habilidades = $pessoa->habilidades;
+        $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at','updated_at']);
+
+        return response()->json([
+            'data - habilidades' => $nome_habilidades
+            
+        ], 200); 
+
+        /*foreach ($vaga->Habilidade as $habilidade) {
+            Habilidade::find($habilidade->vagas_habilidades->id_habilidades);
+        } */
+
+    }
+
     /*
      * Remove the specified resource from storage.
      
     public function destroy(string $id_pessoas)
     {
-        //vai ter na pessoa fisica, mas como deleted at on cascade (passar o deleted at pra cá)
+        //vai ter na pessoa, só
     } */
 }

@@ -250,7 +250,7 @@ class PessoaController extends Controller
 
             PessoasFisica::where('id_pessoas','=', $id_pessoas)->candidato()->delete();
 
-            PessoasFisica::where('id_pessoas','=', $id_pessoas)->habilidades()->delete();
+            PessoasFisica::where('id_pessoas','=', $id_pessoas)->habilidades()->delete(); //terminar de fazer o de habilidades
 
             PessoasFisica::findOrFail($id_pessoas)->delete();
 
