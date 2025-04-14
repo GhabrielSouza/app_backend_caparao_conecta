@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('pessoas_fisicas', function (Blueprint $table) {
             $table->unsignedBigInteger('id_pessoas')->primary();
-            $table->string('cpf', 11)->unique();
+            $table->string('cpf', 20)->unique();
             $table->date('data_de_nascimento');
             $table->string('sobrenome', 255);
             $table->string('cad_unico', 12)->nullable()->unique();

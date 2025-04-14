@@ -9,9 +9,11 @@ use App\Models\Usuario;
 use App\Models\Cidade;
 use App\Models\Vaga;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Models\Pessoa;
+use Mockery\Undefined;
 
 class PessoaController extends Controller
 {
@@ -46,7 +48,7 @@ class PessoaController extends Controller
             "id_tipo_usuarios": 3,
 
             "cep": "aaaaa",
-            "id_cidades": 1,
+            "cidade": "Alegre",
             "estado": "São Paulo"
 
             -------------------------------------
@@ -56,7 +58,7 @@ class PessoaController extends Controller
             "id_pessoas": 2, agora é auto increment
             "nome": "Cleiton",
             "sobrenome": "Castro Fernandes",
-            "data_de_nascimento": "2006-07-02",
+            "data_de_nascimento": "02/06/2006",
             "genero": "Masculino",
 
             "telefone": "28992228225",
@@ -69,56 +71,82 @@ class PessoaController extends Controller
             "id_tipo_usuarios": 2,
 
             "cep": "aaaaa",
-            "id_cidades": 1,
+            "cidade": "Cariacica",
             "estado": "São Paulo"
 
         */
-        
-        $pessoa = new Pessoa;
-        
-        $pessoa->nome = $request->nome;
-        $pessoa->telefone = $request->telefone;
-        $pessoa->sobre = $request->sobre;
-        $pessoa->imagem = $request->imagem;
 
-        $pessoa->save();
+        // Verifica se a cidade já existe pelo nome e estado
+        $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
 
-        $request->id_pessoas = $pessoa->id_pessoas; //passa o id_pessoas do auto increment pro request, que consegue levar o id para os outros controllers
+        if (!$cidade) {
+            // Cria a cidade se ela ainda não existir
+            $cidade = Cidade::create([
+                'nome_cidade' => $request->cidade,
+                'id_pais' => 1,
+            ]);
+        }
+
+        // Cria a pessoa
+        $pessoa = Pessoa::create([
+            'nome' => $request->nome,
+            'telefone' => $request->telefone,
+            'sobre' => $request->sobre,
+            'imagem' => $request->imagem,
+        ]);
+
+        $request->merge(['id_pessoas' => $pessoa->id_pessoas]);
+
+        // Cria o usuário
+        $usuario = Usuario::create([
+            'email' => $request->email,
+            'senha' => bcrypt($request->senha),
+            'id_pessoas' => $pessoa->id_pessoas,
+            'id_tipo_usuarios' => $request->id_tipo_usuarios
+        ]);
+
+        // Cria o endereço com o ID da cidade
+        $endereco = Endereco::create([
+            'cep' => $request->cep,
+            'estado' => $request->estado,
+            'id_cidades' => $cidade->id_cidades,
+            'id_pessoas' => $pessoa->id_pessoas
+        ]);
 
         if ($request->id_tipo_usuarios == 3) {
-
-            $empresa = app('App\Http\Controllers\EmpresaController')->store($request); //manda a variável request para a função store() do controller da empresa
-            $usuario = app('App\Http\Controllers\UsuarioController')->store($request); //mesma coisa, só que pro controller do usuário
-            $endereco = app('App\Http\Controllers\EnderecoController')->store($request); //mesma coisa, só que pro controller do usuário
+            $empresa = Empresa::create([
+                'id_pessoas' => $pessoa->id_pessoas,
+                'cnpj' => $request->cnpj,
+            ]);
 
             return response()->json([
-                'mensagem' => 'Pessoa, empresa, endereço e usuario cadastrado com sucesso',
+                'mensagem' => 'Pessoa, empresa, cidade, endereço e usuário cadastrados com sucesso',
                 'data - pessoa' => $pessoa,
+                'data - cidade' => $cidade,
                 'data - endereço' => $endereco,
                 'data - empresa' => $empresa,
-                'data - usuario' => $usuario
-
-                
+                'data - usuário' => $usuario
             ], 200);
-
         }
 
         if ($request->id_tipo_usuarios == 2) {
-
-            $usuario = app('App\Http\Controllers\UsuarioController')->store($request); //mesma coisa, só que pro controller do usuário
-            $endereco = app('App\Http\Controllers\EnderecoController')->store($request); //mesma coisa, só que pro controller do usuário
-            $pessoa_fisica = app('App\Http\Controllers\PessoasFisicaController')->store($request); //mesma coisa, só que pro controller do usuário
+            $pessoaFisica = PessoasFisica::create([
+                'id_pessoas' => $pessoa->id_pessoas,
+                'cpf' => $request->cpf,
+                'data_de_nascimento' => Carbon::createFromFormat('d/m/Y', $request->data_de_nascimento)->format('Y-m-d'),
+                'sobrenome' => $request->sobrenome,
+                'cad_unico' => $request->cad_unico,
+                'genero' => $request->genero,
+            ]);
 
             return response()->json([
-                'mensagem' => 'Pessoa, pessoa física, endereço e usuario cadastrado com sucesso',
+                'mensagem' => 'Pessoa, pessoa física, cidade, endereço e usuário cadastrados com sucesso',
                 'data - pessoa' => $pessoa,
+                'data - cidade' => $cidade,
                 'data - endereço' => $endereco,
-                'data - pessoa física' => $pessoa_fisica,
-                'data - usuario' => $usuario
-
-                
+                'data - pessoa física' => $pessoaFisica,
+                'data - usuário' => $usuario
             ], 200);
-
         }
 
     }
@@ -142,21 +170,21 @@ class PessoaController extends Controller
                 'data - pessoa' => $pessoa,
                 'data - empresa' => $empresa,
                 'data - usuario' => $usuario,
-                'data - endereço'=> $endereco,
+                'data - endereço' => $endereco,
                 'data - cidade' => $cidade
             ], 200);
 
         }
 
         if ($usuario->id_tipo_usuarios == 2) {
-            
+
             $pessoa_fisica = PessoasFisica::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
 
             return response()->json([
                 'data - pessoa' => $pessoa,
                 'data - pessoa física' => $pessoa_fisica,
                 'data - usuario' => $usuario,
-                'data - endereço'=> $endereco,
+                'data - endereço' => $endereco,
                 'data - cidade' => $cidade
             ], 200);
 
@@ -169,49 +197,93 @@ class PessoaController extends Controller
      */
     public function update(Request $request, string $id_pessoas)
     {
-        
-        $pessoa = Pessoa::findOrFail($id_pessoas);
+        // Atualiza ou cria a cidade
+        $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
 
-        $pessoa->nome = $request->nome;
-        $pessoa->telefone = $request->telefone;
-        $pessoa->sobre = $request->sobre;
-        $pessoa->imagem = $request->imagem;
-
-        $pessoa->save();
-
-        $usuario = Usuario::find($id_pessoas);
-
-        $usuario = app('App\Http\Controllers\UsuarioController')->update($request, $id_pessoas); //
-        $endereco = app('App\Http\Controllers\EnderecoController')->update($request, $id_pessoas);
-
-        if ($usuario->id_tipo_usuarios == 3) {
-
-            $empresa = app('App\Http\Controllers\EmpresaController')->update($request, $id_pessoas); //
-
-            return response()->json([
-                'mensagem' => 'Dados da pessoa jurídica, empresa, usuário e endereço foram atualizados com sucesso',
-                'data - pessoa' => $pessoa,
-                'data - empresa' => $empresa,
-                'data - usuario' => $usuario,
-                'data - endereco'=> $endereco
-            ], 200);
-        
-    }
-    
-        if ($usuario->id_tipo_usuarios == 2) {
-
-            $pessoaFisica = app('App\Http\Controllers\PessoasFisicaController')->update($request, $id_pessoas);
-
-            return response()->json([
-                'mensagem' => 'Dados da pessoa física, usuário e endereço foram atualizados com sucesso',
-                'data - pessoa' => $pessoa,
-                'data - empresa' => $pessoaFisica,
-                'data - usuario' => $usuario,
-                'data - endereco'=> $endereco
-            ], 200);
-
+        if (!$cidade) {
+            $cidade = Cidade::create([
+                'nome_cidade' => $request->cidade,
+                'id_pais' => 1,
+            ]);
         }
 
+        // Atualiza a pessoa
+        $pessoa = Pessoa::find($id_pessoas);
+        if (!$pessoa) {
+            return response()->json(['mensagem' => 'Pessoa não encontrada'], 404);
+        }
+        $pessoa->update([
+            'nome' => $request->nome,
+            'telefone' => $request->telefone,
+            'sobre' => $request->sobre,
+            'imagem' => $request->imagem,
+        ]);
+
+        // Atualiza o usuário
+        $usuario = Usuario::find($id_pessoas);
+        if (!$usuario) {
+            return response()->json(['mensagem' => 'Usuário não encontrado'], 404);
+        }
+        $usuario->update([
+            'email' => $request->email,
+            'senha' => $request->senha ? bcrypt($request->senha) : $usuario->senha,
+            'id_tipo_usuarios' => $request->id_tipo_usuarios
+        ]);
+
+        // Atualiza o endereço
+        $endereco = Endereco::where('id_pessoas', $id_pessoas)->first();
+        if (!$endereco) {
+            return response()->json(['mensagem' => 'Endereço não encontrado'], 404);
+        }
+        $endereco->update([
+            'cep' => $request->cep,
+            'estado' => $request->estado,
+            'id_cidades' => $cidade->id_cidades
+        ]);
+
+        if ($request->id_tipo_usuarios == 3) {
+            $empresa = Empresa::find($id_pessoas);
+            if (!$empresa) {
+                return response()->json(['mensagem' => 'Empresa não encontrada'], 404);
+            }
+            $empresa->update([
+                'cnpj' => $request->cnpj,
+            ]);
+
+            return response()->json([
+                'mensagem' => 'Dados atualizados com sucesso',
+                'pessoa' => $pessoa,
+                'cidade' => $cidade,
+                'endereço' => $endereco,
+                'empresa' => $empresa,
+                'usuário' => $usuario
+            ], 200);
+        }
+
+        if ($request->id_tipo_usuarios == 2) {
+            $pessoaFisica = PessoasFisica::find($id_pessoas);
+            if (!$pessoaFisica) {
+                return response()->json(['mensagem' => 'Pessoa física não encontrada'], 404);
+            }
+            $pessoaFisica->update([
+                'cpf' => $request->cpf,
+                'data_de_nascimento' => Carbon::createFromFormat('d/m/Y', $request->data_de_nascimento)->format('Y-m-d'),
+                'sobrenome' => $request->sobrenome,
+                'cad_unico' => $request->cad_unico,
+                'genero' => $request->genero,
+            ]);
+
+            return response()->json([
+                'mensagem' => 'Dados atualizados com sucesso',
+                'pessoa' => $pessoa,
+                'cidade' => $cidade,
+                'endereço' => $endereco,
+                'pessoa_fisica' => $pessoaFisica,
+                'usuário' => $usuario
+            ], 200);
+        }
+
+        return response()->json(['mensagem' => 'Tipo de usuário inválido'], 400);
     }
 
     /**
@@ -219,45 +291,61 @@ class PessoaController extends Controller
      */
     public function destroy(string $id_pessoas)
     {
-        
-        Pessoa::findOrFail( $id_pessoas )->delete();
 
-        Endereco::findOrFail( $id_pessoas )->delete();
+        Endereco::where('id_pessoas', '=', $id_pessoas)->delete();
 
-        if (Usuario::find($id_pessoas)->id_tipo_usuarios == 3){
-            Usuario::findOrFail( $id_pessoas )->delete();
+        if (Usuario::find($id_pessoas)->id_tipo_usuarios == 3) {
+            Usuario::findOrFail($id_pessoas)->delete();
 
-            Vaga::where('id_empresas', '=', $id_pessoas)->vagaOnHabilidade()->delete();
+            $vaga = Vaga::where('id_empresas', '=', $id_pessoas);
 
-            Vaga::where('id_empresas', '=', $id_pessoas)->candidato()->delete();
+            if ($vaga->exists()) {
+
+                if ($vaga->vagaOnHabilidade()->exists()){
+                    $vaga->vagaOnHabilidade()->delete();
+                }
+
+                if ($vaga->candidato()->exists()){
+                    $vaga->candidato()->delete();
+                }
+
+                $vaga->delete();
+
+            }
 
             //AINDA NÃO DELETA OS CURSOS, vou fazer isso depois Do Chefe conversar com o flávio
 
-            Vaga::where('id_empresas', '=', $id_pessoas)->delete();
-
             Empresa::findOrFail($id_pessoas)->delete();
 
-
+            Pessoa::findOrFail($id_pessoas)->delete();
 
             return response()->json([
-                'mensage' => 'Tudo relacionado a essa pessoa foi desativado com sucesso',
+                'mensage' => 'Tudo relacionado a essa pessoa jurídica foi desativado com sucesso',
             ], 200);
 
         }
 
-        if (Usuario::find($id_pessoas)->id_tipo_usuarios == 2){
-            Usuario::findOrFail( $id_pessoas )->delete();
+        if (Usuario::find($id_pessoas)->id_tipo_usuarios == 2) {
+            Usuario::findOrFail($id_pessoas)->delete();
 
-            PessoasFisica::where('id_pessoas','=', $id_pessoas)->candidato()->delete();
+            $pessoaFisica = PessoasFisica::where('id_pessoas', '=', $id_pessoas);
 
-            PessoasFisica::where('id_pessoas','=', $id_pessoas)->habilidades()->delete(); //terminar de fazer o de habilidades
+            if ($pessoaFisica->candidato()){
+                $pessoaFisica->candidato()->delete();
+            }
 
-            PessoasFisica::findOrFail($id_pessoas)->delete();
+            if ($pessoaFisica->habilidades()->exists()){
+                $pessoaFisica->habilidades()->delete();
+            }
+
+            $pessoaFisica->delete();
+
+            Pessoa::findOrFail($id_pessoas)->delete();
 
             return response()->json([
-                'mensage' => 'Tudo relacionado a essa pessoa foi desativado com sucesso',
+                'mensage' => 'Tudo relacionado a essa pessoa física foi desativado com sucesso',
             ], 200);
-        }       
+        }
 
     }
 }
