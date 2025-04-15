@@ -288,47 +288,69 @@ class PessoaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id_pessoas)
+    public function destroy($id_pessoas)
     {
-
-        Pessoa::findOrFail($id_pessoas)->delete();
-
-        Endereco::findOrFail($id_pessoas)->delete();
-
-        if (Usuario::find($id_pessoas)->id_tipo_usuarios == 3) {
-            Usuario::findOrFail($id_pessoas)->delete();
-
-            Vaga::where('id_empresas', '=', $id_pessoas)->vagaOnHabilidade()->delete();
-
-            Vaga::where('id_empresas', '=', $id_pessoas)->candidato()->delete();
-
-            //AINDA NÃO DELETA OS CURSOS, vou fazer isso depois Do Chefe conversar com o flávio
-
-            Vaga::where('id_empresas', '=', $id_pessoas)->delete();
-
-            Empresa::findOrFail($id_pessoas)->delete();
-
-
-
-            return response()->json([
-                'mensage' => 'Tudo relacionado a essa pessoa foi desativado com sucesso',
-            ], 200);
-
+    // Verifica se o usuário existe
+        $usuario = Usuario::find($id_pessoas);
+        if (!$usuario) {
+            return response()->json(['mensagem' => 'Usuário não encontrado.'], 404);
         }
 
-        if (Usuario::find($id_pessoas)->id_tipo_usuarios == 2) {
-            Usuario::findOrFail($id_pessoas)->delete();
+        // Deleta Pessoa e Endereço
+        Pessoa::find($id_pessoas)?->delete();
+        Endereco::find($id_pessoas)?->delete();
 
-            PessoasFisica::where('id_pessoas', '=', $id_pessoas)->candidato()->delete();
+        // Se for empresa
+        if ($usuario->id_tipo_usuarios == 3) {
+            $empresa = Empresa::find($id_pessoas);
 
-            PessoasFisica::where('id_pessoas', '=', $id_pessoas)->habilidades()->delete();
+            if ($empresa) {
+                $vagas = Vaga::where('id_empresas', $id_pessoas)->get();
+            
+                foreach ($vagas as $vaga) {
+                    // Se vagaOnHabilidade for belongsToMany
+                    $vaga->vagaOnHabilidade()->detach();
+            
+                    // candidato é belongsToMany
+                    $vaga->candidato()->detach();
+            
+                    // Deleta a vaga após remover vínculos
+                    $vaga->delete();
+                }
+            
+                // Deleta a empresa após todas as vagas e relacionamentos serem limpos
+                $empresa->delete();
+            }
+            
 
-            PessoasFisica::findOrFail($id_pessoas)->delete();
+            $usuario->delete();
 
             return response()->json([
-                'mensage' => 'Tudo relacionado a essa pessoa foi desativado com sucesso',
+                'mensagem' => 'Tudo relacionado à empresa foi desativado com sucesso.',
             ], 200);
         }
 
+        // Se for pessoa física
+        if ($usuario->id_tipo_usuarios == 2) {
+            $pessoaFisica = PessoasFisica::where('id_pessoas', $id_pessoas)->first();
+
+            if ($pessoaFisica) {
+                $pessoaFisica->candidato()->delete();
+                $pessoaFisica->habilidades()->delete();
+                $pessoaFisica->delete();
+            }
+
+            $usuario->delete();
+
+            return response()->json([
+                'mensagem' => 'Tudo relacionado à pessoa física foi desativado com sucesso.',
+            ], 200);
+        }
+
+        // Tipo de usuário não previsto
+        return response()->json([
+            'mensagem' => 'Tipo de usuário não reconhecido.',
+        ], 400);
     }
+
 }
