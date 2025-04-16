@@ -34,8 +34,8 @@ class VagaController extends Controller
             "descricao": "Gerente de estoque",
             "salario": 10250.99,
             "status": "ativo",
-            "data_criacao": "2006-07-02",
-            "data_fechamento": "2006-07-02",
+            "data_criacao": "02/07/2006",
+            "data_fechamento": "02/07/2007",
             "qtd_vaga": 20,
             "modalidade_da_vaga": "presencial",
             "id_empresas": 16
@@ -52,8 +52,8 @@ class VagaController extends Controller
             $vaga->descricao = $request->descricao;
             $vaga->salario = $request->salario;
             $vaga->status = $request->status;
-            $vaga->data_criacao = $request->data_criacao;
-            $vaga->data_fechamento = $request->data_fechamento;
+            $vaga->data_criacao = Carbon::createFromFormat('d/m/Y', $request->data_criacao)->format('Y-m-d');
+            $vaga->data_fechamento = Carbon::createFromFormat('d/m/Y', $request->data_fechamento)->format('Y-m-d');
             $vaga->qtd_vaga = $request->qtd_vaga;
             $vaga->qtd_vagas_preenchidas = 0; //como a vaga está sendo criada, ela vai sempre estar zerada.
             $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
@@ -147,6 +147,9 @@ class VagaController extends Controller
             ], 404);
         }
 
+        $vaga->vagaOnHabilidade()->detach();
+        $vaga->candidato()->detach();
+
         $vaga->delete();
 
         return response()->json([
@@ -177,8 +180,8 @@ class VagaController extends Controller
         $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at','updated_at']);
 
         return response()->json([
-            'data - vaga' => $vagas,
-            'data - habilidades' => $nome_habilidades
+            'data - vaga' => $vagas
+            //'data - habilidades' => $nome_habilidades caso precise num futuro próximo
             
         ], 200); 
 
