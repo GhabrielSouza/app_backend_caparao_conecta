@@ -7,13 +7,17 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "fakerphp/faker": "^1.24",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9"
     },
     "require-dev": {
+<<<<<<< HEAD
         "fakerphp/faker": "^1.23",
         "laravel/breeze": "^2.3",
+=======
+>>>>>>> cf62256a9879c9e9756b6ac3885dbebdc7a1da7b
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",

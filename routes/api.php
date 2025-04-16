@@ -1,5 +1,6 @@
 <?php
 
+<<<<<<< HEAD
 
 use App\Http\Controllers\ExperienciaController;
 use App\Http\Controllers\CidadeController;
@@ -17,6 +18,9 @@ use App\Http\Controllers\HabilidadeController;
 use App\Models\Endereco;
 use App\Models\Habilidade;
 use App\Models\PessoasFisica;
+=======
+use App\Http\Controllers\Formacao_AcademicaController;
+>>>>>>> cf62256a9879c9e9756b6ac3885dbebdc7a1da7b
 use Illuminate\Support\Facades\Route;
 
 Route::get('/status', function () {
@@ -30,6 +34,7 @@ Route::get('/status', function () {
 });
 
 
+<<<<<<< HEAD
 
 //Rotas de experiencias
 Route::get('/experiencias', [ExperienciaController::class,'all']);
@@ -87,3 +92,11 @@ Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); //o cont
 Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); //o controller de pessoas faz o delete de pessoas, empresas e usuários
 Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);  //o controller de pessoas faz o update de pessoas, empresas e usuários
 
+=======
+//Rotas de formacoes academicas
+Route::get('/formacoes_academicas', [Formacao_AcademicaController::class,'all']);
+Route ::get('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'show']);
+Route ::post('/formacoes_academicas', [Formacao_AcademicaController::class, 'store']);
+Route::put('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class,'update']);
+Route::delete('/formacoes_academicas/{id_experiencias}', [Formacao_AcademicaController::class,'destroy']);
+>>>>>>> cf62256a9879c9e9756b6ac3885dbebdc7a1da7b
