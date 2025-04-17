@@ -1,8 +1,6 @@
 <?php
 
-<<<<<<< HEAD
 use App\Http\Controllers\Formacao_AcademicaController;
-=======
 
 use App\Http\Controllers\ExperienciaController;
 use App\Http\Controllers\CidadeController;
@@ -20,7 +18,6 @@ use App\Http\Controllers\HabilidadeController;
 use App\Models\Endereco;
 use App\Models\Habilidade;
 use App\Models\PessoasFisica;
->>>>>>> 884d90dd1c9dc3cba5fe54b82e42e6115b5ac018
 use Illuminate\Support\Facades\Route;
 
 Route::get('/status', function () {
@@ -34,21 +31,12 @@ Route::get('/status', function () {
 });
 
 
-<<<<<<< HEAD
 //Rotas de formacoes academicas
 Route::get('/formacoes_academicas', [Formacao_AcademicaController::class,'all']);
 Route ::get('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'show']);
 Route ::post('/formacoes_academicas', [Formacao_AcademicaController::class, 'store']);
 Route::put('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class,'update']);
 Route::delete('/formacoes_academicas/{id_experiencias}', [Formacao_AcademicaController::class,'destroy']);
-=======
-
-//Rotas de experiencias
-Route::get('/experiencias', [ExperienciaController::class,'all']);
-Route ::get('/experiencias/{id_experiencia}', [ExperienciaController::class, 'show']);
-Route ::post('/experiencias', [ExperienciaController::class, 'store']);
-Route::put('/experiencias/{id_experiencia}', [ExperienciaController::class,'update']);
-Route::delete('/experiencias/{id_experiencias}', [ExperienciaController::class,'destroy']);
 
 //Route de vagas
 Route::post('/cadVagas', [VagaController::class, 'store']);
@@ -99,4 +87,3 @@ Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); //o cont
 Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); //o controller de pessoas faz o delete de pessoas, empresas e usuários
 Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);  //o controller de pessoas faz o update de pessoas, empresas e usuários
 
->>>>>>> 884d90dd1c9dc3cba5fe54b82e42e6115b5ac018
