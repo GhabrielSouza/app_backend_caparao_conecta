@@ -19,19 +19,7 @@ class Formacao_AcademicaController extends Controller
 
     public function store(Request $request){
 
-    /*
-        Modelo de inserção de dados via json:
-    {
-        "area_de_estudo":"Machine Learning",
-        "conclusao_formacao":1,
-        "data_conclusao":"20021212",
-        "data_emissao":"20021212",
-        "diploma_formacao":1,
-        "escolaridade":"Segundo Grau",
-        "id_instituicoes":2,
-        "id_pessoasFisicas":1
-    }
-    */
+   
         $formacao = new Formacao_Academica();
 
         $formacao->area_de_estudo = $request->area_de_estudo;
@@ -61,19 +49,6 @@ class Formacao_AcademicaController extends Controller
 
     public function update(Request $request, $id){
 
-/*
-        Modelo de inserção de dados via json: ====> Passar o id da formação a ser alterada na url
-    {
-        "area_de_estudo":"Machine Learning",
-        "conclusao_formacao":1,
-        "data_conclusao":"20021212",
-        "data_emissao":"20021212",
-        "diploma_formacao":1,
-        "escolaridade":"Segundo Grau",
-        "id_instituicoes":2,
-        "id_pessoasFisicas":1
-    }
-    */
 
         $formacao = Formacao_Academica::find($id);
         if (!$formacao) {
