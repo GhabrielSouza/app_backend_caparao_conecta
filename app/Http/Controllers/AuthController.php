@@ -16,7 +16,7 @@ class AuthController extends Controller
         $email = $request->email;
         $password = $request->password;
 
-        $attempt = auth()->attempt(['email' => $email, 'senha' => $password]);
+        $attempt = auth()->attempt(['email' => $email, 'password' => $password]);
 
 
         if (!$attempt) {
@@ -29,14 +29,15 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Login successful',
-            'user' => $user,
             'token' => $token,
         ], 200);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->token()->delete();
-        return response()->json(['message' => 'Logout successful'], 200);
+        // Revoga o token atual
+        $request->user()->currentAccessToken()->delete();
+        
+        return response()->json(['message' => 'Logout realizado com sucesso'], 200);
     }
 }

@@ -10,8 +10,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Usuario extends Authenticatable
 {
-    use SoftDeletes;
     use HasApiTokens, HasFactory, Notifiable;
+    use SoftDeletes;
 
     protected $fillable = [
         'email',
