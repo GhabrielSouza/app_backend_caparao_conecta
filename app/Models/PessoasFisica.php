@@ -24,7 +24,7 @@ class PessoasFisica extends Model
     public $timestamps = false;
 
     public function pessoa(){
-        return $this->belongsTo('App\Models\Pessoa');
+        return $this->belongsTo('App\Models\Pessoa','id_pessoas', 'id_pessoas');
     }
 
     public function candidato()

@@ -180,7 +180,7 @@ class VagaController extends Controller
         $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at','updated_at']);
 
         return response()->json([
-            'data - vaga' => $vagas
+            'vaga' => $vagas
             //'data - habilidades' => $nome_habilidades caso precise num futuro próximo
             
         ], 200); 

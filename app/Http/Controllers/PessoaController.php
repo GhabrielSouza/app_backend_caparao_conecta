@@ -156,36 +156,25 @@ class PessoaController extends Controller
      */
     public function show(string $id_pessoas)
     {
-        //vagas = Vaga::with("habilidades")->find($id_pessoas);
-        $pessoa = Pessoa::find($id_pessoas);
-        $usuario = Usuario::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller de usuario, que também retorna as colunas da tabela
-        $endereco = Endereco::where('id_pessoas', $pessoa->id_pessoas)->first();
-        $cidade = Cidade::where('id_cidades', $endereco->id_cidades)->first();
+        
+        $usuario = Usuario::find($id_pessoas); 
 
         if ($usuario->id_tipo_usuarios == 3) {
 
-            $empresa = Empresa::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'empresa'])->find( $id_pessoas );
 
             return response()->json([
-                'data - pessoa' => $pessoa,
-                'data - empresa' => $empresa,
-                'data - usuario' => $usuario,
-                'data - endereço' => $endereco,
-                'data - cidade' => $cidade
+                $pessoa
             ], 200);
 
         }
 
         if ($usuario->id_tipo_usuarios == 2) {
 
-            $pessoa_fisica = PessoasFisica::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica'])->find( $id_pessoas );
 
             return response()->json([
-                'data - pessoa' => $pessoa,
-                'data - pessoa física' => $pessoa_fisica,
-                'data - usuario' => $usuario,
-                'data - endereço' => $endereco,
-                'data - cidade' => $cidade
+                $pessoa
             ], 200);
 
         }
