@@ -64,12 +64,8 @@ Route::get('/candidatosOnVagas/{id_vagas}', [VagaController::class, 'verCandidat
 Route::post('/habOnCandidato/{id_habilidades}/{id_pessoas}', [PessoasFisicaController::class, 'adicionarHabilidades']);
 Route::get('/habOnCandidato/{id_pessoas}', [PessoasFisicaController::class, 'verHabilidades']);
 
-
-
 //Route de habiliades
 Route::post('/cadHabilidades', [HabilidadeController::class, 'store']);
-
-
 
 //Route de cidades
 Route::post('/cadCidades', [CidadeController::class,'store']);
@@ -77,7 +73,6 @@ Route::get('/cidades/{id_cidades}', [CidadeController::class,'show']);
 Route::get('/cidadesShowAll', [CidadeController::class, 'showAll']);
 Route::delete('/cidades/{id_cidades}', [CidadeController::class,'destroy']);
 Route::put('/cidades/{id_cidades}', [CidadeController::class,'update']);
-
 
 /* Route de endereços que tá junto do de pessoas
 Route::post('/cadEnderecos', [EnderecoController::class,'store']);

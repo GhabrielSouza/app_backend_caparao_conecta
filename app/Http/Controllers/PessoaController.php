@@ -12,6 +12,8 @@ use App\Models\Vaga;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Validator;
+
 use App\Models\Pessoa;
 use Mockery\Undefined;
 
@@ -76,18 +78,91 @@ class PessoaController extends Controller
 
         */
 
+        if ($request->id_tipo_usuarios == 3){
+
+            $rules = [
+
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
+
+                'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
+
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
+
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
+
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
+
+        }
+
+        if ($request->id_tipo_usuarios == 2){
+
+            $rules = [
+
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
+
+                'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
+                'data_de_nascimento' => 'required|date',
+                'sobrenome' => 'required|string|max:255',
+                'cad_unico'=> 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
+                'genero'=> 'required|string|max:45',
+
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
+
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
+
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
+
+        }
+
         // Verifica se a cidade já existe pelo nome e estado
         $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
 
         if (!$cidade) {
+
             // Cria a cidade se ela ainda não existir
             $cidade = Cidade::create([
                 'nome_cidade' => $request->cidade,
                 'id_pais' => 1,
             ]);
+            
         }
 
         // Cria a pessoa
+
         $pessoa = Pessoa::create([
             'nome' => $request->nome,
             'telefone' => $request->telefone,
@@ -197,6 +272,77 @@ class PessoaController extends Controller
      */
     public function update(Request $request, string $id_pessoas)
     {
+
+        if ($request->id_tipo_usuarios == 3){
+
+            $rules = [
+
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
+
+                'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
+
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
+
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
+
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
+
+        }
+
+        if ($request->id_tipo_usuarios == 2){
+
+            $rules = [
+
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
+
+                'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
+                'data_de_nascimento' => 'required|date',
+                'sobrenome' => 'required|string|max:255',
+                'cad_unico'=> 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
+                'genero'=> 'required|string|max:45',
+
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
+
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
+
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
+
+        }
+
         // Atualiza ou cria a cidade
         $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
 
