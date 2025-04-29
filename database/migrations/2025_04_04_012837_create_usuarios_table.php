@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('usuarios', function (Blueprint $table) {
             $table->string('email', 255);
-            $table->string('senha', 512);
+            $table->string('password', 512);
             $table->foreignId('id_tipo_usuarios')->constrained('tipo_usuarios', 'id_tipo_usuarios')->onDelete('cascade');
             $table->unsignedBigInteger('id_pessoas')->primary();
             $table->softDeletes();

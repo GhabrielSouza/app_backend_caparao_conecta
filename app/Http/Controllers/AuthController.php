@@ -16,10 +16,12 @@ class AuthController extends Controller
         $email = $request->email;
         $password = $request->password;
 
-        $attempt = auth()->attempt(['email' => $email, 'password' => $password]);
+        $attempt = auth()->attempt(['email' => $email, 'senha' => $password]);
+
 
         if (!$attempt) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return response()->json(['message' => 'Invalid credentials'
+        ], 401);
         }
 
         $user = auth()->user();
