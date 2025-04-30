@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Empresa;
 use App\Models\Endereco;
 use App\Models\PessoasFisica;
+use App\Models\Rede_Social;
 use App\Models\Usuario;
 use App\Models\Cidade;
 use App\Models\Vaga;
@@ -41,6 +42,9 @@ class PessoaController extends Controller
             "telefone": "28992228225",
             "sobre": "Marceneiro",
 
+            "instagram": "eduardo_ecf1",
+            "github": "odraudecf",
+
             "cnpj": "123456789",
 
             "email": "cleiton@gmail.com",
@@ -60,6 +64,9 @@ class PessoaController extends Controller
             "sobrenome": "Castro Fernandes",
             "data_de_nascimento": "02/06/2006",
             "genero": "Masculino",
+
+            "instagram": "eduardo_ecf1",
+            "github": "odraudecf",
 
             "telefone": "28992228225",
             "sobre": "Marceneiro",
@@ -105,6 +112,14 @@ class PessoaController extends Controller
             'id_tipo_usuarios' => $request->id_tipo_usuarios
         ]);
 
+        $rede_social = Rede_Social::create([
+            'instagram' => $request->instagram,
+            'github' => $request->github,
+            'linkedin' => $request->linkedin,
+            'curriculo_lattes' => $request->lattes,
+            'id_pessoas' => $pessoa->id_pessoas
+        ]);
+
         // Cria o endereço com o ID da cidade
         $endereco = Endereco::create([
             'cep' => $request->cep,
@@ -122,6 +137,7 @@ class PessoaController extends Controller
             return response()->json([
                 'mensagem' => 'Pessoa, empresa, cidade, endereço e usuário cadastrados com sucesso',
                 'data - pessoa' => $pessoa,
+                'data - redes sociais' => $rede_social,
                 'data - cidade' => $cidade,
                 'data - endereço' => $endereco,
                 'data - empresa' => $empresa,
@@ -142,6 +158,7 @@ class PessoaController extends Controller
             return response()->json([
                 'mensagem' => 'Pessoa, pessoa física, cidade, endereço e usuário cadastrados com sucesso',
                 'data - pessoa' => $pessoa,
+                'data - redes sociais' => $rede_social,
                 'data - cidade' => $cidade,
                 'data - endereço' => $endereco,
                 'data - pessoa física' => $pessoaFisica,
@@ -219,6 +236,17 @@ class PessoaController extends Controller
             'imagem' => $request->imagem,
         ]);
 
+        $rede_social = Rede_Social::find($id_pessoas);
+        if (!$rede_social) {
+            return response()->json(['mensagem' => 'Rede social não encontrada'], 404);
+        }
+        $rede_social->update([
+            'instagram' => $request->instagram,
+            'github' => $request->github,
+            'linkedin' => $request->linkedin,
+            'curriculo_lattes' => $request->lattes,
+        ]);
+
         // Atualiza o usuário
         $usuario = Usuario::find($id_pessoas);
         if (!$usuario) {
@@ -253,6 +281,7 @@ class PessoaController extends Controller
             return response()->json([
                 'mensagem' => 'Dados atualizados com sucesso',
                 'pessoa' => $pessoa,
+                'rede social' => $rede_social,
                 'cidade' => $cidade,
                 'endereço' => $endereco,
                 'empresa' => $empresa,
@@ -276,6 +305,7 @@ class PessoaController extends Controller
             return response()->json([
                 'mensagem' => 'Dados atualizados com sucesso',
                 'pessoa' => $pessoa,
+                'rede social' => $rede_social,
                 'cidade' => $cidade,
                 'endereço' => $endereco,
                 'pessoa_fisica' => $pessoaFisica,
@@ -300,6 +330,7 @@ class PessoaController extends Controller
         // Deleta Pessoa e Endereço
         Pessoa::find($id_pessoas)?->delete();
         Endereco::find($id_pessoas)?->delete();
+        Rede_Social::find($id_pessoas)?->delete();
 
         // Se for empresa
         if ($usuario->id_tipo_usuarios == 3) {
