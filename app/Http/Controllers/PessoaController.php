@@ -156,26 +156,28 @@ class PessoaController extends Controller
      */
     public function show(string $id_pessoas)
     {
-        
-        $usuario = Usuario::find($id_pessoas); 
+
+        $usuario = Usuario::find($id_pessoas);
 
         if ($usuario->id_tipo_usuarios == 3) {
 
-            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'empresa'])->find( $id_pessoas );
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'empresa'])->find($id_pessoas);
 
-            return response()->json([
-                $pessoa
-            ], 200);
+            return response()->json(
+                $pessoa,
+                200
+            );
 
         }
 
         if ($usuario->id_tipo_usuarios == 2) {
 
-            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica'])->find( $id_pessoas );
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica'])->find($id_pessoas);
 
-            return response()->json([
-                $pessoa
-            ], 200);
+            return response()->json(
+                $pessoa,
+                200
+            );
 
         }
 
@@ -275,12 +277,22 @@ class PessoaController extends Controller
         return response()->json(['mensagem' => 'Tipo de usuário inválido'], 400);
     }
 
+    public function updateSobre(Request $request, string $id_pessoas)
+    {
+        $pessoa = Pessoa::findOrFail($id_pessoas); // Retorna 404 automaticamente se não existir
+        $pessoa->update(['sobre' => $request->sobre]);
+
+        return response()->json([
+            $pessoa->sobre
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id_pessoas)
     {
-    // Verifica se o usuário existe
+        // Verifica se o usuário existe
         $usuario = Usuario::find($id_pessoas);
         if (!$usuario) {
             return response()->json(['mensagem' => 'Usuário não encontrado.'], 404);
@@ -296,22 +308,22 @@ class PessoaController extends Controller
 
             if ($empresa) {
                 $vagas = Vaga::where('id_empresas', $id_pessoas)->get();
-            
+
                 foreach ($vagas as $vaga) {
                     // Se vagaOnHabilidade for belongsToMany
                     $vaga->vagaOnHabilidade()->detach();
-            
+
                     // candidato é belongsToMany
                     $vaga->candidato()->detach();
-            
+
                     // Deleta a vaga após remover vínculos
                     $vaga->delete();
                 }
-            
+
                 // Deleta a empresa após todas as vagas e relacionamentos serem limpos
                 $empresa->delete();
             }
-            
+
 
             $usuario->delete();
 
