@@ -36,4 +36,8 @@ class PessoasFisica extends Model
         return $this->belongsToMany('App\Models\Habilidade','pessoas_fisicas_habilidades','id_pessoasFisicas', 'id_habilidades')->withTimestamps();
     }
 
+    public function instituicao(){
+        return $this->belongsToMany('App\Models\Instituicao', 'pessoas_fisicas_instituicoes', 'id_pessoasFisicas', 'id_instituicao')->withTimestamps();
+    }
+
 }
