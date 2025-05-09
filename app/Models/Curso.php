@@ -23,7 +23,7 @@ class Curso extends Model
 
     public function instituicao()
     {
-        return $this->belongsTo('App\Models\Curso');
+        return $this->belongsTo('App\Models\Curso', 'id_instituicoes', 'id_instituicoes');
     }
 
     public function tipoDeCurso(){

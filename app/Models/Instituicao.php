@@ -17,8 +17,8 @@ class Instituicao extends Model
 
     protected $foreingKey = 'id_institucao';
 
-    public function pessoaFisica()
-    {
-        return $this->belongsToMany('App\Models\PessoasFisica', 'pessoas_fisicas_instituicoes', 'id_instituicao', 'id_pessoasFisicas')->withTimestamps();
-    }
+    // public function pessoaFisica()
+    // {
+    //     return $this->belongsToMany('App\Models\PessoasFisica', 'pessoas_fisicas_instituicoes', 'id_instituicao', 'id_pessoasFisicas')->withTimestamps();
+    // }
 }

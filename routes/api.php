@@ -31,7 +31,6 @@ Route::get('/status', function () {
     );
 });
 
-
 //Rotas de formacoes academicas
 Route::get('/formacoes_academicas', [Formacao_AcademicaController::class, 'all']);
 Route::get('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'show']);
@@ -46,13 +45,19 @@ Route::post('/experiencias', [ExperienciaController::class, 'store']);
 Route::put('/experiencias/{id_experiencia}', [ExperienciaController::class, 'update']);
 Route::delete('/experiencias/{id_experiencias}', [ExperienciaController::class, 'destroy']);
 
-Route::get('/cursos', [CursoController::class, 'all']);
+Route::get('/cursos', [CursoController::class, 'index']);
 Route::get('/cursos/{id_curso}', [CursoController::class, 'show']);
 Route::post('/cursos', [CursoController::class, 'store']);
 Route::put('/cursos/{id_curso}', [CursoController::class, 'update']);
 Route::delete('/cursos/{id_cursos}', [CursoController::class, 'destroy']);
+
+Route::post('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'adicionarCursoVaga']); //adicionar curso na vaga
+Route::get('/cursosOnVaga/{id_vagas}', [CursoController::class, 'verCursosVaga']); //ver cursos da vaga
+Route::delete('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'removerCursoVaga']); //remover curso da vaga
+
 Route::post('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'adicionarCurso']); //adicionar curso na pessoa fisica
 Route::get('/cursosOnPessoaFisica/{id_pessoas}', [CursoController::class, 'verCursos']); //ver cursos da pessoa fisica
+Route::delete('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'removerCurso']); //remover curso da pessoa fisica
 
 //Route de vagas
 Route::post('/cadVagas', [VagaController::class, 'store']);
@@ -60,6 +65,7 @@ Route::get('/vagas/{id_vagas}', [VagaController::class, 'show']);
 Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
 Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
+
 
 //Route da habilidades + vagas (relação N pra N)
 Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); //adicionar habilidades nas vagas

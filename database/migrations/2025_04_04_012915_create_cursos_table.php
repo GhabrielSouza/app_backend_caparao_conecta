@@ -11,11 +11,12 @@ return new class extends Migration {
             $table->id('id_cursos');
             $table->string('curso', 255);
             $table->string('cargo_horaria', 50);
+            $table->foreignId('id_tipo_de_cursos')->constrained('tipo_de_cursos','id_tipo_de_cursos');
+            $table->foreignId('id_instituicoes')->constrained('instituicoes', 'id_instituicoes')->onDelete('cascade');
+
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreignId('id_instituicoes')->constrained('instituicoes', 'id_instituicoes')->onDelete('cascade');
-            $table->foreignId('id_tipo_de_curso')->constrained('tipo_de_cursos','id_tipo_de_curso')->onDelete('cascade');
+            
         });
     }
 

@@ -15,7 +15,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             TipoUsuarios::class,
-            Paises_Cidades::class
+            Paises_Cidades::class,
+            TipoDeCursos::class,
+            Instituicoes::class,
         ]);
     }
 }

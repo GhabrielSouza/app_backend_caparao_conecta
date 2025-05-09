@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Curso;
 use App\Models\PessoasFisica;
-
+use App\Models\Vaga;
 class CursoController extends Controller
 {
     /**
@@ -22,8 +22,11 @@ class CursoController extends Controller
     public function store(Request $request)
     {
         $curso = new Curso;
-        $curso->nome = $request->nome;
+        $curso->curso = $request->curso;
         $curso->cargo_horaria = $request->cargo_horaria;
+        $curso->id_tipo_de_cursos = $request->id_tipo_de_cursos;
+        $curso->id_instituicoes = $request->id_instituicoes;
+        $curso->save();
 
         return response()->json([
             'curso' => $curso,
@@ -82,6 +85,92 @@ class CursoController extends Controller
         }
 
         return response()->json($pessoa_fisica->cursos, 200);
+    }
+
+    public function removerCurso(string $id_cursos, string $id_pessoas)
+    {
+        $curso = Curso::find($id_cursos);
+
+        if (!$curso) {
+            return response()->json([
+                'message' => 'Curso não encontrado',
+            ], 404);
+        }
+
+        $pessoa_fisica = PessoasFisica::find($id_pessoas);
+
+        if (!$pessoa_fisica) {
+            return response()->json([
+                'message' => 'Pessoa física não encontrada',
+            ], 404);
+        }
+
+        $pessoa_fisica->cursos()->detach($curso->id);
+
+        return response()->json([
+            'message' => 'Curso removido com sucesso',
+        ], 200);
+    }
+    public function adicionarCursoVaga(Request $request, string $id_cursos, string $id_vagas)
+    {
+        $curso = Curso::find($id_cursos);
+
+        if (!$curso) {
+            return response()->json([
+                'message' => 'Curso não encontrado',
+            ], 404);
+        }
+
+        $vaga = Vaga::find($id_vagas);
+
+        if (!$vaga) {
+            return response()->json([
+                'message' => 'Vaga não encontrada',
+            ], 404);
+        }
+
+        $vaga->cursos()->attach($curso->id);
+
+        return response()->json([
+            'message' => 'Curso adicionado com sucesso',
+        ], 200);
+    }
+    public function verCursosVaga(string $id_vagas)
+    {
+        $vaga = Vaga::find($id_vagas);
+
+        if (!$vaga) {
+            return response()->json([
+                'message' => 'Vaga não encontrada',
+            ], 404);
+        }
+
+        return response()->json($vaga->cursos, 200);
+    }
+
+    public function removerCursoVaga(string $id_cursos, string $id_vagas)
+    {
+        $curso = Curso::find($id_cursos);
+
+        if (!$curso) {
+            return response()->json([
+                'message' => 'Curso não encontrado',
+            ], 404);
+        }
+
+        $vaga = Vaga::find($id_vagas);
+
+        if (!$vaga) {
+            return response()->json([
+                'message' => 'Vaga não encontrada',
+            ], 404);
+        }
+
+        $vaga->cursos()->detach($curso->id);
+
+        return response()->json([
+            'message' => 'Curso removido com sucesso',
+        ], 200);
     }
 
     /**
