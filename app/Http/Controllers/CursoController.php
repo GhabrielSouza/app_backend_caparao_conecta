@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Curso;
+use App\Models\PessoasFisica;
 
 class CursoController extends Controller
 {
@@ -46,6 +47,43 @@ class CursoController extends Controller
 
     }
 
+    public function adicionarCurso(Request $request, string $id_cursos, string $id_pessoas)
+    {
+        $curso = Curso::find($id_cursos);
+
+        if (!$curso) {
+            return response()->json([
+                'message' => 'Curso não encontrado',
+            ], 404);
+        }
+
+        $pessoa_fisica = PessoasFisica::find($id_pessoas);
+
+        if (!$pessoa_fisica) {
+            return response()->json([
+                'message' => 'Pessoa física não encontrada',
+            ], 404);
+        }
+
+        $pessoa_fisica->cursos()->attach($curso->id);
+
+        return response()->json([
+            'message' => 'Curso adicionado com sucesso',
+        ], 200);
+    }
+    public function verCursos(string $id_pessoas)
+    {
+        $pessoa_fisica = PessoasFisica::find($id_pessoas);
+
+        if (!$pessoa_fisica) {
+            return response()->json([
+                'message' => 'Pessoa física não encontrada',
+            ], 404);
+        }
+
+        return response()->json($pessoa_fisica->cursos, 200);
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -72,7 +110,7 @@ class CursoController extends Controller
     public function destroy(string $id)
     {
         $curso = Curso::find($id);
-        
+
         if (!$curso) {
             return response()->json([
                 'message' => 'Curso não encontrado',
@@ -84,6 +122,6 @@ class CursoController extends Controller
         return response()->json([
             'message' => 'Curso deletado com sucesso',
         ], 200);
-        
+
     }
 }
