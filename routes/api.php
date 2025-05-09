@@ -32,14 +32,14 @@ Route::get('/status', function () {
 });
 
 //Rotas de formacoes academicas
-Route::get('/formacoes_academicas', [Formacao_AcademicaController::class, 'all']);
+Route::get('/formacoes_academicas', [Formacao_AcademicaController::class, 'index']);
 Route::get('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'show']);
 Route::post('/formacoes_academicas', [Formacao_AcademicaController::class, 'store']);
 Route::put('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'update']);
 Route::delete('/formacoes_academicas/{id_experiencias}', [Formacao_AcademicaController::class, 'destroy']);
 
 //Rotas de experiencias
-Route::get('/experiencias', [ExperienciaController::class, 'all']);
+Route::get('/experiencias', [ExperienciaController::class, 'index']);
 Route::get('/experiencias/{id_experiencia}', [ExperienciaController::class, 'show']);
 Route::post('/experiencias', [ExperienciaController::class, 'store']);
 Route::put('/experiencias/{id_experiencia}', [ExperienciaController::class, 'update']);
