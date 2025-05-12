@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Curso;
 use App\Models\PessoasFisica;
 use App\Models\Vaga;
+use Carbon\Carbon;
 class CursoController extends Controller
 {
     /**
@@ -68,14 +69,46 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $pessoa_fisica->cursos()->attach($curso->id);
+        $pessoa_fisica->cursosOnPessoasFisicas()->attach($curso->id_cursos, [
+            'certificado_curso' => $request->certificado_curso,
+            'data_conclusao' => Carbon::createFromFormat('d/m/Y', $request->data_conclusao)->format('Y-m-d'),
+        ]);
 
         return response()->json([
             'message' => 'Curso adicionado com sucesso',
+            $pessoa_fisica,
+            $curso
         ], 200);
     }
     public function verCursos(string $id_pessoas)
     {
+        $pessoa_fisica = PessoasFisica::with('cursosOnPessoasFisicas')->find($id_pessoas);
+
+        if (!$pessoa_fisica) {
+            return response()->json([
+                'message' => 'Pessoa física não encontrada',
+            ], 404);
+        }
+
+        $cursos = $pessoa_fisica->cursosOnPessoasFisicas->makeHidden([
+            'created_at',
+            'updated_at',
+            'deleted_at',
+        ]);
+
+        return response()->json($cursos,  200);
+    }
+
+    public function updateCurso(Request $request, string $id_cursos, string $id_pessoas)
+    {
+        $curso = Curso::find($id_cursos);
+
+        if (!$curso) {
+            return response()->json([
+                'message' => 'Curso não encontrado',
+            ], 404);
+        }
+
         $pessoa_fisica = PessoasFisica::find($id_pessoas);
 
         if (!$pessoa_fisica) {
@@ -84,7 +117,14 @@ class CursoController extends Controller
             ], 404);
         }
 
-        return response()->json($pessoa_fisica->cursos, 200);
+        $pessoa_fisica->cursosOnPessoasFisicas()->updateExistingPivot($curso->id_cursos, [
+            'certificado_curso' => $request->certificado_curso,
+            'data_conclusao' => Carbon::createFromFormat('d/m/Y', $request->data_conclusao)->format('Y-m-d'),
+        ]);
+
+        return response()->json([
+            'message' => 'Curso atualizado com sucesso',
+        ], 200);
     }
 
     public function removerCurso(string $id_cursos, string $id_pessoas)
@@ -105,7 +145,7 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $pessoa_fisica->cursos()->detach($curso->id);
+        $pessoa_fisica->cursosOnPessoasFisicas()->detach($curso->id);
 
         return response()->json([
             'message' => 'Curso removido com sucesso',
@@ -186,7 +226,7 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $curso->nome = $request->nome;
+        $curso->curso = $request->curso;
         $curso->cargo_horaria = $request->cargo_horaria;
         $curso->save();
 

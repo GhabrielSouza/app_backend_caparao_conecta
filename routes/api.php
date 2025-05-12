@@ -57,6 +57,7 @@ Route::delete('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, '
 
 Route::post('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'adicionarCurso']); //adicionar curso na pessoa fisica
 Route::get('/cursosOnPessoaFisica/{id_pessoas}', [CursoController::class, 'verCursos']); //ver cursos da pessoa fisica
+Route::put('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'updateCurso']); //atualizar curso da pessoa fisica
 Route::delete('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'removerCurso']); //remover curso da pessoa fisica
 
 //Route de vagas
