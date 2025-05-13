@@ -218,7 +218,6 @@ class PessoaController extends Controller
         $usuario->update([
             'email' => $request->email,
             'senha' => $request->senha ? bcrypt($request->senha) : $usuario->senha,
-            // 'id_tipo_usuarios' => $request->id_tipo_usuarios
         ]);
 
         // Atualiza o endereço

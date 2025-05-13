@@ -94,10 +94,10 @@ class VagaController extends Controller
         
         $vagas = Vaga::all();
 
-        return response()->json([
-            'data - todas vagas' => $vagas
+        return response()->json(
+             $vagas
             
-        ], 200); 
+        , 200); 
 
     }
 
