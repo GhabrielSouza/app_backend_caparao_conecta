@@ -91,25 +91,25 @@ class VagaController extends Controller
     }
     
     public function showAll(Request $request)
-{
-    $modalidade = $request->input('modalidade'); // array ou null
-    $id_empresa = $request->input('id_empresa');
-    $atuacao = $request->input('atuacao');
-
-    $vagas = Vaga::query()
-        ->when($modalidade, function ($query) use ($modalidade) {
-            $query->whereIn('modalidade_da_vaga', $modalidade);
-        })
-        ->when($id_empresa, function ($query) use ($id_empresa) {
-            $query->whereIn('id_empresas', $id_empresa);
-        })
-        ->when($atuacao, function ($query) use ($atuacao) {
-            $query->whereIn('atuacao', $atuacao); // nome da coluna no banco
-        })
-        ->get();
-
-    return response()->json($vagas, 200);
-}
+    {
+        $modalidade = (array) $request->input('modalidade'); // força array
+        $id_empresa = (array) $request->input('id_empresa');
+        $atuacao = (array) $request->input('atuacao');
+    
+        $vagas = Vaga::query()
+            ->when($request->has('modalidade'), function ($query) use ($modalidade) {
+                $query->whereIn('modalidade_da_vaga', $modalidade);
+            })
+            ->when($request->has('id_empresa'), function ($query) use ($id_empresa) {
+                $query->whereIn('id_empresas', $id_empresa);
+            })
+            ->when($request->has('atuacao'), function ($query) use ($atuacao) {
+                $query->whereIn('atuacao', $atuacao);
+            })
+            ->get();
+    
+        return response()->json($vagas, 200);
+    }
 
 
     /**
