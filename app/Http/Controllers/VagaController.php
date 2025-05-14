@@ -197,12 +197,6 @@ class VagaController extends Controller
         
         $pessoasFisica->candidato()->attach($id_vagas, array('created_at' => Carbon::now(),'updated_at'=> Carbon::now()));
 
-        // $dataCandidatura = $pessoasFisica->candidato()::findOrFail($id_vagas);
-
-        // $dataCandidatura->data_candidatura = $request->data_candidatura;
-
-        // $dataCandidatura->save();
-
         $vaga = Vaga::find($id_vagas);
 
         return response()->json([
@@ -230,8 +224,8 @@ class VagaController extends Controller
         }
     }
 
-    return response()->json([
-        'data' => $pessoas
-    ], 200);
+    return response()->json(
+         $pessoas
+    , 200);
 }
 }

@@ -6,18 +6,13 @@ use App\Http\Controllers\ExperienciaController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\EnderecoController;
 
-use App\Http\Controllers\EmpresaController;
-use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PessoaController;
 use App\Http\Controllers\PessoasFisicaController;
-use App\Http\Controllers\CandidatoController;
+
 
 use App\Http\Controllers\VagaController;
 use App\Http\Controllers\HabilidadeController;
 
-use App\Models\Endereco;
-use App\Models\Habilidade;
-use App\Models\PessoasFisica;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/status', function () {
@@ -53,11 +48,11 @@ Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
 
 //Route da habilidades + vagas (relação N pra N)
-Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); //adicionar habilidades nas vagas
+Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); 
 Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
 //Route da pessoa fisica + vagas (relação N pra N)
-Route::post('/candidatar/{id_pessoas}/{id_vagas}', [VagaController::class, 'candidatarPessoas']); //adicionar pessoa fisica nas vagas
+Route::post('/candidatar/{id_pessoas}/{id_vagas}', [VagaController::class, 'candidatarPessoas']);
 Route::get('/candidatosOnVagas/{id_vagas}', [VagaController::class, 'verCandidatos']);
 
 //Relação de habilidades com pessoas físicas N pra N
@@ -89,10 +84,10 @@ Route::put('/enderecos/{id_enderecos}', [EnderecoController::class,'update']);
 Route::get('/enderecoShowAll', [EnderecoController::class, 'showAll']);
 
 //Route de pessoas
-Route::post('/cadPessoas', [PessoaController::class, 'store']); //o controller de pessoas faz o store de pessoas, empresas e usuários
-Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); //o controller de pessoas faz o show de pessoas, empresas e usuários
-Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); //o controller de pessoas faz o delete de pessoas, empresas e usuários
-Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);  //o controller de pessoas faz o update de pessoas, empresas e usuários
+Route::post('/cadPessoas', [PessoaController::class, 'store']); 
+Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); 
+Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); 
+Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']); 
 
 //Route update sobre de pessoas
 Route::patch('/pessoas/{id}/sobre', [PessoaController::class, 'updateSobre']);
