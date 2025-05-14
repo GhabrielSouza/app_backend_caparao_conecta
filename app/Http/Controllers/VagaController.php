@@ -92,10 +92,10 @@ class VagaController extends Controller
     
     public function showAll(Request $request)
     {
-        $modalidade = (array) $request->input('modalidade'); // força array
-        $id_empresa = (array) $request->input('id_empresa');
-        $atuacao = (array) $request->input('atuacao');
-    
+        $modalidade = explode(",", $request->input('modalidade')); // força array
+        $id_empresa = explode(",", $request->input('id_empresa'));
+        $atuacao = explode(",", $request->input('atuacao'));
+        
         $vagas = Vaga::query()
             ->when($request->has('modalidade'), function ($query) use ($modalidade) {
                 $query->whereIn('modalidade_da_vaga', $modalidade);
