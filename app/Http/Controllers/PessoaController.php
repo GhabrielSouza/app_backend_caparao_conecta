@@ -100,7 +100,7 @@ class PessoaController extends Controller
         // Cria o usuário
         $usuario = Usuario::create([
             'email' => $request->email,
-            'senha' => bcrypt($request->senha),
+            'password' => bcrypt($request->password),
             'id_pessoas' => $pessoa->id_pessoas,
             'id_tipo_usuarios' => $request->id_tipo_usuarios
         ]);
