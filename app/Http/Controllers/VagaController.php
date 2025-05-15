@@ -90,14 +90,34 @@ class VagaController extends Controller
         return response()->json($vaga, 200);
     }
     
-    public function showAll(){
+    public function showAll(Request $request)
+    {
+        $modalidade = explode(",", $request->input('modalidade')); 
+        $id_empresa = explode(",", $request->input('id_empresa'));
+        $atuacao = explode(",", $request->input('atuacao'));
         
+
+        $vagas = Vaga::query()
+            ->when($request->has('modalidade'), function ($query) use ($modalidade) {
+                $query->whereIn('modalidade_da_vaga', $modalidade);
+            })
+            ->when($request->has('id_empresa'), function ($query) use ($id_empresa) {
+                $query->whereIn('id_empresas', $id_empresa);
+            })
+            ->when($request->has('atuacao'), function ($query) use ($atuacao) {
+                $query->whereIn('atuacao', $atuacao);
+            })
+            ->get();
+    
+        return response()->json($vagas, 200);
+
         $vagas = Vaga::all();
 
         return response()->json(
              $vagas
             
         , 200); 
+
 
     }
 
