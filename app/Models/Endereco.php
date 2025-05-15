@@ -23,11 +23,11 @@ class Endereco extends Model
 
     public function pessoas()
     { // uma pessoa tem N endereços
-        return $this->belongsTo('App\Models\Pessoa');
+        return $this->belongsTo('App\Models\Pessoa','id_pessoas', 'id_pessoas');
     }
 
     public function cidade()
     { // uma cidade tem N endereços
-        return $this->belongsTo('App\Models\Cidade');
+        return $this->belongsTo('App\Models\Cidade', 'id_cidades', 'id_cidades');
     }
 }
