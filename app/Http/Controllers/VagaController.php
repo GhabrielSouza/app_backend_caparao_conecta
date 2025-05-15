@@ -248,9 +248,6 @@ class VagaController extends Controller
             
         ], 200); 
 
-        /*foreach ($vaga->Habilidade as $habilidade) {
-            Habilidade::find($habilidade->vagas_habilidades->id_habilidades);
-        } */
 
     }
 

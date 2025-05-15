@@ -33,51 +33,6 @@ class PessoaController extends Controller
     public function store(Request $request)
     {
 
-        /*
-            Estilo de envio dos dados
-
-            Se for empresa:
-
-            "id_pessoas": 2, agora é auto increment
-            "nome": "Cleiton",
-            "telefone": "28992228225",
-            "sobre": "Marceneiro",
-
-            "cnpj": "123456789",
-
-            "email": "cleiton@gmail.com",
-            "senha": "123456",
-            "id_tipo_usuarios": 3,
-
-            "cep": "aaaaa",
-            "cidade": "Alegre",
-            "estado": "São Paulo"
-
-            -------------------------------------
-
-            Se for pessoa física:
-
-            "id_pessoas": 2, agora é auto increment
-            "nome": "Cleiton",
-            "sobrenome": "Castro Fernandes",
-            "data_de_nascimento": "02/06/2006",
-            "genero": "Masculino",
-
-            "telefone": "28992228225",
-            "sobre": "Marceneiro",
-
-            "cpf": "17462952793",
-
-            "email": "cleiton@gmail.com",
-            "senha": "123456",
-            "id_tipo_usuarios": 2,
-
-            "cep": "aaaaa",
-            "cidade": "Cariacica",
-            "estado": "São Paulo"
-
-        */
-
         if ($request->id_tipo_usuarios == 3){
 
             $rules = [
@@ -148,7 +103,6 @@ class PessoaController extends Controller
 
         }
 
-        // Verifica se a cidade já existe pelo nome e estado
         $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
 
         if (!$cidade) {
@@ -162,7 +116,6 @@ class PessoaController extends Controller
         }
 
         // Cria a pessoa
-
         $pessoa = Pessoa::create([
             'nome' => $request->nome,
             'telefone' => $request->telefone,
@@ -231,15 +184,14 @@ class PessoaController extends Controller
      */
     public function show(string $id_pessoas)
     {
-        //vagas = Vaga::with("habilidades")->find($id_pessoas);
         $pessoa = Pessoa::find($id_pessoas);
-        $usuario = Usuario::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller de usuario, que também retorna as colunas da tabela
+        $usuario = Usuario::find($id_pessoas);
         $endereco = Endereco::where('id_pessoas', $pessoa->id_pessoas)->first();
         $cidade = Cidade::where('id_cidades', $endereco->id_cidades)->first();
 
         if ($usuario->id_tipo_usuarios == 3) {
 
-            $empresa = Empresa::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
+            $empresa = Empresa::find($id_pessoas);
 
             return response()->json([
                 'data - pessoa' => $pessoa,
@@ -253,7 +205,7 @@ class PessoaController extends Controller
 
         if ($usuario->id_tipo_usuarios == 2) {
 
-            $pessoa_fisica = PessoasFisica::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
+            $pessoa_fisica = PessoasFisica::find($id_pessoas);
 
             return response()->json([
                 'data - pessoa' => $pessoa,
