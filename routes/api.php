@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Formacao_AcademicaController;
 
 use App\Http\Controllers\ExperienciaController;
@@ -48,7 +49,9 @@ Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
 
 //Route da habilidades + vagas (relação N pra N)
+
 Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); 
+Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); //adicionar habilidades nas vagas
 Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
 //Route da pessoa fisica + vagas (relação N pra N)
@@ -89,5 +92,11 @@ Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']);
 Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); 
 Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']); 
 
+
 //Route update sobre de pessoas
 Route::patch('/pessoas/{id}/sobre', [PessoaController::class, 'updateSobre']);
+
+//login e logout
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
