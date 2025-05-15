@@ -94,10 +94,10 @@ class VagaController extends Controller
         
         $vagas = Vaga::all();
 
-        return response()->json([
-            'data - todas vagas' => $vagas
+        return response()->json(
+             $vagas
             
-        ], 200); 
+        , 200); 
 
     }
 
@@ -180,7 +180,7 @@ class VagaController extends Controller
         $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at','updated_at']);
 
         return response()->json([
-            'data - vaga' => $vagas
+            'vaga' => $vagas
             //'data - habilidades' => $nome_habilidades caso precise num futuro próximo
             
         ], 200); 
@@ -196,12 +196,6 @@ class VagaController extends Controller
         $pessoasFisica = PessoasFisica::find($id_pessoas);
         
         $pessoasFisica->candidato()->attach($id_vagas, array('created_at' => Carbon::now(),'updated_at'=> Carbon::now()));
-
-        // $dataCandidatura = $pessoasFisica->candidato()::findOrFail($id_vagas);
-
-        // $dataCandidatura->data_candidatura = $request->data_candidatura;
-
-        // $dataCandidatura->save();
 
         $vaga = Vaga::find($id_vagas);
 
@@ -230,8 +224,8 @@ class VagaController extends Controller
         }
     }
 
-    return response()->json([
-        'data' => $pessoas
-    ], 200);
+    return response()->json(
+         $pessoas
+    , 200);
 }
 }

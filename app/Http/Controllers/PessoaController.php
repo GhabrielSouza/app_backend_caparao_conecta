@@ -156,37 +156,28 @@ class PessoaController extends Controller
      */
     public function show(string $id_pessoas)
     {
-        //vagas = Vaga::with("habilidades")->find($id_pessoas);
-        $pessoa = Pessoa::find($id_pessoas);
-        $usuario = Usuario::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller de usuario, que também retorna as colunas da tabela
-        $endereco = Endereco::where('id_pessoas', $pessoa->id_pessoas)->first();
-        $cidade = Cidade::where('id_cidades', $endereco->id_cidades)->first();
+
+        $usuario = Usuario::find($id_pessoas);
 
         if ($usuario->id_tipo_usuarios == 3) {
 
-            $empresa = Empresa::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'empresa'])->find($id_pessoas);
 
-            return response()->json([
-                'data - pessoa' => $pessoa,
-                'data - empresa' => $empresa,
-                'data - usuario' => $usuario,
-                'data - endereço' => $endereco,
-                'data - cidade' => $cidade
-            ], 200);
+            return response()->json(
+                $pessoa,
+                200
+            );
 
         }
 
         if ($usuario->id_tipo_usuarios == 2) {
 
-            $pessoa_fisica = PessoasFisica::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica'])->find($id_pessoas);
 
-            return response()->json([
-                'data - pessoa' => $pessoa,
-                'data - pessoa física' => $pessoa_fisica,
-                'data - usuario' => $usuario,
-                'data - endereço' => $endereco,
-                'data - cidade' => $cidade
-            ], 200);
+            return response()->json(
+                $pessoa,
+                200
+            );
 
         }
 
@@ -227,7 +218,6 @@ class PessoaController extends Controller
         $usuario->update([
             'email' => $request->email,
             'senha' => $request->senha ? bcrypt($request->senha) : $usuario->senha,
-            'id_tipo_usuarios' => $request->id_tipo_usuarios
         ]);
 
         // Atualiza o endereço
@@ -286,12 +276,22 @@ class PessoaController extends Controller
         return response()->json(['mensagem' => 'Tipo de usuário inválido'], 400);
     }
 
+    public function updateSobre(Request $request, string $id_pessoas)
+    {
+        $pessoa = Pessoa::findOrFail($id_pessoas); // Retorna 404 automaticamente se não existir
+        $pessoa->update(['sobre' => $request->sobre]);
+
+        return response()->json([
+            $pessoa->sobre
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id_pessoas)
     {
-    // Verifica se o usuário existe
+        // Verifica se o usuário existe
         $usuario = Usuario::find($id_pessoas);
         if (!$usuario) {
             return response()->json(['mensagem' => 'Usuário não encontrado.'], 404);
@@ -307,22 +307,22 @@ class PessoaController extends Controller
 
             if ($empresa) {
                 $vagas = Vaga::where('id_empresas', $id_pessoas)->get();
-            
+
                 foreach ($vagas as $vaga) {
                     // Se vagaOnHabilidade for belongsToMany
                     $vaga->vagaOnHabilidade()->detach();
-            
+
                     // candidato é belongsToMany
                     $vaga->candidato()->detach();
-            
+
                     // Deleta a vaga após remover vínculos
                     $vaga->delete();
                 }
-            
+
                 // Deleta a empresa após todas as vagas e relacionamentos serem limpos
                 $empresa->delete();
             }
-            
+
 
             $usuario->delete();
 
