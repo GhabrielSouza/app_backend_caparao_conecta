@@ -40,4 +40,9 @@ class Vaga extends Model
     {
         return $this->belongsToMany('App\Models\PessoasFisica', 'candidaturas', 'id_vagas', 'id_pessoasFisicas')->withTimestamps();
     }
+
+    public function cursoOnVaga()
+    {
+        return $this->belongsToMany('App\Models\Curso', 'vagas_cursos', 'id_vagas', 'id_cursos')->withTimestamps();
+    }
 }

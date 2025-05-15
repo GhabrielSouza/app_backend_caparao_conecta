@@ -151,7 +151,7 @@ class CursoController extends Controller
             'message' => 'Curso removido com sucesso',
         ], 200);
     }
-    public function adicionarCursoVaga(Request $request, string $id_cursos, string $id_vagas)
+    public function adicionarCursoVaga(string $id_cursos, string $id_vagas)
     {
         $curso = Curso::find($id_cursos);
 
@@ -169,7 +169,7 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $vaga->cursos()->attach($curso->id);
+        $vaga->cursoOnVaga()->attach($curso->id_cursos);
 
         return response()->json([
             'message' => 'Curso adicionado com sucesso',
@@ -185,7 +185,7 @@ class CursoController extends Controller
             ], 404);
         }
 
-        return response()->json($vaga->cursos, 200);
+        return response()->json($vaga->cursoOnVaga, 200);
     }
 
     public function removerCursoVaga(string $id_cursos, string $id_vagas)
@@ -206,7 +206,7 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $vaga->cursos()->detach($curso->id);
+        $vaga->cursoOnVaga()->detach($curso->id_cursos);
 
         return response()->json([
             'message' => 'Curso removido com sucesso',
