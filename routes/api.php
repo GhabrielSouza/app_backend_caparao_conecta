@@ -51,14 +51,14 @@ Route::post('/cursos', [CursoController::class, 'store']);
 Route::put('/cursos/{id_curso}', [CursoController::class, 'update']);
 Route::delete('/cursos/{id_cursos}', [CursoController::class, 'destroy']);
 
-Route::post('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'adicionarCursoVaga']); //adicionar curso na vaga
-Route::get('/cursosOnVaga/{id_vagas}', [CursoController::class, 'verCursosVaga']); //ver cursos da vaga
-Route::delete('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'removerCursoVaga']); //remover curso da vaga
+Route::post('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'adicionarCursoVaga']);
+Route::get('/cursosOnVaga/{id_vagas}', [CursoController::class, 'verCursosVaga']);
+Route::delete('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'removerCursoVaga']);
 
-Route::post('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'adicionarCurso']); //adicionar curso na pessoa fisica
-Route::get('/cursosOnPessoaFisica/{id_pessoas}', [CursoController::class, 'verCursos']); //ver cursos da pessoa fisica
-Route::put('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'updateCurso']); //atualizar curso da pessoa fisica
-Route::delete('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'removerCurso']); //remover curso da pessoa fisica
+Route::post('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'adicionarCurso']);
+Route::get('/cursosOnPessoaFisica/{id_pessoas}', [CursoController::class, 'verCursos']);
+Route::put('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'updateCurso']);
+Route::delete('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'removerCurso']);
 
 //Route de vagas
 Route::post('/cadVagas', [VagaController::class, 'store']);
@@ -69,11 +69,11 @@ Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
 
 
 //Route da habilidades + vagas (relação N pra N)
-Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); //adicionar habilidades nas vagas
+Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']);
 Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
 //Route da pessoa fisica + vagas (relação N pra N)
-Route::post('/candidatar/{id_pessoas}/{id_vagas}', [VagaController::class, 'candidatarPessoas']); //adicionar pessoa fisica nas vagas
+Route::post('/candidatar/{id_pessoas}/{id_vagas}', [VagaController::class, 'candidatarPessoas']);
 Route::get('/candidatosOnVagas/{id_vagas}', [VagaController::class, 'verCandidatos']);
 
 //Relação de habilidades com pessoas físicas N pra N
@@ -94,8 +94,8 @@ Route::put('/cidades/{id_cidades}', [CidadeController::class, 'update']);
 Route::get('/enderecoShowAll', [EnderecoController::class, 'showAll']);
 
 //Route de pessoas
-Route::post('/cadPessoas', [PessoaController::class, 'store']); //o controller de pessoas faz o store de pessoas, empresas e usuários
-Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); //o controller de pessoas faz o show de pessoas, empresas e usuários
-Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); //o controller de pessoas faz o delete de pessoas, empresas e usuários
-Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);  //o controller de pessoas faz o update de pessoas, empresas e usuários
+Route::post('/cadPessoas', [PessoaController::class, 'store']);
+Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']);
+Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']);
+Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);
 
