@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Experiencia;
 
+use Illuminate\Support\Facades\Validator;
+
 class ExperienciaController extends Controller
 {
     public function index(){
@@ -13,6 +15,26 @@ class ExperienciaController extends Controller
     }
 
     public function store(Request $request){
+
+        $rules = [
+
+            'cargo' => 'required|string|max:255',
+            'nome_empresa' => 'string|max:255',
+            'comprovacao' => 'required|boolean',
+            'descricao' => 'string',
+            'id_pessoasFisicas' => 'required|integer|exists:App\Models\PessoasFisica,id_pessoas',
+
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+                
+            return response()->json([
+                'error' => $validator->errors()
+            ], 422);
+                
+        }
 
         $experiencia = new Experiencia();
 
@@ -40,11 +62,29 @@ class ExperienciaController extends Controller
 
     public function update(Request $request, $id){
 
-
-
         $experiencia = Experiencia::find($id);
         if (!$experiencia) {
             return response()->json(['message' => 'Experiência não encontrada'], 404);
+        }
+
+        $rules = [
+
+            'cargo' => 'required|string|max:255',
+            'nome_empresa' => 'string|max:255',
+            'comprovacao' => 'required|boolean',
+            'descricao' => 'string',
+            'id_pessoasFisicas' => 'required|integer|exists:App\Models\PessoasFisica,id_pessoas',
+
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+                
+            return response()->json([
+                'error' => $validator->errors()
+            ], 422);
+                
         }
 
         $experiencia->cargo = $request->cargo;

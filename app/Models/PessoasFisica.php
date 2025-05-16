@@ -23,9 +23,9 @@ class PessoasFisica extends Model
 
     public $timestamps = false;
 
-    public function pessoa()
-    {
-        return $this->belongsTo('App\Models\Pessoa');
+
+    public function pessoa(){
+        return $this->belongsTo('App\Models\Pessoa','id_pessoas', 'id_pessoas');
     }
 
     public function candidato()
@@ -37,11 +37,6 @@ class PessoasFisica extends Model
     {
         return $this->belongsToMany('App\Models\Habilidade', 'pessoas_fisicas_habilidades', 'id_pessoasFisicas', 'id_habilidades')->withTimestamps();
     }
-
-    //discutir com o grupo se é necessário
-    // public function instituicao(){
-    //     return $this->belongsToMany('App\Models\Instituicao', 'pessoas_fisicas_instituicoes', 'id_pessoasFisicas', 'id_instituicao')->withTimestamps();
-    // }
 
     public function formacaoAcademica()
     {

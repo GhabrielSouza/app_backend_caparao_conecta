@@ -13,6 +13,8 @@ use App\Models\Vaga;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Validator;
+
 use App\Models\Pessoa;
 use Mockery\Undefined;
 
@@ -32,66 +34,84 @@ class PessoaController extends Controller
     public function store(Request $request)
     {
 
-        /*
-            Estilo de envio dos dados
+        if ($request->id_tipo_usuarios == 3){
+            $rules = [
 
-            Se for empresa:
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
 
-            "id_pessoas": 2, agora é auto increment
-            "nome": "Cleiton",
-            "telefone": "28992228225",
-            "sobre": "Marceneiro",
+                'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
 
-            "instagram": "eduardo_ecf1",
-            "github": "odraudecf",
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
 
-            "cnpj": "123456789",
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
 
-            "email": "cleiton@gmail.com",
-            "senha": "123456",
-            "id_tipo_usuarios": 3,
+        }
 
-            "cep": "aaaaa",
-            "cidade": "Alegre",
-            "estado": "São Paulo"
+        if ($request->id_tipo_usuarios == 2){
 
-            -------------------------------------
+            $rules = [
 
-            Se for pessoa física:
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
 
-            "id_pessoas": 2, agora é auto increment
-            "nome": "Cleiton",
-            "sobrenome": "Castro Fernandes",
-            "data_de_nascimento": "02/06/2006",
-            "genero": "Masculino",
+                'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
+                'data_de_nascimento' => 'required|date',
+                'sobrenome' => 'required|string|max:255',
+                'cad_unico'=> 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
+                'genero'=> 'required|string|max:45',
 
-            "instagram": "eduardo_ecf1",
-            "github": "odraudecf",
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
 
-            "telefone": "28992228225",
-            "sobre": "Marceneiro",
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
 
-            "cpf": "17462952793",
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
 
-            "email": "cleiton@gmail.com",
-            "senha": "123456",
-            "id_tipo_usuarios": 2,
+        }
 
-            "cep": "aaaaa",
-            "cidade": "Cariacica",
-            "estado": "São Paulo"
-
-        */
-
-        // Verifica se a cidade já existe pelo nome e estado
         $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
 
         if (!$cidade) {
+
             // Cria a cidade se ela ainda não existir
             $cidade = Cidade::create([
                 'nome_cidade' => $request->cidade,
                 'id_pais' => 1,
             ]);
+            
         }
 
         // Cria a pessoa
@@ -107,7 +127,7 @@ class PessoaController extends Controller
         // Cria o usuário
         $usuario = Usuario::create([
             'email' => $request->email,
-            'senha' => bcrypt($request->senha),
+            'password' => bcrypt($request->password),
             'id_pessoas' => $pessoa->id_pessoas,
             'id_tipo_usuarios' => $request->id_tipo_usuarios
         ]);
@@ -173,37 +193,27 @@ class PessoaController extends Controller
      */
     public function show(string $id_pessoas)
     {
-        //vagas = Vaga::with("habilidades")->find($id_pessoas);
-        $pessoa = Pessoa::find($id_pessoas);
-        $usuario = Usuario::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller de usuario, que também retorna as colunas da tabela
-        $endereco = Endereco::where('id_pessoas', $pessoa->id_pessoas)->first();
-        $cidade = Cidade::where('id_cidades', $endereco->id_cidades)->first();
+        $usuario = Usuario::find($id_pessoas);
 
         if ($usuario->id_tipo_usuarios == 3) {
 
-            $empresa = Empresa::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'empresa'])->find($id_pessoas);
 
-            return response()->json([
-                'data - pessoa' => $pessoa,
-                'data - empresa' => $empresa,
-                'data - usuario' => $usuario,
-                'data - endereço' => $endereco,
-                'data - cidade' => $cidade
-            ], 200);
+            return response()->json(
+                $pessoa,
+                200
+            );
 
         }
 
         if ($usuario->id_tipo_usuarios == 2) {
+          
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica'])->find($id_pessoas);
 
-            $pessoa_fisica = PessoasFisica::find($id_pessoas); //manda a variável id_pessoas para a função show() do controller da empresa, que retorna as colunas da tabela
-
-            return response()->json([
-                'data - pessoa' => $pessoa,
-                'data - pessoa física' => $pessoa_fisica,
-                'data - usuario' => $usuario,
-                'data - endereço' => $endereco,
-                'data - cidade' => $cidade
-            ], 200);
+            return response()->json(
+                $pessoa,
+                200
+            );
 
         }
 
@@ -214,6 +224,77 @@ class PessoaController extends Controller
      */
     public function update(Request $request, string $id_pessoas)
     {
+
+        if ($request->id_tipo_usuarios == 3){
+
+            $rules = [
+
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
+
+                'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
+
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
+
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
+
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
+
+        }
+
+        if ($request->id_tipo_usuarios == 2){
+
+            $rules = [
+
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
+
+                'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
+                'data_de_nascimento' => 'required|date',
+                'sobrenome' => 'required|string|max:255',
+                'cad_unico'=> 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
+                'genero'=> 'required|string|max:45',
+
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
+
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
+
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
+
+        }
+
         // Atualiza ou cria a cidade
         $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
 
@@ -255,7 +336,6 @@ class PessoaController extends Controller
         $usuario->update([
             'email' => $request->email,
             'senha' => $request->senha ? bcrypt($request->senha) : $usuario->senha,
-            'id_tipo_usuarios' => $request->id_tipo_usuarios
         ]);
 
         // Atualiza o endereço
@@ -316,12 +396,22 @@ class PessoaController extends Controller
         return response()->json(['mensagem' => 'Tipo de usuário inválido'], 400);
     }
 
+    public function updateSobre(Request $request, string $id_pessoas)
+    {
+        $pessoa = Pessoa::findOrFail($id_pessoas); 
+        $pessoa->update(['sobre' => $request->sobre]);
+
+        return response()->json([
+            $pessoa->sobre
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id_pessoas)
     {
-    // Verifica se o usuário existe
+        // Verifica se o usuário existe
         $usuario = Usuario::find($id_pessoas);
         if (!$usuario) {
             return response()->json(['mensagem' => 'Usuário não encontrado.'], 404);
@@ -338,22 +428,22 @@ class PessoaController extends Controller
 
             if ($empresa) {
                 $vagas = Vaga::where('id_empresas', $id_pessoas)->get();
-            
+
                 foreach ($vagas as $vaga) {
                     // Se vagaOnHabilidade for belongsToMany
                     $vaga->vagaOnHabilidade()->detach();
-            
+
                     // candidato é belongsToMany
                     $vaga->candidato()->detach();
-            
+
                     // Deleta a vaga após remover vínculos
                     $vaga->delete();
                 }
-            
+
                 // Deleta a empresa após todas as vagas e relacionamentos serem limpos
                 $empresa->delete();
             }
-            
+
 
             $usuario->delete();
 

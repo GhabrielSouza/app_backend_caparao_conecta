@@ -23,7 +23,7 @@ class Pessoa extends Model
 
     public function empresa()
     { // Relação um pra um de pessoa com empresa
-        return $this->hasOne('App\Models\Empresa');
+        return $this->hasOne('App\Models\Empresa', 'id_pessoas', 'id_pessoas');
     }
 
     public function pessoasFisica(){
@@ -31,10 +31,10 @@ class Pessoa extends Model
     }
 
     public function usuario(){ // Relação um pra um de pessoa com usuário
-        return $this->hasOne('App\Models\Usuario');
+        return $this->hasOne('App\Models\Usuario','id_pessoas', 'id_pessoas');
     }
     public function endereco()
     { // uma pessoa tem N endereços
-        return $this->hasOne('App\Models\Endereco');
+        return $this->hasOne('App\Models\Endereco','id_pessoas', 'id_pessoas');
     }
 }
