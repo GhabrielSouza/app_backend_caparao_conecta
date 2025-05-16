@@ -45,7 +45,7 @@ class PessoaController extends Controller
                 'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
 
                 'email' => 'required|string|max:255|email:rfc,dns,spoof',
-                'senha' => 'required|string|max:512',
+                'password' => 'required|string|max:512',
 
                 'cep' => 'required|string|max:10',
                 'estado' => 'required|string|max:255',
@@ -81,7 +81,7 @@ class PessoaController extends Controller
                 'genero'=> 'required|string|max:45',
 
                 'email' => 'required|string|max:255|email:rfc,dns,spoof',
-                'senha' => 'required|string|max:512',
+                'password' => 'required|string|max:512',
 
                 'cep' => 'required|string|max:10',
                 'estado' => 'required|string|max:255',
@@ -237,7 +237,7 @@ class PessoaController extends Controller
                 'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
 
                 'email' => 'required|string|max:255|email:rfc,dns,spoof',
-                'senha' => 'required|string|max:512',
+                'password' => 'required|string|max:512',
 
                 'cep' => 'required|string|max:10',
                 'estado' => 'required|string|max:255',
@@ -274,7 +274,7 @@ class PessoaController extends Controller
                 'genero'=> 'required|string|max:45',
 
                 'email' => 'required|string|max:255|email:rfc,dns,spoof',
-                'senha' => 'required|string|max:512',
+                'password' => 'required|string|max:512',
 
                 'cep' => 'required|string|max:10',
                 'estado' => 'required|string|max:255',
@@ -335,7 +335,7 @@ class PessoaController extends Controller
         }
         $usuario->update([
             'email' => $request->email,
-            'senha' => $request->senha ? bcrypt($request->senha) : $usuario->senha,
+            'password' => $request->senha ? bcrypt($request->senha) : $usuario->senha,
         ]);
 
         // Atualiza o endereço
