@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Carbon\Traits\Timestamp;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Validator;
+
 use Illuminate\Support\Arr;
 
 class VagaController extends Controller
@@ -44,35 +46,61 @@ class VagaController extends Controller
 
         */
 
-        if ($request->data_criacao < $request->data_fechamento) {
+        $rules = [
 
-            $vaga = new Vaga;
+            'titulo_vaga' => 'required|string|max:255',
+            'descricao' => 'string|max:255',
+            'salario' => 'required|decimal:2',
+            'status' => 'string|max:255',
+            'data_criacao' => 'required|date',
+            'data_fechamento' => 'required|date',
+            'qtd_vaga' => 'required|integer',
+            'qtd_vagas_preenchidas' => 'integer',
+            'modalidade_da_vaga' => 'required|string|max:255',
+            'id_empresas' => 'required|integer|exists:App\Models\Empresa,id_pessoas',
 
-            $vaga->titulo_vaga = $request->titulo_vaga;
-            $vaga->descricao = $request->descricao;
-            $vaga->salario = $request->salario;
-            $vaga->status = $request->status;
-            $vaga->data_criacao = Carbon::createFromFormat('d/m/Y', $request->data_criacao)->format('Y-m-d');
-            $vaga->data_fechamento = Carbon::createFromFormat('d/m/Y', $request->data_fechamento)->format('Y-m-d');
-            $vaga->qtd_vaga = $request->qtd_vaga;
-            $vaga->qtd_vagas_preenchidas = 0; //como a vaga está sendo criada, ela vai sempre estar zerada.
-            $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
-            $vaga->id_empresas = $request->id_empresas;
+        ];
 
-            $vaga->save();
+        $validator = Validator::make($request->all(), $rules);
 
+        if ($validator->fails()) {
+                
             return response()->json([
-                'mensagem' => 'Vaga criada com sucesso',
-                'data' => $vaga
-            ], 200);
+                'error' => $validator->errors()
+            ], 422);
+                
         }
 
-        else {
+        if ($request->data_criacao > $request->data_fechamento){
+
             return response()->json([
                 'mensagem' => 'Data de fechamento não pode ser antes da data de criação.'
             ], 200);
+
         }
+
+        $vaga = new Vaga;
+
+        $vaga->titulo_vaga = $request->titulo_vaga;
+        $vaga->descricao = $request->descricao;
+        $vaga->salario = $request->salario;
+        $vaga->status = $request->status;
+        $vaga->data_criacao = Carbon::createFromFormat('d/m/Y', $request->data_criacao)->format('Y-m-d');
+        $vaga->data_fechamento = Carbon::createFromFormat('d/m/Y', $request->data_fechamento)->format('Y-m-d');
+        $vaga->qtd_vaga = $request->qtd_vaga;
+        $vaga->qtd_vagas_preenchidas = 0; //como a vaga está sendo criada, ela vai sempre estar zerada.
+        $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
+        $vaga->id_empresas = $request->id_empresas;
+
+        $vaga->save();
+
+        return response()->json([
+            'mensagem' => 'Vaga criada com sucesso',
+            'data' => $vaga
+        ], 200);
     }
+        
+    
 
     /**
      * Display the specified resource.
@@ -130,6 +158,46 @@ class VagaController extends Controller
 
         $vaga = Vaga::find($id);
 
+        if (!$vaga) {
+            return response()->json([
+                'mensage' => 'Vaga não encontrada'
+            ], 404);
+        }
+
+        $rules = [
+
+            'titulo_vaga' => 'required|string|max:255',
+            'descricao' => 'string|max:255',
+            'salario' => 'required|decimal:2',
+            'status' => 'string|max:255',
+            'data_criacao' => 'required|date',
+            'data_fechamento' => 'required|date',
+            'qtd_vaga' => 'required|integer',
+            'qtd_vagas_preenchidas' => 'integer',
+            'modalidade_da_vaga' => 'required|string|max:255',
+            'id_empresas' => 'required|integer|exists:App\Models\Empresa,id_pessoas',
+
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            
+            return response()->json([
+                'error' => $validator->errors()
+            ], 422);
+            
+        }
+
+        if ($request->data_criacao > $request->data_fechamento){
+
+            return response()->json([
+                'mensagem' => 'Data de fechamento não pode ser antes da data de criação.'
+            ], 200);
+
+        }
+
+
         $vaga->titulo_vaga = $request->titulo_vaga;
         $vaga->descricao = $request->descricao;
         $vaga->salario = $request->salario;
@@ -140,12 +208,6 @@ class VagaController extends Controller
         $vaga->qtd_vagas_preenchidas = $request->qtd_vagas_preenchidas;
         $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
         $vaga->id_empresas = $request->id_empresas;
-
-        if (!$vaga) {
-            return response()->json([
-                'mensage' => 'Vaga não encontrada'
-            ], 404);
-        }
 
         $vaga->save();
 
@@ -161,6 +223,7 @@ class VagaController extends Controller
     public function destroy(string $id)
     {
         $vaga = Vaga::find($id);
+
         if (!$vaga) {
             return response()->json([
                 'mensage' => 'Vaga não encontrada'
@@ -205,9 +268,6 @@ class VagaController extends Controller
             
         ], 200); 
 
-        /*foreach ($vaga->Habilidade as $habilidade) {
-            Habilidade::find($habilidade->vagas_habilidades->id_habilidades);
-        } */
 
     }
 

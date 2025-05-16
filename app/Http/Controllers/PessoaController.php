@@ -12,6 +12,8 @@ use App\Models\Vaga;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Validator;
+
 use App\Models\Pessoa;
 use Mockery\Undefined;
 
@@ -31,60 +33,86 @@ class PessoaController extends Controller
     public function store(Request $request)
     {
 
-        /*
-            Estilo de envio dos dados
+        if ($request->id_tipo_usuarios == 3){
 
-            Se for empresa:
+            $rules = [
 
-            "id_pessoas": 2, agora é auto increment
-            "nome": "Cleiton",
-            "telefone": "28992228225",
-            "sobre": "Marceneiro",
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
 
-            "cnpj": "123456789",
+                'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
 
-            "email": "cleiton@gmail.com",
-            "senha": "123456",
-            "id_tipo_usuarios": 3,
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
 
-            "cep": "aaaaa",
-            "cidade": "Alegre",
-            "estado": "São Paulo"
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
 
-            -------------------------------------
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
 
-            Se for pessoa física:
+        }
 
-            "id_pessoas": 2, agora é auto increment
-            "nome": "Cleiton",
-            "sobrenome": "Castro Fernandes",
-            "data_de_nascimento": "02/06/2006",
-            "genero": "Masculino",
+        if ($request->id_tipo_usuarios == 2){
 
-            "telefone": "28992228225",
-            "sobre": "Marceneiro",
+            $rules = [
 
-            "cpf": "17462952793",
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
 
-            "email": "cleiton@gmail.com",
-            "senha": "123456",
-            "id_tipo_usuarios": 2,
+                'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
+                'data_de_nascimento' => 'required|date',
+                'sobrenome' => 'required|string|max:255',
+                'cad_unico'=> 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
+                'genero'=> 'required|string|max:45',
 
-            "cep": "aaaaa",
-            "cidade": "Cariacica",
-            "estado": "São Paulo"
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
 
-        */
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
 
-        // Verifica se a cidade já existe pelo nome e estado
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
+
+        }
+
         $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
 
         if (!$cidade) {
+
             // Cria a cidade se ela ainda não existir
             $cidade = Cidade::create([
                 'nome_cidade' => $request->cidade,
                 'id_pais' => 1,
             ]);
+            
         }
 
         // Cria a pessoa
@@ -156,7 +184,6 @@ class PessoaController extends Controller
      */
     public function show(string $id_pessoas)
     {
-
         $usuario = Usuario::find($id_pessoas);
 
         if ($usuario->id_tipo_usuarios == 3) {
@@ -171,7 +198,7 @@ class PessoaController extends Controller
         }
 
         if ($usuario->id_tipo_usuarios == 2) {
-
+          
             $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica'])->find($id_pessoas);
 
             return response()->json(
@@ -188,6 +215,77 @@ class PessoaController extends Controller
      */
     public function update(Request $request, string $id_pessoas)
     {
+
+        if ($request->id_tipo_usuarios == 3){
+
+            $rules = [
+
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
+
+                'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
+
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
+
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
+
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
+
+        }
+
+        if ($request->id_tipo_usuarios == 2){
+
+            $rules = [
+
+                'nome' => 'required|string|max:255',
+                'telefone' => 'required|string|max:20',
+                'sobre' => 'string',
+                'imagem' => 'string|max:255',
+
+                'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
+                'data_de_nascimento' => 'required|date',
+                'sobrenome' => 'required|string|max:255',
+                'cad_unico'=> 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
+                'genero'=> 'required|string|max:45',
+
+                'email' => 'required|string|max:255|email:rfc,dns,spoof',
+                'senha' => 'required|string|max:512',
+
+                'cep' => 'required|string|max:10',
+                'estado' => 'required|string|max:255',
+
+                'cidade' => 'required|string|max:50',
+    
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                    
+                return response()->json([
+                    'error' => $validator->errors()
+                ], 422);
+                    
+            }
+
+        }
+
         // Atualiza ou cria a cidade
         $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
 
@@ -278,7 +376,7 @@ class PessoaController extends Controller
 
     public function updateSobre(Request $request, string $id_pessoas)
     {
-        $pessoa = Pessoa::findOrFail($id_pessoas); // Retorna 404 automaticamente se não existir
+        $pessoa = Pessoa::findOrFail($id_pessoas); 
         $pessoa->update(['sobre' => $request->sobre]);
 
         return response()->json([

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Experiencia;
 use App\Models\Formacao_Academica;
 
+use Illuminate\Support\Facades\Validator;
+
 class Formacao_AcademicaController extends Controller
 {
     public function index(){
@@ -19,7 +21,29 @@ class Formacao_AcademicaController extends Controller
 
     public function store(Request $request){
 
-   
+        $rules = [
+
+            'escolaridade' => 'required|string|max:255',
+            'area_de_estudo' => 'string|max:255',
+            'diploma_formacao' => 'required|boolean',
+            'conclusao_formacao' => 'required|boolean',
+            'data_emissao' => 'required|date',
+            'data_conclusao' => 'required|date',
+            'id_pessoasFisicas' => 'required|integer|exists:App\Models\PessoasFisica,id_pessoas',
+            'id_instituicoes' => 'required|integer|exists:instituicoes',
+
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+                
+            return response()->json([
+                'error' => $validator->errors()
+            ], 422);
+                
+        }
+
         $formacao = new Formacao_Academica();
 
         $formacao->area_de_estudo = $request->area_de_estudo;
@@ -53,6 +77,29 @@ class Formacao_AcademicaController extends Controller
         $formacao = Formacao_Academica::find($id);
         if (!$formacao) {
             return response()->json(['message' => 'Formação não encontrada'], 404);
+        }
+
+        $rules = [
+
+            'escolaridade' => 'required|string|max:255',
+            'area_de_estudo' => 'string|max:255',
+            'diploma_formacao' => 'required|boolean',
+            'conclusao_formacao' => 'required|boolean',
+            'data_emissao' => 'required|date',
+            'data_conclusao' => 'required|date',
+            'id_pessoasFisicas' => 'required|integer|exists:App\Models\PessoasFisica,id_pessoas',
+            'id_instituicoes' => 'required|integer|exists:instituicoes',
+
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+                
+            return response()->json([
+                'error' => $validator->errors()
+            ], 422);
+                
         }
 
         $formacao->area_de_estudo = $request->area_de_estudo;
