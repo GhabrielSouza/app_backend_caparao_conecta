@@ -6,23 +6,17 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class Paises_Cidades extends Seeder
+class Instituicoes extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DB::table("pais")->insert([
+        DB::table("instituicoes")->insert([
 
-            'nome_pais' => 'Brasil'
-
-        ]);
-
-        DB::table("cidades")->insert([
-
-            'nome_cidade' => 'Porto Alegre',
-            'id_pais' => 1
+            'nome' => 'Instituto Federal do Rio Grande do Sul',
+            'id_cidades' => 1,
 
         ]);
     }

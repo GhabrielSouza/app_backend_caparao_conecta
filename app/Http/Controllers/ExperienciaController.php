@@ -10,10 +10,6 @@ use Illuminate\Support\Facades\Validator;
 class ExperienciaController extends Controller
 {
     public function index(){
-        return view("experiencias.index");
-    }
-
-    public function all(){
         $experiencias = Experiencia::all();
         return response()->json($experiencias);
     }

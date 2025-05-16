@@ -1,6 +1,10 @@
 <?php
 
+
+use App\Http\Controllers\CursoController;
+
 use App\Http\Controllers\AuthController;
+
 use App\Http\Controllers\Formacao_AcademicaController;
 
 use App\Http\Controllers\ExperienciaController;
@@ -26,20 +30,35 @@ Route::get('/status', function () {
     );
 });
 
-
 //Rotas de formacoes academicas
-Route::get('/formacoes_academicas', [Formacao_AcademicaController::class, 'all']);
+Route::get('/formacoes_academicas', [Formacao_AcademicaController::class, 'index']);
 Route::get('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'show']);
 Route::post('/formacoes_academicas', [Formacao_AcademicaController::class, 'store']);
 Route::put('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'update']);
 Route::delete('/formacoes_academicas/{id_experiencias}', [Formacao_AcademicaController::class, 'destroy']);
 
 //Rotas de experiencias
-Route::get('/experiencias', [ExperienciaController::class, 'all']);
+Route::get('/experiencias', [ExperienciaController::class, 'index']);
 Route::get('/experiencias/{id_experiencia}', [ExperienciaController::class, 'show']);
 Route::post('/experiencias', [ExperienciaController::class, 'store']);
 Route::put('/experiencias/{id_experiencia}', [ExperienciaController::class, 'update']);
 Route::delete('/experiencias/{id_experiencias}', [ExperienciaController::class, 'destroy']);
+
+Route::get('/cursos', [CursoController::class, 'index']);
+Route::get('/cursos/{id_curso}', [CursoController::class, 'show']);
+Route::post('/cursos', [CursoController::class, 'store']);
+Route::put('/cursos/{id_curso}', [CursoController::class, 'update']);
+Route::delete('/cursos/{id_cursos}', [CursoController::class, 'destroy']);
+
+Route::post('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'adicionarCursoVaga']);
+Route::get('/cursosOnVaga/{id_vagas}', [CursoController::class, 'verCursosVaga']);
+Route::delete('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'removerCursoVaga']);
+
+Route::post('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'adicionarCurso']);
+Route::get('/cursosOnPessoaFisica/{id_pessoas}', [CursoController::class, 'verCursos']);
+Route::put('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'updateCurso']);
+Route::delete('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'removerCurso']);
+
 
 //Route de vagas
 Route::post('/cadVagas', [VagaController::class, 'store']);
@@ -49,9 +68,8 @@ Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
 
 //Route da habilidades + vagas (relação N pra N)
+Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']);
 
-Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); 
-Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']); //adicionar habilidades nas vagas
 Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
 //Route da pessoa fisica + vagas (relação N pra N)
@@ -72,12 +90,6 @@ Route::get('/cidadesShowAll', [CidadeController::class, 'showAll']);
 Route::delete('/cidades/{id_cidades}', [CidadeController::class, 'destroy']);
 Route::put('/cidades/{id_cidades}', [CidadeController::class, 'update']);
 
-/* Route de endereços que tá junto do de pessoas
-Route::post('/cadEnderecos', [EnderecoController::class,'store']);
-Route::get('/enderecos/{id_enderecos}', [EnderecoController::class,'show']);
-Route::delete('/enderecos/{id_enderecos}', [EnderecoController::class,'destroy']);
-Route::put('/enderecos/{id_enderecos}', [EnderecoController::class,'update']);
-*/
 
 Route::get('/enderecoShowAll', [EnderecoController::class, 'showAll']);
 
@@ -94,4 +106,3 @@ Route::patch('/pessoas/{id}/sobre', [PessoaController::class, 'updateSobre']);
 //login e logout
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-

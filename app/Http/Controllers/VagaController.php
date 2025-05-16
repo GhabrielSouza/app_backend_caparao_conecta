@@ -30,21 +30,6 @@ class VagaController extends Controller
     public function store(Request $request)
     {
 
-        /*
-
-            "titulo_vaga": "Teste",
-            "descricao": "Gerente de estoque",
-            "salario": 10250.99,
-            "status": "ativo",
-            "data_criacao": "02/07/2006",
-            "data_fechamento": "02/07/2007",
-            "qtd_vaga": 20,
-            "modalidade_da_vaga": "presencial",
-            "id_empresas": 16
-
-            "qtd_vagas_preenchidas": 12, //NÃO PRECISA de colocar no store, já que sempre vai ser 0 quando criar a vaga
-
-        */
 
         $rules = [
 
@@ -72,7 +57,6 @@ class VagaController extends Controller
         }
 
         if ($request->data_criacao > $request->data_fechamento){
-
             return response()->json([
                 'mensagem' => 'Data de fechamento não pode ser antes da data de criação.'
             ], 200);
@@ -88,7 +72,7 @@ class VagaController extends Controller
         $vaga->data_criacao = Carbon::createFromFormat('d/m/Y', $request->data_criacao)->format('Y-m-d');
         $vaga->data_fechamento = Carbon::createFromFormat('d/m/Y', $request->data_fechamento)->format('Y-m-d');
         $vaga->qtd_vaga = $request->qtd_vaga;
-        $vaga->qtd_vagas_preenchidas = 0; //como a vaga está sendo criada, ela vai sempre estar zerada.
+        $vaga->qtd_vagas_preenchidas = 0; 
         $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
         $vaga->id_empresas = $request->id_empresas;
 
@@ -138,14 +122,6 @@ class VagaController extends Controller
             ->get();
     
         return response()->json($vagas, 200);
-
-        $vagas = Vaga::all();
-
-        return response()->json(
-             $vagas
-            
-        , 200); 
-
 
     }
 
@@ -240,10 +216,11 @@ class VagaController extends Controller
         ], 200);
     }
 
-    public function adicionarHabilidades($id_habilidades, $id_vagas){
+    public function adicionarHabilidades($id_habilidades, $id_vagas)
+    {
 
         $habilidade = Habilidade::find($id_habilidades);
-        
+
         $habilidade->habilidadeOnVaga()->attach($id_vagas);
 
         $vaga = Vaga::find($id_vagas);
@@ -252,30 +229,33 @@ class VagaController extends Controller
             'mensagem' => 'Habilidade colocada na vaga com sucesso!',
             'data - habilidade' => $habilidade,
             'data - vaga' => $vaga
-        ], 200); 
+        ], 200);
 
     }
 
-    public function verHabilidades($id_vagas){
+    public function verHabilidades($id_vagas)
+    {
 
         $vagas = Vaga::find($id_vagas);
         $habilidades = $vagas->vagaOnHabilidade;
-        $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at','updated_at']);
+        $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at', 'updated_at']);
 
-        return response()->json([
-            'vaga' => $vagas
-            //'data - habilidades' => $nome_habilidades caso precise num futuro próximo
-            
-        ], 200); 
+
+        return response()->json(
+            $vagas,
+            200
+        );
 
 
     }
 
-    public function candidatarPessoas($id_pessoas, $id_vagas){
+    public function candidatarPessoas($id_pessoas, $id_vagas)
+    {
 
         $pessoasFisica = PessoasFisica::find($id_pessoas);
-        
+     
         $pessoasFisica->candidato()->attach($id_vagas, array('created_at' => Carbon::now(),'updated_at'=> Carbon::now()));
+
 
         $vaga = Vaga::find($id_vagas);
 
@@ -283,26 +263,27 @@ class VagaController extends Controller
             'mensagem' => 'Candidato cadastrado na vaga com sucesso!',
             'data - pessoa física' => $pessoasFisica,
             'data - vaga' => $vaga
-        ], 200); 
+        ], 200);
 
     }
 
     public function verCandidatos($id_vagas)
-{
-    $vagas = Vaga::findOrFail($id_vagas);
-    $candidatos = $vagas->candidato;
+    {
+        $vagas = Vaga::findOrFail($id_vagas);
+        $candidatos = $vagas->candidato;
 
-    $pessoas = [];
+        $pessoas = [];
 
-    foreach ($candidatos as $candidato) {
-        // Get Pessoa with pessoasFisica relationship
-        $pessoa = Pessoa::with('pessoasFisica')
-            ->find($candidato->id_pessoas);
+        foreach ($candidatos as $candidato) {
+            // Get Pessoa with pessoasFisica relationship
+            $pessoa = Pessoa::with('pessoasFisica')
+                ->find($candidato->id_pessoas);
 
-        if ($pessoa) {
-            $pessoas[] = $pessoa;
+            if ($pessoa) {
+                $pessoas[] = $pessoa;
+            }
         }
-    }
+
 
     return response()->json(
          $pessoas

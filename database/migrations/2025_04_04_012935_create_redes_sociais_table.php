@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->string('curriculo_lattes', 255)->nullable();
             $table->id('id_redeSociais');
             $table->unsignedBigInteger('id_pessoas');
-            $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('id_pessoas')

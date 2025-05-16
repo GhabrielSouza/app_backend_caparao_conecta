@@ -11,13 +11,10 @@ use Illuminate\Support\Facades\Validator;
 class Formacao_AcademicaController extends Controller
 {
     public function index(){
-        //
-    }
-
-    public function all(){
         $formacoes = Formacao_Academica::all();
         return response()->json($formacoes);
     }
+
 
     public function store(Request $request){
 

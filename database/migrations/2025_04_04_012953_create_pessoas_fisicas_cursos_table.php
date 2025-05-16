@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->unsignedBigInteger('id_cursos');
             $table->unsignedBigInteger('id_pessoasFisicas');
             $table->primary(['id_cursos', 'id_pessoasFisicas']);
+            $table->boolean('certificado_curso');
+            $table->date('data_conclusao');
             $table->timestamps();
             $table->softDeletes();
 
