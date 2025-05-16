@@ -96,7 +96,7 @@ class CursoController extends Controller
             'deleted_at',
         ]);
 
-        return response()->json($cursos,  200);
+        return response()->json($cursos, 200);
     }
 
     public function updateCurso(Request $request, string $id_cursos, string $id_pessoas)

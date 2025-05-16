@@ -65,9 +65,7 @@ class VagaController extends Controller
                 'mensagem' => 'Vaga criada com sucesso',
                 'data' => $vaga
             ], 200);
-        }
-
-        else {
+        } else {
             return response()->json([
                 'mensagem' => 'Data de fechamento não pode ser antes da data de criação.'
             ], 200);
@@ -89,15 +87,16 @@ class VagaController extends Controller
 
         return response()->json($vaga, 200);
     }
-    
-    public function showAll(){
-        
+
+    public function showAll()
+    {
+
         $vagas = Vaga::all();
 
         return response()->json([
             'data - todas vagas' => $vagas
-            
-        ], 200); 
+
+        ], 200);
 
     }
 
@@ -157,10 +156,11 @@ class VagaController extends Controller
         ], 200);
     }
 
-    public function adicionarHabilidades($id_habilidades, $id_vagas){
+    public function adicionarHabilidades($id_habilidades, $id_vagas)
+    {
 
         $habilidade = Habilidade::find($id_habilidades);
-        
+
         $habilidade->habilidadeOnVaga()->attach($id_vagas);
 
         $vaga = Vaga::find($id_vagas);
@@ -169,39 +169,32 @@ class VagaController extends Controller
             'mensagem' => 'Habilidade colocada na vaga com sucesso!',
             'data - habilidade' => $habilidade,
             'data - vaga' => $vaga
-        ], 200); 
+        ], 200);
 
     }
 
-    public function verHabilidades($id_vagas){
+    public function verHabilidades($id_vagas)
+    {
 
         $vagas = Vaga::find($id_vagas);
         $habilidades = $vagas->vagaOnHabilidade;
-        $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at','updated_at']);
+        $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at', 'updated_at']);
 
-        return response()->json([
-            'data - vaga' => $vagas
-            //'data - habilidades' => $nome_habilidades caso precise num futuro próximo
-            
-        ], 200); 
-
-        /*foreach ($vaga->Habilidade as $habilidade) {
-            Habilidade::find($habilidade->vagas_habilidades->id_habilidades);
-        } */
+        return response()->json(
+            $vagas
+            ,
+            200
+        );
 
     }
 
-    public function candidatarPessoas($id_pessoas, $id_vagas){
+    public function candidatarPessoas($id_pessoas, $id_vagas)
+    {
 
         $pessoasFisica = PessoasFisica::find($id_pessoas);
-        
-        $pessoasFisica->candidato()->attach($id_vagas, array('created_at' => Carbon::now(),'updated_at'=> Carbon::now()));
 
-        // $dataCandidatura = $pessoasFisica->candidato()::findOrFail($id_vagas);
+        $pessoasFisica->candidato()->attach($id_vagas, array('created_at' => Carbon::now(), 'updated_at' => Carbon::now()));
 
-        // $dataCandidatura->data_candidatura = $request->data_candidatura;
-
-        // $dataCandidatura->save();
 
         $vaga = Vaga::find($id_vagas);
 
@@ -209,29 +202,29 @@ class VagaController extends Controller
             'mensagem' => 'Candidato cadastrado na vaga com sucesso!',
             'data - pessoa física' => $pessoasFisica,
             'data - vaga' => $vaga
-        ], 200); 
+        ], 200);
 
     }
 
     public function verCandidatos($id_vagas)
-{
-    $vagas = Vaga::findOrFail($id_vagas);
-    $candidatos = $vagas->candidato;
+    {
+        $vagas = Vaga::findOrFail($id_vagas);
+        $candidatos = $vagas->candidato;
 
-    $pessoas = [];
+        $pessoas = [];
 
-    foreach ($candidatos as $candidato) {
-        // Get Pessoa with pessoasFisica relationship
-        $pessoa = Pessoa::with('pessoasFisica')
-            ->find($candidato->id_pessoas);
+        foreach ($candidatos as $candidato) {
+            // Get Pessoa with pessoasFisica relationship
+            $pessoa = Pessoa::with('pessoasFisica')
+                ->find($candidato->id_pessoas);
 
-        if ($pessoa) {
-            $pessoas[] = $pessoa;
+            if ($pessoa) {
+                $pessoas[] = $pessoa;
+            }
         }
-    }
 
-    return response()->json([
-        'data' => $pessoas
-    ], 200);
-}
+        return response()->json([
+            'data' => $pessoas
+        ], 200);
+    }
 }
