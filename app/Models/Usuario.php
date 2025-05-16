@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
+    use HasApiTokens, HasFactory, Notifiable;
     use SoftDeletes;
 
     protected $fillable = [
         'email',
-        'senha',
+        'password',
         'id_tipo_usuarios',
         'id_pessoas',
     ];

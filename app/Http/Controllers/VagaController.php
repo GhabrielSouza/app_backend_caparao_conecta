@@ -118,14 +118,34 @@ class VagaController extends Controller
         return response()->json($vaga, 200);
     }
     
-    public function showAll(){
+    public function showAll(Request $request)
+    {
+        $modalidade = explode(",", $request->input('modalidade')); 
+        $id_empresa = explode(",", $request->input('id_empresa'));
+        $atuacao = explode(",", $request->input('atuacao'));
         
+
+        $vagas = Vaga::query()
+            ->when($request->has('modalidade'), function ($query) use ($modalidade) {
+                $query->whereIn('modalidade_da_vaga', $modalidade);
+            })
+            ->when($request->has('id_empresa'), function ($query) use ($id_empresa) {
+                $query->whereIn('id_empresas', $id_empresa);
+            })
+            ->when($request->has('atuacao'), function ($query) use ($atuacao) {
+                $query->whereIn('atuacao', $atuacao);
+            })
+            ->get();
+    
+        return response()->json($vagas, 200);
+
         $vagas = Vaga::all();
 
-        return response()->json([
-            'data - todas vagas' => $vagas
+        return response()->json(
+             $vagas
             
-        ], 200); 
+        , 200); 
+
 
     }
 
@@ -243,7 +263,7 @@ class VagaController extends Controller
         $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at','updated_at']);
 
         return response()->json([
-            'data - vaga' => $vagas
+            'vaga' => $vagas
             //'data - habilidades' => $nome_habilidades caso precise num futuro próximo
             
         ], 200); 
@@ -256,12 +276,6 @@ class VagaController extends Controller
         $pessoasFisica = PessoasFisica::find($id_pessoas);
         
         $pessoasFisica->candidato()->attach($id_vagas, array('created_at' => Carbon::now(),'updated_at'=> Carbon::now()));
-
-        // $dataCandidatura = $pessoasFisica->candidato()::findOrFail($id_vagas);
-
-        // $dataCandidatura->data_candidatura = $request->data_candidatura;
-
-        // $dataCandidatura->save();
 
         $vaga = Vaga::find($id_vagas);
 
@@ -290,8 +304,8 @@ class VagaController extends Controller
         }
     }
 
-    return response()->json([
-        'data' => $pessoas
-    ], 200);
+    return response()->json(
+         $pessoas
+    , 200);
 }
 }
