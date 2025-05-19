@@ -26,15 +26,22 @@ class Pessoa extends Model
         return $this->hasOne('App\Models\Empresa', 'id_pessoas', 'id_pessoas');
     }
 
-    public function pessoasFisica(){
-         return $this->hasOne('App\Models\PessoasFisica', 'id_pessoas', 'id_pessoas'); 
+    public function pessoasFisica()
+    {
+        return $this->hasOne('App\Models\PessoasFisica', 'id_pessoas', 'id_pessoas');
     }
 
-    public function usuario(){ // Relação um pra um de pessoa com usuário
-        return $this->hasOne('App\Models\Usuario','id_pessoas', 'id_pessoas');
+    public function usuario()
+    { // Relação um pra um de pessoa com usuário
+        return $this->hasOne('App\Models\Usuario', 'id_pessoas', 'id_pessoas');
     }
     public function endereco()
     { // uma pessoa tem N endereços
-        return $this->hasOne('App\Models\Endereco','id_pessoas', 'id_pessoas');
+        return $this->hasOne('App\Models\Endereco', 'id_pessoas', 'id_pessoas');
+    }
+
+    public function redeSocial()
+    { // uma pessoa tem N endereços
+        return $this->hasOne('App\Models\Rede_Social', 'id_pessoas', 'id_pessoas');
     }
 }

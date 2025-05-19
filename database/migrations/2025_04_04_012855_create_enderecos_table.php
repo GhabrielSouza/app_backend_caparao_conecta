@@ -9,7 +9,6 @@ return new class extends Migration {
     {
         Schema::create('enderecos', function (Blueprint $table) {
             $table->id('id_enderecos');
-            $table->string('cep', 10);
             $table->foreignId('id_cidades')->constrained('cidades', 'id_cidades')->onDelete('cascade');
             $table->unsignedBigInteger('id_pessoas');
             $table->string('estado', 255);

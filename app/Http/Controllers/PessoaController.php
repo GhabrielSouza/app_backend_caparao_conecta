@@ -34,7 +34,7 @@ class PessoaController extends Controller
     public function store(Request $request)
     {
 
-        if ($request->id_tipo_usuarios == 3){
+        if ($request->id_tipo_usuarios == 3) {
             $rules = [
 
                 'nome' => 'required|string|max:255',
@@ -47,25 +47,24 @@ class PessoaController extends Controller
                 'email' => 'required|string|max:255|email:rfc,dns,spoof',
                 'password' => 'required|string|max:512',
 
-                'cep' => 'required|string|max:10',
                 'estado' => 'required|string|max:255',
                 'cidade' => 'required|string|max:50',
-    
+
             ];
-    
+
             $validator = Validator::make($request->all(), $rules);
-    
+
             if ($validator->fails()) {
-                    
+
                 return response()->json([
                     'error' => $validator->errors()
                 ], 422);
-                    
+
             }
 
         }
 
-        if ($request->id_tipo_usuarios == 2){
+        if ($request->id_tipo_usuarios == 2) {
 
             $rules = [
 
@@ -77,27 +76,26 @@ class PessoaController extends Controller
                 'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
                 'data_de_nascimento' => 'required|date',
                 'sobrenome' => 'required|string|max:255',
-                'cad_unico'=> 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
-                'genero'=> 'required|string|max:45',
+                'cad_unico' => 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
+                'genero' => 'required|string|max:45',
 
                 'email' => 'required|string|max:255|email:rfc,dns,spoof',
                 'password' => 'required|string|max:512',
 
-                'cep' => 'required|string|max:10',
                 'estado' => 'required|string|max:255',
 
                 'cidade' => 'required|string|max:50',
-    
+
             ];
-    
+
             $validator = Validator::make($request->all(), $rules);
-    
+
             if ($validator->fails()) {
-                    
+
                 return response()->json([
                     'error' => $validator->errors()
                 ], 422);
-                    
+
             }
 
         }
@@ -111,7 +109,7 @@ class PessoaController extends Controller
                 'nome_cidade' => $request->cidade,
                 'id_pais' => 1,
             ]);
-            
+
         }
 
         // Cria a pessoa
@@ -142,7 +140,6 @@ class PessoaController extends Controller
 
         // Cria o endereço com o ID da cidade
         $endereco = Endereco::create([
-            'cep' => $request->cep,
             'estado' => $request->estado,
             'id_cidades' => $cidade->id_cidades,
             'id_pessoas' => $pessoa->id_pessoas
@@ -197,7 +194,7 @@ class PessoaController extends Controller
 
         if ($usuario->id_tipo_usuarios == 3) {
 
-            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'empresa'])->find($id_pessoas);
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'empresa', 'redeSocial'])->find($id_pessoas);
 
             return response()->json(
                 $pessoa,
@@ -207,8 +204,8 @@ class PessoaController extends Controller
         }
 
         if ($usuario->id_tipo_usuarios == 2) {
-          
-            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica'])->find($id_pessoas);
+
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica', 'redeSocial'])->find($id_pessoas);
 
             return response()->json(
                 $pessoa,
@@ -225,7 +222,7 @@ class PessoaController extends Controller
     public function update(Request $request, string $id_pessoas)
     {
 
-        if ($request->id_tipo_usuarios == 3){
+        if ($request->id_tipo_usuarios == 3) {
 
             $rules = [
 
@@ -237,28 +234,26 @@ class PessoaController extends Controller
                 'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
 
                 'email' => 'required|string|max:255|email:rfc,dns,spoof',
-                'password' => 'required|string|max:512',
 
-                'cep' => 'required|string|max:10',
                 'estado' => 'required|string|max:255',
 
                 'cidade' => 'required|string|max:50',
-    
+
             ];
-    
+
             $validator = Validator::make($request->all(), $rules);
-    
+
             if ($validator->fails()) {
-                    
+
                 return response()->json([
                     'error' => $validator->errors()
                 ], 422);
-                    
+
             }
 
         }
 
-        if ($request->id_tipo_usuarios == 2){
+        if ($request->id_tipo_usuarios == 2) {
 
             $rules = [
 
@@ -270,27 +265,25 @@ class PessoaController extends Controller
                 'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
                 'data_de_nascimento' => 'required|date',
                 'sobrenome' => 'required|string|max:255',
-                'cad_unico'=> 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
-                'genero'=> 'required|string|max:45',
+                'cad_unico' => 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
+                'genero' => 'required|string|max:45',
 
                 'email' => 'required|string|max:255|email:rfc,dns,spoof',
-                'password' => 'required|string|max:512',
 
-                'cep' => 'required|string|max:10',
                 'estado' => 'required|string|max:255',
 
                 'cidade' => 'required|string|max:50',
-    
+
             ];
-    
+
             $validator = Validator::make($request->all(), $rules);
-    
+
             if ($validator->fails()) {
-                    
+
                 return response()->json([
                     'error' => $validator->errors()
                 ], 422);
-                    
+
             }
 
         }
@@ -335,7 +328,6 @@ class PessoaController extends Controller
         }
         $usuario->update([
             'email' => $request->email,
-            'password' => $request->senha ? bcrypt($request->senha) : $usuario->senha,
         ]);
 
         // Atualiza o endereço
@@ -344,7 +336,6 @@ class PessoaController extends Controller
             return response()->json(['mensagem' => 'Endereço não encontrado'], 404);
         }
         $endereco->update([
-            'cep' => $request->cep,
             'estado' => $request->estado,
             'id_cidades' => $cidade->id_cidades
         ]);
@@ -398,7 +389,7 @@ class PessoaController extends Controller
 
     public function updateSobre(Request $request, string $id_pessoas)
     {
-        $pessoa = Pessoa::findOrFail($id_pessoas); 
+        $pessoa = Pessoa::findOrFail($id_pessoas);
         $pessoa->update(['sobre' => $request->sobre]);
 
         return response()->json([

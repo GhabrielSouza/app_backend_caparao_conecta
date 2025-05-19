@@ -11,7 +11,6 @@ class Endereco extends Model
     use SoftDeletes;
     protected $fillable = [
         'id_enderecos',
-        'cep',
         'id_cidades',
         'id_pessoas',
         'estado'
@@ -23,7 +22,7 @@ class Endereco extends Model
 
     public function pessoas()
     { // uma pessoa tem N endereços
-        return $this->belongsTo('App\Models\Pessoa','id_pessoas', 'id_pessoas');
+        return $this->belongsTo('App\Models\Pessoa', 'id_pessoas', 'id_pessoas');
     }
 
     public function cidade()

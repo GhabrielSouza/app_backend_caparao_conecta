@@ -29,6 +29,6 @@ class Rede_Social extends Model
 
     public function pessoas()
     { // uma pessoa tem N endereços
-        return $this->belongsTo('App\Models\Pessoa');
+        return $this->belongsTo('App\Models\Pessoa', 'id_pessoas', 'id_pessoas');
     }
 }
