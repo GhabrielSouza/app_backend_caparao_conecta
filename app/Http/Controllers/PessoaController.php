@@ -231,7 +231,7 @@ class PessoaController extends Controller
                 'sobre' => 'string',
                 'imagem' => 'string|max:255',
 
-                'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
+
 
                 'email' => 'required|string|max:255|email:rfc,dns,spoof',
 
@@ -262,7 +262,7 @@ class PessoaController extends Controller
                 'sobre' => 'string',
                 'imagem' => 'string|max:255',
 
-                'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
+
                 'data_de_nascimento' => 'required|date',
                 'sobrenome' => 'required|string|max:255',
                 'cad_unico' => 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
@@ -306,8 +306,6 @@ class PessoaController extends Controller
         $pessoa->update([
             'nome' => $request->nome,
             'telefone' => $request->telefone,
-            'sobre' => $request->sobre,
-            'imagem' => $request->imagem,
         ]);
 
         $rede_social = Rede_Social::find($id_pessoas);
@@ -345,9 +343,7 @@ class PessoaController extends Controller
             if (!$empresa) {
                 return response()->json(['mensagem' => 'Empresa não encontrada'], 404);
             }
-            $empresa->update([
-                'cnpj' => $request->cnpj,
-            ]);
+
 
             return response()->json([
                 'mensagem' => 'Dados atualizados com sucesso',
@@ -366,7 +362,6 @@ class PessoaController extends Controller
                 return response()->json(['mensagem' => 'Pessoa física não encontrada'], 404);
             }
             $pessoaFisica->update([
-                'cpf' => $request->cpf,
                 'data_de_nascimento' => Carbon::createFromFormat('d/m/Y', $request->data_de_nascimento)->format('Y-m-d'),
                 'sobrenome' => $request->sobrenome,
                 'cad_unico' => $request->cad_unico,
