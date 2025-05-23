@@ -13,6 +13,8 @@ return new class extends Migration {
             $table->string('nome_empresa', 255);
             $table->boolean('comprovacao');
             $table->text('descricao')->nullable();
+            $table->date('data_emissao');
+            $table->date('data_conclusao');
             $table->unsignedBigInteger('id_pessoasFisicas');
             $table->timestamps();
             $table->softDeletes();
