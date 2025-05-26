@@ -14,7 +14,8 @@ return new class extends Migration {
             $table->boolean('comprovacao');
             $table->text('descricao')->nullable();
             $table->date('data_emissao');
-            $table->date('data_conclusao');
+            $table->date('data_conclusao')->nullable();
+            $table->boolean('trabalho_atual');
             $table->unsignedBigInteger('id_pessoasFisicas');
             $table->timestamps();
             $table->softDeletes();

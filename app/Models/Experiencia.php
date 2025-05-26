@@ -15,6 +15,9 @@ class Experiencia extends Model
         'nome_empresa',
         'comprovacao',
         'descricao',
+        'data_emissao',
+        'data_conclusao',
+        'trabalho_atual',
         'id_pessoasFisicas'
     ];
 
