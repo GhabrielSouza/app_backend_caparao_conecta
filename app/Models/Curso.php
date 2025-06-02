@@ -30,7 +30,7 @@ class Curso extends Model
         return $this->belongsTo('App\Models\TipoDeCurso');
     }
 
-    public function cursoOnPessoaFisica()
+    public function cursosOnPessoasFisicas()
     {
         return $this->belongsToMany('App\Models\PessoasFisica', 'pessoas_fisicas_cursos', 'id_cursos', 'id_pessoasFisicas')->withTimestamps();
     }

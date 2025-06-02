@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Habilidade;
-
+use Illuminate\Support\Facades\Validator;
+use function PHPUnit\Framework\returnArgument;
 class HabilidadeController extends Controller
 {
     /**
@@ -13,7 +14,8 @@ class HabilidadeController extends Controller
      */
     public function index()
     {
-        //
+        $habilidades = Habilidade::all();
+        return response()->json($habilidades, 200);
     }
 
     /**
@@ -22,7 +24,23 @@ class HabilidadeController extends Controller
     public function store(Request $request)
     {
 
-        //não vai ter, as habilidades são predefinidas no BD
+        $rules = [
+            'nome' => 'required|string|max:255',
+            'status' => 'string|max:45',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $habilidades = new Habilidade();
+        $habilidades->nome = $request->nome;
+        $habilidades->status = $request->id_cidades;
+        $habilidades->save();
+
+        return response()->json($habilidades, 201);
 
     }
 
@@ -55,10 +73,31 @@ class HabilidadeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id_pessoas)
+    public function update(Request $request, string $id)
     {
 
-        //se pá que vai ser no BD direto, não sei se vai ter update
+        $rules = [
+            'nome' => 'required|string|max:255',
+            'status' => 'string|max:45',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $habilidades = Habilidade::find($id);
+
+        if(!$habilidades){
+            return response()->json(['error' => 'Habilidade não encontrada'], 404);
+        }
+
+        $habilidades->nome = $request->nome;
+        $habilidades->status = $request->id_cidades;
+        $habilidades->save();
+
+        return response()->json($habilidades, 201);
 
     }
 

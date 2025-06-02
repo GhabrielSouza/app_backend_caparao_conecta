@@ -11,10 +11,23 @@ class Instituicao extends Model
     protected $fillable = [
         'id_instituicao',
         'nome',
+        'id_cidades',
 
     ];
-    protected $primaryKey = 'id_institucao';
 
-    protected $foreingKey = 'id_institucao';
+    protected $table = 'instituicoes';
+
+    protected $primaryKey = 'id_instituicoes';
+
+    protected $foreingKey = 'id_instituicoes';
+
+    public function formacaoAcademica(){
+        return $this->hasMany('App/Models/Formacao_Academica', 'id_instituicoes', 'id_instituicoes');
+    }
+
+    public function curso()
+    {
+        return $this->hasMany('App\Models\Curso', 'id_instituicoes', 'id_instituicoes');
+    }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PessoasFisica;
 use Illuminate\Http\Request;
 use App\Models\Experiencia;
 use App\Models\Formacao_Academica;
@@ -21,7 +22,7 @@ class Formacao_AcademicaController extends Controller
         $rules = [
 
             'escolaridade' => 'required|string|max:255',
-            'area_de_estudo' => 'string|max:255',
+            'area_de_estudo' => 'nullable|string|max:255',
             'diploma_formacao' => 'required|boolean',
             'conclusao_formacao' => 'required|boolean',
             'data_emissao' => 'required|date',
@@ -58,12 +59,15 @@ class Formacao_AcademicaController extends Controller
     }
 
 
-    public function show($id){
-        $formacao = Formacao_Academica::find($id);
-        if (!$formacao) {
-            return response()->json(['message' => 'Formação não encontrada'], 404);
+    public function show($id)
+    {
+        $formacoes = Formacao_Academica::where('id_pessoasFisicas', $id)->with('instituicao')->get();
+        
+        if ($formacoes->isEmpty()) {
+            return response()->json(['message' => 'Nenhuma formação encontrada'], 404);
         }
-        return response()->json($formacao);
+        
+        return response()->json($formacoes);
     }
 
 
@@ -79,7 +83,7 @@ class Formacao_AcademicaController extends Controller
         $rules = [
 
             'escolaridade' => 'required|string|max:255',
-            'area_de_estudo' => 'string|max:255',
+            'area_de_estudo' => 'nullable|string|max:255',
             'diploma_formacao' => 'required|boolean',
             'conclusao_formacao' => 'required|boolean',
             'data_emissao' => 'required|date',

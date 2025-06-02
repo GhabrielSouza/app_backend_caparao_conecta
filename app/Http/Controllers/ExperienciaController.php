@@ -26,7 +26,7 @@ class ExperienciaController extends Controller
             'nome_empresa' => 'string|max:255',
             'comprovacao' => 'required|boolean',
             'descricao' => 'string',
-            'data_emissao' => 'date',
+            'data_emissao' => 'date|required',
             'data_conclusao' => 'nullable|date|required_if:trabalho_atual,false',
             'trabalho_atual' => 'required|boolean',
             'id_pessoasFisicas' => 'required|integer|exists:App\Models\PessoasFisica,id_pessoas',
@@ -65,11 +65,12 @@ class ExperienciaController extends Controller
 
     public function show($id)
     {
-        $experiencia = PessoasFisica::with('experiencia')->find($id);
-        $experiencias = $experiencia->experiencia;
-        if (!$experiencia) {
-            return response()->json(['message' => 'Experiência não encontrada'], 404);
+        $experiencias = Experiencia::where('id_pessoasFisicas', $id)->get();
+        
+        if ($experiencias->isEmpty()) {
+            return response()->json(['message' => 'Nenhuma experiência encontrada'], 404);
         }
+        
         return response()->json($experiencias, 200);
     }
 

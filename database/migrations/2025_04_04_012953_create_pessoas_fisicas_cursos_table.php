@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('id_pessoasFisicas');
             $table->primary(['id_cursos', 'id_pessoasFisicas']);
             $table->boolean('certificado_curso');
-            $table->date('data_conclusao');
+            $table->date('data_conclusao')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

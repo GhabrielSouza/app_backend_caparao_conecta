@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\PessoasFisica;
+
 use App\Models\Habilidade;
 
 class PessoasFisicaController extends Controller
@@ -71,20 +72,31 @@ class PessoasFisicaController extends Controller
 
     }
 
-    public function adicionarHabilidades($id_habilidades, $id_pessoas){
+    public function adicionarHabilidades(Request $request){
 
-        $habilidade = Habilidade::find($id_habilidades);
-        
-        $habilidade->habilidadeOnCandidato()->attach($id_pessoas);
-
-        $pessoa = PessoasFisica::find($id_pessoas);
+        $request->validate([
+            'id_pessoasFisicas' => 'required',
+            'id_habilidades' => 'required|array',
+        ]);
+    
+        foreach ($request->id_habilidades as $habilidadeId) {
+            $habilidade = Habilidade::findOrFail($habilidadeId);
+            $habilidade->pessoas()->attach($request->id_pessoasFisicas);
+        }
 
         return response()->json([
             'mensagem' => 'Habilidade atribuida ao candidato com sucesso!',
-            'data - habilidade' => $habilidade,
-            'data - vaga' => $pessoa
+            $habilidade,
         ], 200); 
 
+    }
+
+    public function removerHabilidades(Request $request)
+    {
+        $pessoa = PessoasFisica::findOrFail($request->id_pessoasFisicas);
+        $pessoa->habilidades()->detach($request->id_habilidades);
+        
+        return response()->json(['success' => true]);
     }
 
     public function verHabilidades($id_pessoas){
@@ -93,10 +105,9 @@ class PessoasFisicaController extends Controller
         $habilidades = $pessoa->habilidades;
         $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at','updated_at']);
 
-        return response()->json([
-            'data - habilidades' => $nome_habilidades
-            
-        ], 200); 
+        return response()->json(
+            $nome_habilidades
+            , 200); 
 
         /*foreach ($vaga->Habilidade as $habilidade) {
             Habilidade::find($habilidade->vagas_habilidades->id_habilidades);

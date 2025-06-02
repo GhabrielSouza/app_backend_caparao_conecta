@@ -22,7 +22,7 @@ class Habilidade extends Model
         return $this->belongsToMany('App\Models\Vaga', 'vagas_habilidades', 'id_habilidades', 'id_vagas');
     }
 
-    public function habilidadeOnCandidato(){
+    public function pessoas(){
         return $this->belongsToMany('App\Models\PessoasFisica','pessoas_fisicas_habilidades','id_habilidades', 'id_pessoasFisicas')->withTimestamps();
     }
 
