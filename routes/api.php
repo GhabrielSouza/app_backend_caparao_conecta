@@ -67,9 +67,9 @@ Route::post('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'ad
 Route::get('/cursosOnVaga/{id_vagas}', [CursoController::class, 'verCursosVaga']);
 Route::delete('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'removerCursoVaga']);
 
-Route::post('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'adicionarCurso']);
+Route::post('/cursosOnPessoaFisica', [CursoController::class, 'adicionarCurso']);
 Route::get('/cursosOnPessoaFisica/{id_pessoas}', [CursoController::class, 'verCursos']);
-Route::put('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'updateCurso']);
+Route::put('/cursosOnPessoaFisica', [CursoController::class, 'updateCurso']);
 Route::delete('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'removerCurso']);
 
 //Route de vagas
@@ -103,10 +103,10 @@ Route::put('/cidades/{id_cidades}', [CidadeController::class, 'update']);
 Route::get('/enderecoShowAll', [EnderecoController::class, 'showAll']);
 
 //Route de pessoas
-Route::post('/cadPessoas', [PessoaController::class, 'store']); 
-Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']); 
-Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']); 
-Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']); 
+Route::post('/cadPessoas', [PessoaController::class, 'store']);
+Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']);
+Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']);
+Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);
 
 //Route update sobre de pessoas
 Route::patch('/pessoas/{id}/sobre', [PessoaController::class, 'updateSobre']);

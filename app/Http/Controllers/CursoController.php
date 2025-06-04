@@ -51,9 +51,9 @@ class CursoController extends Controller
 
     }
 
-    public function adicionarCurso(Request $request, string $id_cursos, string $id_pessoas)
+    public function adicionarCurso(Request $request)
     {
-        $curso = Curso::find($id_cursos);
+        $curso = Curso::find($request->id_cursos);
 
         if (!$curso) {
             return response()->json([
@@ -61,7 +61,7 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $pessoa_fisica = PessoasFisica::find($id_pessoas);
+        $pessoa_fisica = PessoasFisica::find($request->id_pessoasFisicas);
 
         if (!$pessoa_fisica) {
             return response()->json([
@@ -99,9 +99,9 @@ class CursoController extends Controller
         return response()->json($cursos, 200);
     }
 
-    public function updateCurso(Request $request, string $id_cursos, string $id_pessoas)
+    public function updateCurso(Request $request)
     {
-        $curso = Curso::find($id_cursos);
+        $curso = Curso::find($request->id_cursos);
 
         if (!$curso) {
             return response()->json([
@@ -109,7 +109,7 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $pessoa_fisica = PessoasFisica::find($id_pessoas);
+        $pessoa_fisica = PessoasFisica::find($request->id_pessoasFisicas);
 
         if (!$pessoa_fisica) {
             return response()->json([
