@@ -99,7 +99,14 @@ class CursoController extends Controller
         return response()->json($cursos, 200);
     }
 
-    public function updateCurso(Request $request)
+    public function listarPorInstituicao($idInstituicao)
+    {
+        $cursos = Curso::where('id_instituicoes', $idInstituicao)->get();
+        
+        return response()->json($cursos);
+    }
+
+    public function updateCurso(Request $request, string $id_cursos, string $id_pessoas)
     {
         $curso = Curso::find($request->id_cursos);
 
