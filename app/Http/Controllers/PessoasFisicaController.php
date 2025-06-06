@@ -74,19 +74,12 @@ class PessoasFisicaController extends Controller
 
     public function adicionarHabilidades(Request $request){
 
-        $request->validate([
-            'id_pessoasFisicas' => 'required',
-            'id_habilidades' => 'required|array',
-        ]);
-    
-        foreach ($request->id_habilidades as $habilidadeId) {
-            $habilidade = Habilidade::findOrFail($habilidadeId);
-            $habilidade->pessoas()->attach($request->id_pessoasFisicas);
-        }
+        $pessoa = PessoasFisica::findOrFail($request->id_pessoasFisicas); // Encontre a pessoa uma vez
+        $pessoa->habilidades()->attach($request->id_habilidades);
 
         return response()->json([
             'mensagem' => 'Habilidade atribuida ao candidato com sucesso!',
-            $habilidade,
+            $pessoa,
         ], 200); 
 
     }

@@ -71,7 +71,7 @@ class CursoController extends Controller
 
         $pessoa_fisica->cursosOnPessoasFisicas()->attach($curso->id_cursos, [
             'certificado_curso' => $request->certificado_curso,
-            'data_conclusao' => Carbon::createFromFormat('d/m/Y', $request->data_conclusao)->format('Y-m-d'),
+            'data_conclusao' => $request->data_conclusao,
         ]);
 
         return response()->json([
@@ -106,9 +106,9 @@ class CursoController extends Controller
         return response()->json($cursos);
     }
 
-    public function updateCurso(Request $request, string $id_cursos, string $id_pessoas)
+    public function updateCurso(Request $request, string $id_cursos)
     {
-        $curso = Curso::find($request->id_cursos);
+        $curso = Curso::find($id_cursos);
 
         if (!$curso) {
             return response()->json([
@@ -126,7 +126,7 @@ class CursoController extends Controller
 
         $pessoa_fisica->cursosOnPessoasFisicas()->updateExistingPivot($curso->id_cursos, [
             'certificado_curso' => $request->certificado_curso,
-            'data_conclusao' => Carbon::createFromFormat('d/m/Y', $request->data_conclusao)->format('Y-m-d'),
+            'data_conclusao' => $request->data_conclusao
         ]);
 
         return response()->json([
