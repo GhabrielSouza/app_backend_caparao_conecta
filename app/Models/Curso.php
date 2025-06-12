@@ -35,7 +35,7 @@ class Curso extends Model
         return $this->belongsToMany('App\Models\PessoasFisica', 'pessoas_fisicas_cursos', 'id_cursos', 'id_pessoasFisicas')->withTimestamps();
     }
 
-    public function cursoOnVaga()
+    public function curso()
     {
         return $this->belongsToMany('App\Models\Vaga', 'vagas_cursos', 'id_cursos', 'id_vagas')->withTimestamps();
     }

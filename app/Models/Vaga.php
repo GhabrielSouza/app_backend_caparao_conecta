@@ -31,9 +31,9 @@ class Vaga extends Model
         return $this->belongsTo('App\Models\Empresa');
     }
 
-    public function vagaOnHabilidade()
+    public function habilidades()
     {
-        return $this->belongsToMany('App\Models\Habilidade', 'vagas_habilidades', 'id_vagas', 'id_habilidades')->withTimestamps();
+        return $this->belongsToMany(Habilidade::class, 'vagas_habilidades', 'id_vagas', 'id_habilidades')->withTimestamps();
     }
 
     public function candidato()
@@ -41,8 +41,8 @@ class Vaga extends Model
         return $this->belongsToMany('App\Models\PessoasFisica', 'candidaturas', 'id_vagas', 'id_pessoasFisicas')->withTimestamps();
     }
 
-    public function cursoOnVaga()
+    public function curso()
     {
-        return $this->belongsToMany('App\Models\Curso', 'vagas_cursos', 'id_vagas', 'id_cursos')->withTimestamps();
+        return $this->belongsToMany(Curso::class, 'vagas_cursos', 'id_vagas', 'id_cursos')->withTimestamps();
     }
 }
