@@ -115,7 +115,7 @@ class VagaController extends Controller
      */
     public function show(string $id)
     {
-        $vaga = Vaga::with(['habilidades', 'cursos'])->find($id);
+        $vaga = Vaga::with(['habilidades', 'curso', 'empresa.pessoa.redeSocial'])->find($id);
 
         if (!$vaga) {
             return response()->json([

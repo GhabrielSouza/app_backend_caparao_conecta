@@ -28,7 +28,7 @@ class Vaga extends Model
 
     public function empresa()
     {
-        return $this->belongsTo('App\Models\Empresa');
+        return $this->belongsTo('App\Models\Empresa', 'id_empresas', 'id_pessoas');
     }
 
     public function habilidades()
