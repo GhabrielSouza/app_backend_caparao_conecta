@@ -78,6 +78,7 @@ Route::get('/vagas/{id_vagas}', [VagaController::class, 'show']);
 Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
 Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
+Route::patch('/vagas/{id_vagas}', [VagaController::class, 'updateStatus']);
 
 //Route da habilidades + vagas (relação N pra N)
 Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']);
