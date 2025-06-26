@@ -171,7 +171,6 @@ class VagaController extends Controller
             'descricao' => 'string|max:255',
             'salario' => 'required|decimal:2',
             'status' => 'string|max:255',
-            'data_criacao' => 'required|date',
             'data_fechamento' => 'required|date',
             'qtd_vaga' => 'required|integer',
             'qtd_vagas_preenchidas' => 'integer',
@@ -203,8 +202,8 @@ class VagaController extends Controller
         $vaga->descricao = $request->descricao;
         $vaga->salario = $request->salario;
         $vaga->status = $request->status;
-        $vaga->data_criacao = Carbon::createFromFormat('d/m/Y', $request->data_criacao)->format('Y-m-d');
-        $vaga->data_fechamento = Carbon::createFromFormat('d/m/Y', $request->data_fechamento)->format('Y-m-d');
+        $vaga->data_criacao = Carbon::now();
+        $vaga->data_fechamento = Carbon::parse($request->input('data_fechamento'));
         $vaga->qtd_vaga = $request->qtd_vaga;
         $vaga->qtd_vagas_preenchidas = $request->qtd_vagas_preenchidas;
         $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
