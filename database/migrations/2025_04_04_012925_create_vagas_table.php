@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('vagas', function (Blueprint $table) {
             $table->id('id_vagas');
             $table->string('titulo_vaga', 255);
-            $table->string('descricao', 255)->nullable();
+            $table->string('descricao')->nullable();
             $table->decimal('salario', 9, 2);
             $table->string('status', 255)->nullable();
             $table->date('data_criacao');

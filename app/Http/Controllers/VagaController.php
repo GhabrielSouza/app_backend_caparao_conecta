@@ -34,7 +34,7 @@ class VagaController extends Controller
         // 1. ATUALIZAR REGRAS DE VALIDAÇÃO PARA IDs
         $rules = [
             'titulo_vaga' => 'required|string|max:255',
-            'descricao' => 'nullable|string|max:255',
+            'descricao' => 'nullable|string',
             'salario' => 'required',
             'data_fechamento' => 'required|date',
             'qtd_vaga' => 'required|integer',
@@ -168,7 +168,7 @@ class VagaController extends Controller
         $rules = [
 
             'titulo_vaga' => 'required|string|max:255',
-            'descricao' => 'string|max:255',
+            'descricao' => 'string',
             'salario' => 'required|decimal:2',
             'status' => 'string|max:255',
             'data_fechamento' => 'required|date',
