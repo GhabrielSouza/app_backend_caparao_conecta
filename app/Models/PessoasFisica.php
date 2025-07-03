@@ -24,8 +24,9 @@ class PessoasFisica extends Model
     public $timestamps = false;
 
 
-    public function pessoa(){
-        return $this->belongsTo('App\Models\Pessoa','id_pessoas', 'id_pessoas');
+    public function pessoa()
+    {
+        return $this->belongsTo('App\Models\Pessoa', 'id_pessoas', 'id_pessoas');
     }
 
     public function candidato()
@@ -42,9 +43,10 @@ class PessoasFisica extends Model
     {
         return $this->hasMany('App\Models\Formacao_Academica', 'id_pessoasFisicas', 'id_pessoas');
     }
-    public function cursosOnPessoasFisicas()
+    public function cursos()
     {
-        return $this->belongsToMany('App\Models\Curso', 'pessoas_fisicas_cursos', 'id_pessoasFisicas', 'id_cursos')->withPivot('certificado_curso', 'data_conclusao');;
+        return $this->belongsToMany('App\Models\Curso', 'pessoas_fisicas_cursos', 'id_pessoasFisicas', 'id_cursos')->withPivot('certificado_curso', 'data_conclusao');
+        ;
     }
     public function experiencia()
     {

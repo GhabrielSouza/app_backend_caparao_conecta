@@ -10,6 +10,8 @@ use App\Models\Vaga;
 use Carbon\Carbon;
 use Carbon\Traits\Timestamp;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Usuario;
 
 use Illuminate\Support\Facades\Validator;
 
@@ -31,7 +33,6 @@ class VagaController extends Controller
 
     public function store(Request $request)
     {
-        // 1. ATUALIZAR REGRAS DE VALIDAÇÃO PARA IDs
         $rules = [
             'titulo_vaga' => 'required|string|max:255',
             'descricao' => 'nullable|string',
@@ -169,7 +170,7 @@ class VagaController extends Controller
 
             'titulo_vaga' => 'required|string|max:255',
             'descricao' => 'string',
-            'salario' => 'required|decimal:2',
+            'salario' => 'required',
             'status' => 'string|max:255',
             'data_fechamento' => 'required|date',
             'qtd_vaga' => 'required|integer',
@@ -217,14 +218,14 @@ class VagaController extends Controller
         ], 200);
     }
 
-    public function updateStatus(string $id)
+    public function updateStatusFinalizar(string $id)
     {
         $vaga = Vaga::find($id);
 
         if (!$vaga) {
             return response()->json([
                 'mensage' => 'Vaga não encontrada'
-            ], 200);
+            ], 404);
         }
 
         $vaga->status = 'FINALIZADO';
@@ -233,6 +234,20 @@ class VagaController extends Controller
         return response()->json([
             'mensage' => 'Vaga finalizada com sucesso'
         ], 200);
+    }
+
+    public function updateReativar(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:vagas,id_vagas',
+            'status' => 'required|string',
+        ]);
+
+        Vaga::whereIn('id_vagas', $request->ids)
+            ->update(['status' => $request->status]);
+
+        return response()->json(['message' => 'Status das vagas atualizado com sucesso.']);
     }
 
     /**
@@ -280,46 +295,39 @@ class VagaController extends Controller
 
     }
 
-    public function candidatarPessoas($id_pessoas, $id_vagas)
+    public function candidatarPessoas(Request $request, $id_vagas)
     {
 
-        $pessoasFisica = PessoasFisica::find($id_pessoas);
+        $userId = Auth::id();
 
-        $pessoasFisica->candidato()->attach($id_vagas, array('created_at' => Carbon::now(), 'updated_at' => Carbon::now()));
+        if (!$userId) {
+            return response()->json(['message' => 'Não autorizado.'], 401);
+        }
 
+        $usuario = Usuario::with('pessoa.pessoasFisica')->find($userId);
 
-        $vaga = Vaga::find($id_vagas);
+        if (!$usuario || !$usuario->pessoa || !$usuario->pessoa->pessoasFisica) {
+            return response()->json(['message' => 'Dados de pessoa física não encontrados para este usuário.'], 404);
+        }
+
+        $pessoaFisica = $usuario->pessoa->pessoasFisica;
+
+        $vaga = Vaga::findOrFail($id_vagas);
+
+        $pessoaFisica->candidato()->attach($vaga->id_vagas);
 
         return response()->json([
-            'mensagem' => 'Candidato cadastrado na vaga com sucesso!',
-            'data - pessoa física' => $pessoasFisica,
-            'data - vaga' => $vaga
+            'message' => 'Candidatura realizada com sucesso!',
+            'vaga' => $vaga
         ], 200);
-
     }
 
     public function verCandidatos($id_vagas)
     {
-        $vagas = Vaga::findOrFail($id_vagas);
-        $candidatos = $vagas->candidato;
+        $vaga = Vaga::with('candidato.pessoa', 'candidato.habilidades', 'candidato.cursos')->findOrFail($id_vagas);
 
-        $pessoas = [];
+        $candidatos = $vaga->candidato;
 
-        foreach ($candidatos as $candidato) {
-            // Get Pessoa with pessoasFisica relationship
-            $pessoa = Pessoa::with('pessoasFisica')
-                ->find($candidato->id_pessoas);
-
-            if ($pessoa) {
-                $pessoas[] = $pessoa;
-            }
-        }
-
-
-        return response()->json(
-            $pessoas
-            ,
-            200
-        );
+        return response()->json($candidatos, 200);
     }
 }

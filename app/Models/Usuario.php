@@ -27,7 +27,7 @@ class Usuario extends Authenticatable
 
     public function pessoa()
     {
-        return $this->belongsTo('App\Models\Pessoa');
+        return $this->belongsTo('App\Models\Pessoa', 'id_pessoas', 'id_pessoas');
     }
 
 }

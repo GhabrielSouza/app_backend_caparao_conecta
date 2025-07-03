@@ -78,7 +78,8 @@ Route::get('/vagas/{id_vagas}', [VagaController::class, 'show']);
 Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
 Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
-Route::patch('/vagas/{id_vagas}', [VagaController::class, 'updateStatus']);
+Route::patch('/vagas/reativar', [VagaController::class, 'updateReativar']);
+Route::patch('/vagas/{id_vagas}', [VagaController::class, 'updateStatusFinalizar']);
 
 //Route da habilidades + vagas (relação N pra N)
 Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']);
@@ -86,8 +87,8 @@ Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, '
 Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
 //Route da pessoa fisica + vagas (relação N pra N)
-Route::post('/candidatar/{id_pessoas}/{id_vagas}', [VagaController::class, 'candidatarPessoas']);
-Route::get('/candidatosOnVagas/{id_vagas}', [VagaController::class, 'verCandidatos']);
+Route::post('/vagas/{id_vagas}/candidatar', [VagaController::class, 'candidatarPessoas'])->middleware('auth:sanctum');
+Route::get('/vagas/{id_vagas}/candidatos', [VagaController::class, 'verCandidatos']);
 
 //Relação de habilidades com pessoas físicas N pra N
 Route::post('/habOnCandidato', [PessoasFisicaController::class, 'adicionarHabilidades']);
