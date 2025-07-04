@@ -322,6 +322,21 @@ class VagaController extends Controller
         ], 200);
     }
 
+
+
+    public function atualizarStatusCandidato(Request $request, Vaga $vaga, PessoasFisica $pessoaFisica)
+    {
+        $request->validate([
+            'status' => 'required|string|in:Entrevista,Rejeitado,Contratado,Recebido',
+        ]);
+
+        $vaga->candidato()->updateExistingPivot($pessoaFisica->id_pessoas, [
+            'status' => $request->status
+        ]);
+
+        return response()->json(['message' => 'Status do candidato atualizado com sucesso!']);
+    }
+
     public function verCandidatos($id_vagas)
     {
         $vaga = Vaga::with('candidato.pessoa', 'candidato.habilidades', 'candidato.cursos')->findOrFail($id_vagas);

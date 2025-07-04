@@ -38,7 +38,7 @@ class Vaga extends Model
 
     public function candidato()
     {
-        return $this->belongsToMany('App\Models\PessoasFisica', 'candidaturas', 'id_vagas', 'id_pessoasFisicas')->withTimestamps();
+        return $this->belongsToMany('App\Models\PessoasFisica', 'candidaturas', 'id_vagas', 'id_pessoasFisicas')->withPivot('status', 'created_at', 'updated_at')->withTimestamps();
     }
 
     public function curso()

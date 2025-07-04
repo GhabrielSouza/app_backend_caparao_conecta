@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('id_vagas');
             $table->unsignedBigInteger('id_pessoasFisicas');
             $table->primary(['id_vagas', 'id_pessoasFisicas']);
+            $table->string('status')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

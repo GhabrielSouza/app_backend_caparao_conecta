@@ -89,6 +89,7 @@ Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 //Route da pessoa fisica + vagas (relação N pra N)
 Route::post('/vagas/{id_vagas}/candidatar', [VagaController::class, 'candidatarPessoas'])->middleware('auth:sanctum');
 Route::get('/vagas/{id_vagas}/candidatos', [VagaController::class, 'verCandidatos']);
+Route::patch('/vagas/{vaga}/candidatos/{pessoaFisica}', [VagaController::class, 'atualizarStatusCandidato']);
 
 //Relação de habilidades com pessoas físicas N pra N
 Route::post('/habOnCandidato', [PessoasFisicaController::class, 'adicionarHabilidades']);
