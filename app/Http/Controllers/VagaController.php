@@ -250,35 +250,6 @@ class VagaController extends Controller
         return response()->json(['message' => 'Status das vagas atualizado com sucesso.']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $vaga = Vaga::find($id);
-
-        if (!$vaga) {
-            return response()->json([
-                'mensage' => 'Vaga não encontrada'
-            ], 404);
-        }
-
-        $vaga->habilidades()->detach();
-        $vaga->curso()->detach();
-
-        $vaga->candidato()->detach();
-
-        $vaga->delete();
-
-        return response()->json([
-            'mensage' => 'Vaga deletada com sucesso'
-        ], 200);
-    }
-
-
-
-
-
     public function verHabilidades($id_vagas)
     {
 
@@ -286,13 +257,10 @@ class VagaController extends Controller
         $habilidades = $vagas->vagaOnHabilidade;
         $nome_habilidades = $habilidades->makeHidden(['id_habilidades', 'status', 'pivot', 'created_at', 'deleted_at', 'updated_at']);
 
-
         return response()->json(
             $vagas,
             200
         );
-
-
     }
 
     public function candidatarPessoas(Request $request, $id_vagas)
@@ -322,7 +290,24 @@ class VagaController extends Controller
         ], 200);
     }
 
+    public function prorrogarVaga(Request $request, $id)
+    {
+        $vaga = Vaga::find($id);
 
+        if (!$vaga) {
+            return response()->json(['message' => 'Vaga não encontrada'], 404);
+        }
+
+        $request->validate([
+            'data_fechamento' => 'required|date|after_or_equal:today',
+        ]);
+
+        $vaga->data_fechamento = Carbon::parse($request->data_fechamento);
+        $vaga->prorrogavel = false;
+        $vaga->save();
+
+        return response()->json(['message' => 'Data de fechamento da vaga prorrogada com sucesso!']);
+    }
 
     public function atualizarStatusCandidato(Request $request, Vaga $vaga, PessoasFisica $pessoaFisica)
     {
@@ -344,5 +329,30 @@ class VagaController extends Controller
         $candidatos = $vaga->candidato;
 
         return response()->json($candidatos, 200);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $vaga = Vaga::find($id);
+
+        if (!$vaga) {
+            return response()->json([
+                'mensage' => 'Vaga não encontrada'
+            ], 404);
+        }
+
+        $vaga->habilidades()->detach();
+        $vaga->curso()->detach();
+
+        $vaga->candidato()->detach();
+
+        $vaga->delete();
+
+        return response()->json([
+            'mensage' => 'Vaga deletada com sucesso'
+        ], 200);
     }
 }

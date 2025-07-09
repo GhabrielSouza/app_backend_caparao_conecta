@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->date('data_criacao');
             $table->date('data_fechamento');
             $table->integer('qtd_vaga');
+            $table->boolean('prorrogavel')->default(true);
             $table->integer('qtd_vagas_preenchidas')->nullable();
             $table->string('modalidade_da_vaga', 255);
             $table->unsignedBigInteger('id_empresas');

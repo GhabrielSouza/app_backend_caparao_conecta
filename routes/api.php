@@ -80,6 +80,8 @@ Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
 Route::patch('/vagas/reativar', [VagaController::class, 'updateReativar']);
 Route::patch('/vagas/{id_vagas}', [VagaController::class, 'updateStatusFinalizar']);
+Route::patch('/vagas/{id}/prorrogar', [VagaController::class, 'prorrogarVaga']);
+
 
 //Route da habilidades + vagas (relação N pra N)
 Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']);
