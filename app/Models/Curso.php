@@ -15,19 +15,18 @@ class Curso extends Model
 
     ];
 
-    public $timestamps = false;
-
     protected $primaryKey = 'id_cursos';
 
     protected $foreingKey = 'id_cursos';
 
     public function instituicao()
     {
-        return $this->belongsTo('App\Models\Curso', 'id_instituicoes', 'id_instituicoes');
+        return $this->belongsTo(Instituicao::class, 'id_instituicoes', 'id_instituicoes');
     }
 
-    public function tipoDeCurso(){
-        return $this->belongsTo('App\Models\TipoDeCurso');
+    public function tipoDeCurso()
+    {
+        return $this->belongsTo(TipoDeCurso::class, 'id_tipo_de_cursos', 'id_tipo_de_cursos');
     }
 
     public function cursosOnPessoasFisicas()

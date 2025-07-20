@@ -13,8 +13,6 @@ class TipoDeCurso extends Model
         'nome',
     ];
 
-    public $timestamps = false;
-
     protected $primaryKey = 'id_tipo_de_cursos';
 
     protected $foreingKey = 'id_tipo_de_cursos';

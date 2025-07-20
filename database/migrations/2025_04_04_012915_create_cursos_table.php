@@ -12,12 +12,13 @@ return new class extends Migration {
             $table->string('curso', 255);
             $table->string('cargo_horaria', 50);
             $table->string('link', 100)->nullable();
-            $table->foreignId('id_tipo_de_cursos')->constrained('tipo_de_cursos','id_tipo_de_cursos');
+            $table->string('status', 45)->nullable();
+            $table->foreignId('id_tipo_de_cursos')->constrained('tipo_de_cursos', 'id_tipo_de_cursos');
             $table->foreignId('id_instituicoes')->constrained('instituicoes', 'id_instituicoes')->onDelete('cascade');
 
             $table->timestamps();
             $table->softDeletes();
-            
+
         });
     }
 

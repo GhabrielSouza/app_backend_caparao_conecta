@@ -14,7 +14,9 @@ class CursoController extends Controller
      */
     public function index()
     {
-        return response()->json(Curso::all(), 200);
+        $cursos = Curso::with(['instituicao:id_instituicoes,nome', 'tipoDeCurso:id_tipo_de_cursos,nome'])->get();
+
+        return response()->json($cursos, 200);
     }
 
     /**
@@ -25,6 +27,8 @@ class CursoController extends Controller
         $curso = new Curso;
         $curso->curso = $request->curso;
         $curso->cargo_horaria = $request->cargo_horaria;
+        $curso->status = 'Ativo';
+        $curso->link = $request->link;
         $curso->id_tipo_de_cursos = $request->id_tipo_de_cursos;
         $curso->id_instituicoes = $request->id_instituicoes;
         $curso->save();
@@ -102,7 +106,7 @@ class CursoController extends Controller
     public function listarPorInstituicao($idInstituicao)
     {
         $cursos = Curso::where('id_instituicoes', $idInstituicao)->get();
-        
+
         return response()->json($cursos);
     }
 
@@ -220,6 +224,20 @@ class CursoController extends Controller
         ], 200);
     }
 
+    public function toggleStatus($id)
+    {
+        $curso = Curso::findOrFail($id);
+
+        $novoStatus = $curso->status == 'Ativo' ? 'Inativo' : 'Ativo';
+
+        $curso->status = $novoStatus;
+        $curso->save();
+
+        $mensagem = "Beneficiário " . ($novoStatus == 'Ativo' ? 'Ativado' : 'Inativado') . " com sucesso!";
+
+        return response()->json($mensagem, 200);
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -235,6 +253,10 @@ class CursoController extends Controller
 
         $curso->curso = $request->curso;
         $curso->cargo_horaria = $request->cargo_horaria;
+        $curso->status = 'Ativo';
+        $curso->link = $request->link;
+        $curso->id_tipo_de_cursos = $request->id_tipo_de_cursos;
+        $curso->id_instituicoes = $request->id_instituicoes;
         $curso->save();
 
         return response()->json($curso, 200);

@@ -37,7 +37,7 @@ class HabilidadeController extends Controller
 
         $habilidades = new Habilidade();
         $habilidades->nome = $request->nome;
-        $habilidades->status = $request->id_cidades;
+        $habilidades->status = 'Ativo';
         $habilidades->save();
 
         return response()->json($habilidades, 201);
@@ -59,14 +59,15 @@ class HabilidadeController extends Controller
 
     }
 
-    public function showAll(){
-        
+    public function showAll()
+    {
+
         $habilidades = Habilidade::all();
 
         return response()->json([
             'data - todas habilidades' => $habilidades
-            
-        ], 200); 
+
+        ], 200);
 
     }
 
@@ -89,16 +90,30 @@ class HabilidadeController extends Controller
 
         $habilidades = Habilidade::find($id);
 
-        if(!$habilidades){
+        if (!$habilidades) {
             return response()->json(['error' => 'Habilidade não encontrada'], 404);
         }
 
         $habilidades->nome = $request->nome;
-        $habilidades->status = $request->id_cidades;
+        $habilidades->status = 'Ativo';
         $habilidades->save();
 
         return response()->json($habilidades, 201);
 
+    }
+
+    public function toggleStatus($id)
+    {
+        $habilidade = Habilidade::findOrFail($id);
+
+        $novoStatus = $habilidade->status == 'Ativo' ? 'Inativo' : 'Ativo';
+
+        $habilidade->status = $novoStatus;
+        $habilidade->save();
+
+        $mensagem = "Beneficiário " . ($novoStatus == 'Ativo' ? 'Ativado' : 'Inativado') . " com sucesso!";
+
+        return response()->json($mensagem, 200);
     }
 
     /**

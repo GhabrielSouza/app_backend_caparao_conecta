@@ -56,12 +56,15 @@ Route::get('/cursos/{id_curso}', [CursoController::class, 'show']);
 Route::post('/cursos', [CursoController::class, 'store']);
 Route::put('/cursos/{id_curso}', [CursoController::class, 'update']);
 Route::delete('/cursos/{id_cursos}', [CursoController::class, 'destroy']);
+Route::post('/cursos/{id}/toggle-status', [CursoController::class, 'toggleStatus']);
 
 Route::get('/habilidades', [HabilidadeController::class, 'index']);
 Route::get('/habilidades/{id_habilidade}', [HabilidadeController::class, 'show']);
 Route::post('/habilidades', [HabilidadeController::class, 'store']);
 Route::put('/habilidades/{id_habilidade}', [HabilidadeController::class, 'update']);
 Route::delete('/habilidades/{id_habilidade}', [HabilidadeController::class, 'destroy']);
+Route::post('/habilidades/{id}/toggle-status', [HabilidadeController::class, 'toggleStatus']);
+
 
 Route::post('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'adicionarCursoVaga']);
 Route::get('/cursosOnVaga/{id_vagas}', [CursoController::class, 'verCursosVaga']);
