@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
 class PessoasFisica extends Model
 {
     use SoftDeletes;
@@ -27,6 +28,11 @@ class PessoasFisica extends Model
     public function pessoa()
     {
         return $this->belongsTo('App\Models\Pessoa', 'id_pessoas', 'id_pessoas');
+    }
+
+    public function areaAtuacao()
+    {
+        return $this->belongsTo(AreaAtuacao::class, 'id_areas_atuacao', 'id_areas_atuacao');
     }
 
     public function candidato()

@@ -31,6 +31,11 @@ class Vaga extends Model
         return $this->belongsTo('App\Models\Empresa', 'id_empresas', 'id_pessoas');
     }
 
+    public function areaAtuacao()
+    {
+        return $this->belongsTo(AreaAtuacao::class, 'id_areas_atuacao', 'id_areas_atuacao');
+    }
+
     public function habilidades()
     {
         return $this->belongsToMany(Habilidade::class, 'vagas_habilidades', 'id_vagas', 'id_habilidades')->withTimestamps();

@@ -27,6 +27,7 @@ return new class extends Migration {
                 ->references('id_pessoas')
                 ->on('empresas');
 
+
         });
     }
 

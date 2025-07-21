@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\AreaAtuacaoController;
 use App\Http\Controllers\CursoController;
 
 use App\Http\Controllers\AuthController;
@@ -30,34 +30,28 @@ Route::get('/status', function () {
     );
 });
 
+//Rotas de areas de atuação
+Route::resource('/areas', AreaAtuacaoController::class);
+
 //Rotas de Instituição
-Route::get('/instituicoes', [InstituicaoController::class, 'index']);
-Route::get('/instituicoes/{id_instituicao}', [InstituicaoController::class, 'show']);
-Route::post('/instituicoes', [InstituicaoController::class, 'store']);
-Route::put('/instituicoes/{id_instituicao}', [InstituicaoController::class, 'update']);
-Route::delete('/instituicoes/{id_instituicao}', [InstituicaoController::class, 'destroy']);
+Route::resource('/instituicoes', InstituicaoController::class);
 
 //Rotas de formacoes academicas
-Route::get('/formacoes_academicas', [Formacao_AcademicaController::class, 'index']);
-Route::get('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'show']);
-Route::post('/formacoes_academicas', [Formacao_AcademicaController::class, 'store']);
-Route::put('/formacoes_academicas/{id_experiencia}', [Formacao_AcademicaController::class, 'update']);
-Route::delete('/formacoes_academicas/{id_experiencias}', [Formacao_AcademicaController::class, 'destroy']);
+Route::resource('/formacoes_academicas', Formacao_AcademicaController::class);
 
 //Rotas de experiencias
-Route::get('/experiencias', [ExperienciaController::class, 'index']);
-Route::get('/experiencias/{id_experiencia}', [ExperienciaController::class, 'show']);
-Route::post('/experiencias', [ExperienciaController::class, 'store']);
-Route::put('/experiencias/{id_experiencia}', [ExperienciaController::class, 'update']);
-Route::delete('/experiencias/{id_experiencias}', [ExperienciaController::class, 'destroy']);
+Route::resource('/experiencias', ExperienciaController::class);
+
 
 Route::get('/cursos', [CursoController::class, 'index']);
+Route::get('/showAllCursos', [CursoController::class, 'showAll']);
 Route::get('/cursos/{id_curso}', [CursoController::class, 'show']);
 Route::post('/cursos', [CursoController::class, 'store']);
 Route::put('/cursos/{id_curso}', [CursoController::class, 'update']);
 Route::delete('/cursos/{id_cursos}', [CursoController::class, 'destroy']);
 Route::post('/cursos/{id}/toggle-status', [CursoController::class, 'toggleStatus']);
 
+Route::get('/showAllHabilidades', [HabilidadeController::class, 'showAll']);
 Route::get('/habilidades', [HabilidadeController::class, 'index']);
 Route::get('/habilidades/{id_habilidade}', [HabilidadeController::class, 'show']);
 Route::post('/habilidades', [HabilidadeController::class, 'store']);

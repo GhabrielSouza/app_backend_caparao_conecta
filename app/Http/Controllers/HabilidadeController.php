@@ -12,9 +12,11 @@ class HabilidadeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $habilidades = Habilidade::all();
+        $perPage = $request->input('per_page', 10);
+
+        $habilidades = Habilidade::paginate($perPage);
         return response()->json($habilidades, 200);
     }
 
@@ -61,13 +63,12 @@ class HabilidadeController extends Controller
 
     public function showAll()
     {
-
         $habilidades = Habilidade::all();
 
-        return response()->json([
-            'data - todas habilidades' => $habilidades
-
-        ], 200);
+        return response()->json(
+            $habilidades,
+            200
+        );
 
     }
 

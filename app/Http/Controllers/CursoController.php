@@ -12,9 +12,14 @@ class CursoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $cursos = Curso::with(['instituicao:id_instituicoes,nome', 'tipoDeCurso:id_tipo_de_cursos,nome'])->get();
+
+        $perPage = $request->input('per_page', 10);
+
+        $cursos = Curso::with(['instituicao:id_instituicoes,nome', 'tipoDeCurso:id_tipo_de_cursos,nome'])
+            ->paginate($perPage);
+
 
         return response()->json($cursos, 200);
     }
@@ -52,6 +57,18 @@ class CursoController extends Controller
         }
 
         return response()->json($curso, 200);
+
+    }
+
+    public function showAll()
+    {
+
+        $cursos = Curso::all();
+
+        return response()->json(
+            $cursos,
+            200
+        );
 
     }
 

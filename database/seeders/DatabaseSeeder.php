@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             Paises_Cidades::class,
             TipoDeCursos::class,
             Instituicoes::class,
+            AreaAtuacaoSeeder::class
         ]);
     }
 }
