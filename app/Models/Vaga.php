@@ -20,6 +20,7 @@ class Vaga extends Model
         'qtd_vagas_preenchidas',
         'modalidade_da_vaga',
         'id_empresas',
+        'id_areas_atuacao'
     ];
 
     protected $primaryKey = 'id_vagas';

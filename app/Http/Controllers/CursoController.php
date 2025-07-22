@@ -103,7 +103,7 @@ class CursoController extends Controller
     }
     public function verCursos(string $id_pessoas)
     {
-        $pessoa_fisica = PessoasFisica::with('cursosOnPessoasFisicas')->find($id_pessoas);
+        $pessoa_fisica = PessoasFisica::with('cursos')->find($id_pessoas);
 
         if (!$pessoa_fisica) {
             return response()->json([
@@ -111,7 +111,7 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $cursos = $pessoa_fisica->cursosOnPessoasFisicas->makeHidden([
+        $cursos = $pessoa_fisica->cursos->makeHidden([
             'created_at',
             'updated_at',
             'deleted_at',

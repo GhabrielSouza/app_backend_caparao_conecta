@@ -8,18 +8,17 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('pessoas_fisicas', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_pessoas')->primary();
+            $table->foreignId('id_pessoas')->primary()->constrained('pessoas', 'id_pessoas');
+
             $table->string('cpf', 20)->unique();
             $table->date('data_de_nascimento');
             $table->string('sobrenome', 255);
             $table->string('cad_unico', 12)->nullable()->unique();
             $table->string('genero', 45);
+
+            $table->foreignId('id_areas_atuacao')->nullable()->constrained('areas_atuacao', 'id_areas_atuacao');
+
             $table->softDeletes();
-
-            $table->foreign('id_pessoas')
-                ->references('id_pessoas')
-                ->on('pessoas');
-
         });
     }
 

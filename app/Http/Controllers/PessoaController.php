@@ -72,7 +72,7 @@ class PessoaController extends Controller
                 'telefone' => 'required|string|max:20',
                 'sobre' => 'string',
                 'imagem' => 'string|max:255',
-
+                'id_areas_atuacao' => 'integer',
                 'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
                 'data_de_nascimento' => 'required|date',
                 'sobrenome' => 'required|string|max:255',
@@ -168,6 +168,7 @@ class PessoaController extends Controller
                 'cpf' => $request->cpf,
                 'data_de_nascimento' => Carbon::createFromFormat('d/m/Y', $request->data_de_nascimento)->format('Y-m-d'),
                 'sobrenome' => $request->sobrenome,
+                'id_areas_atuacao' => $request->id_areas_atuacao,
                 'cad_unico' => $request->cad_unico,
                 'genero' => $request->genero,
             ]);
@@ -205,7 +206,7 @@ class PessoaController extends Controller
 
         if ($usuario->id_tipo_usuarios == 2) {
 
-            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica', 'redeSocial'])->find($id_pessoas);
+            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica', 'redeSocial', 'pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area'])->find($id_pessoas);
 
             return response()->json(
                 $pessoa,
@@ -261,7 +262,7 @@ class PessoaController extends Controller
                 'telefone' => 'required|string|max:20',
                 'sobre' => 'string',
                 'imagem' => 'string|max:255',
-
+                'id_areas_atuacao' => 'integer',
 
                 'data_de_nascimento' => 'required|date',
                 'sobrenome' => 'required|string|max:255',
@@ -306,6 +307,7 @@ class PessoaController extends Controller
         $pessoa->update([
             'nome' => $request->nome,
             'telefone' => $request->telefone,
+
         ]);
 
         $rede_social = Rede_Social::find($id_pessoas);
@@ -365,6 +367,7 @@ class PessoaController extends Controller
                 'data_de_nascimento' => Carbon::createFromFormat('d/m/Y', $request->data_de_nascimento)->format('Y-m-d'),
                 'sobrenome' => $request->sobrenome,
                 'cad_unico' => $request->cad_unico,
+                'id_areas_atuacao' => $request->id_areas_atuacao,
                 'genero' => $request->genero,
             ]);
 

@@ -13,20 +13,19 @@ return new class extends Migration {
             $table->string('descricao')->nullable();
             $table->decimal('salario', 9, 2);
             $table->string('status', 255)->nullable();
+
             $table->date('data_criacao');
             $table->date('data_fechamento');
             $table->integer('qtd_vaga');
             $table->boolean('prorrogavel')->default(true);
             $table->integer('qtd_vagas_preenchidas')->nullable();
             $table->string('modalidade_da_vaga', 255);
-            $table->unsignedBigInteger('id_empresas');
+            $table->foreignId('id_empresas')->constrained('empresas', 'id_pessoas');
+
+            $table->foreignId('id_areas_atuacao')->nullable()->constrained('areas_atuacao', 'id_areas_atuacao');
+
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('id_empresas')
-                ->references('id_pessoas')
-                ->on('empresas');
-
 
         });
     }

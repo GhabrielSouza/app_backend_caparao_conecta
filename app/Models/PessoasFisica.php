@@ -15,7 +15,8 @@ class PessoasFisica extends Model
         'data_de_nascimento',
         'sobrenome',
         'cad_unico',
-        'genero'
+        'genero',
+        'id_areas_atuacao'
     ];
 
     protected $primaryKey = 'id_pessoas';

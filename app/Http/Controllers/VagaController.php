@@ -41,7 +41,7 @@ class VagaController extends Controller
             'qtd_vaga' => 'required|integer',
             'modalidade_da_vaga' => 'required|string|max:255',
             'id_empresas' => 'required|integer|exists:empresas,id_pessoas',
-
+            'id_areas_atuacao' => 'integer',
             'habilidades' => 'nullable|array',
             'cursos' => 'nullable|array',
         ];
@@ -58,6 +58,7 @@ class VagaController extends Controller
         $vaga->descricao = $request->descricao;
         $vaga->salario = $request->salario;
         $vaga->status = $request->status;
+        $vaga->id_areas_atuacao = $request->id_areas_atuacao;
         $vaga->data_criacao = Carbon::now();
         $vaga->data_fechamento = $request->data_fechamento;
         $vaga->qtd_vaga = $request->qtd_vaga;
@@ -117,7 +118,7 @@ class VagaController extends Controller
      */
     public function show(string $id)
     {
-        $vaga = Vaga::with(['habilidades', 'curso', 'empresa.pessoa.redeSocial', 'empresa.pessoa.endereco.cidade'])->find($id);
+        $vaga = Vaga::with(['habilidades', 'curso', 'empresa.pessoa.redeSocial', 'empresa.pessoa.endereco.cidade', 'areaAtuacao:id_areas_atuacao, nome_area'])->find($id);
 
         if (!$vaga) {
             return response()->json([
@@ -136,7 +137,7 @@ class VagaController extends Controller
         $atuacao = $request->input('atuacao') ? explode(",", $request->input('atuacao')) : [];
 
         $vagas = Vaga::query()
-            ->with(['habilidades', 'curso'])
+            ->with(['habilidades', 'curso', 'areaAtuacao:id_areas_atuacao,nome_area', 'empresa.pessoa'])
             ->when(!empty($modalidade), function ($query) use ($modalidade) {
                 $query->whereIn('modalidade_da_vaga', $modalidade);
             })
@@ -172,6 +173,7 @@ class VagaController extends Controller
             'descricao' => 'string',
             'salario' => 'required',
             'status' => 'string|max:255',
+            'id_areas_atuacao' => 'integer',
             'data_fechamento' => 'required|date',
             'qtd_vaga' => 'required|integer',
             'qtd_vagas_preenchidas' => 'integer',
@@ -203,6 +205,7 @@ class VagaController extends Controller
         $vaga->descricao = $request->descricao;
         $vaga->salario = $request->salario;
         $vaga->status = $request->status;
+        $vaga->id_areas_atuacao = $request->id_areas_atuacao;
         $vaga->data_criacao = Carbon::now();
         $vaga->data_fechamento = Carbon::parse($request->input('data_fechamento'));
         $vaga->qtd_vaga = $request->qtd_vaga;
