@@ -11,13 +11,15 @@ use Illuminate\Support\Facades\Validator;
 
 class Formacao_AcademicaController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $formacoes = Formacao_Academica::all();
         return response()->json($formacoes);
     }
 
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         $rules = [
 
@@ -35,11 +37,11 @@ class Formacao_AcademicaController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-                
+
             return response()->json([
                 'error' => $validator->errors()
             ], 422);
-                
+
         }
 
         $formacao = new Formacao_Academica();
@@ -62,17 +64,15 @@ class Formacao_AcademicaController extends Controller
     public function show($id)
     {
         $formacoes = Formacao_Academica::where('id_pessoasFisicas', $id)->with('instituicao')->get();
-        
-        if ($formacoes->isEmpty()) {
-            return response()->json(['message' => 'Nenhuma formação encontrada'], 404);
-        }
-        
+
+
         return response()->json($formacoes);
     }
 
 
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
 
 
         $formacao = Formacao_Academica::find($id);
@@ -96,11 +96,11 @@ class Formacao_AcademicaController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-                
+
             return response()->json([
                 'error' => $validator->errors()
             ], 422);
-                
+
         }
 
         $formacao->area_de_estudo = $request->area_de_estudo;
@@ -119,15 +119,16 @@ class Formacao_AcademicaController extends Controller
 
 
 
-    
-    public function destroy($id){
+
+    public function destroy($id)
+    {
         $formacao = Formacao_Academica::find($id);
         if (!$formacao) {
             return response()->json(['message' => 'Formação não encontrada'], 404);
         }
 
         $formacao->delete();
-        if(!$formacao) {
+        if (!$formacao) {
             return response()->json(['message' => 'Erro ao deletar a formação'], 500);
         }
         return response()->json(['message' => 'Formação deletada com sucesso']);

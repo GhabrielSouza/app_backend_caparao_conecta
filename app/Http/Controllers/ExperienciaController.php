@@ -66,11 +66,8 @@ class ExperienciaController extends Controller
     public function show($id)
     {
         $experiencias = Experiencia::where('id_pessoasFisicas', $id)->get();
-        
-        if ($experiencias->isEmpty()) {
-            return response()->json(['message' => 'Nenhuma experiência encontrada'], 404);
-        }
-        
+
+
         return response()->json($experiencias, 200);
     }
 

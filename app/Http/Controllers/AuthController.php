@@ -3,42 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        $email = $request->email;
-        $password = $request->password;
+        if (Auth::attempt($credentials)) {
+            // Inicia uma sessão segura para o usuário.
+            $request->session()->regenerate();
 
-        $attempt = auth()->attempt(['email' => $email, 'password' => $password]);
-
-
-        if (!$attempt) {
-            return response()->json([
-                'message' => 'Invalid credentials'
-            ], 401);
+            // Retorna os dados do usuário, sem nenhum token.
+            return response()->json(Auth::user());
         }
 
-        $user = auth()->user();
-        $token = $user->createToken($user->email, ['*'], now()->addHour())->plainTextToken;
-
         return response()->json([
-            'message' => 'Login successful',
-            'token' => $token,
-        ], 200);
+            'message' => 'As credenciais fornecidas estão incorretas.'
+        ], 401);
     }
 
     public function logout(Request $request)
     {
-        // Revoga o token atual
-        $request->user()->tokens()->delete();
+        // Faz o logout da sessão web.
+        Auth::guard('web')->logout();
 
-        return response()->json(['message' => 'Logout realizado com sucesso'], 200);
+        // Invalida a sessão e regenera o token CSRF.
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json(['message' => 'Logout realizado com sucesso.']);
     }
 }

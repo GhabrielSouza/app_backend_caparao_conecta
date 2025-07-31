@@ -118,7 +118,7 @@ class VagaController extends Controller
      */
     public function show(string $id)
     {
-        $vaga = Vaga::with(['habilidades', 'curso', 'empresa.pessoa.redeSocial', 'empresa.pessoa.endereco.cidade', 'areaAtuacao:id_areas_atuacao, nome_area'])->find($id);
+        $vaga = Vaga::with(['habilidades:id_habilidades,nome', 'curso:id_cursos,curso', 'empresa.pessoa.redeSocial', 'empresa.pessoa.endereco.cidade', 'areaAtuacao:id_areas_atuacao,nome_area', 'candidato.pessoa', 'candidato.habilidades', 'candidato.cursos'])->find($id);
 
         if (!$vaga) {
             return response()->json([
@@ -285,6 +285,10 @@ class VagaController extends Controller
 
         $vaga = Vaga::findOrFail($id_vagas);
 
+        if ($pessoaFisica->candidato()->where('vagas.id_vagas', $vaga->id_vagas)->exists()) {
+            return response()->json(['message' => 'Você já se candidatou para esta vaga.'], 409);
+        }
+
         $pessoaFisica->candidato()->attach($vaga->id_vagas);
 
         return response()->json([
@@ -318,11 +322,37 @@ class VagaController extends Controller
             'status' => 'required|string|in:Entrevista,Rejeitado,Contratado,Recebido',
         ]);
 
+        $novoStatus = $request->status;
+
+        if ($novoStatus === 'Contratado') {
+            $contratadosAtuais = $vaga->candidato()
+                ->wherePivot('status', 'Contratado')
+                ->count();
+
+            if ($contratadosAtuais >= $vaga->qtd_vaga) {
+                return response()->json(['message' => 'O limite de vagas para esta posição já foi atingido.'], 409);
+            }
+        }
+
         $vaga->candidato()->updateExistingPivot($pessoaFisica->id_pessoas, [
-            'status' => $request->status
+            'status' => $novoStatus
         ]);
 
-        return response()->json(['message' => 'Status do candidato atualizado com sucesso!']);
+        if ($novoStatus === 'Contratado') {
+            $totalContratadosAgora = $vaga->candidato()
+                ->wherePivot('status', 'Contratado')
+                ->count();
+
+            if ($totalContratadosAgora >= $vaga->qtd_vaga) {
+                $vaga->status = 'FINALIZADO';
+                $vaga->save();
+            }
+        }
+
+        return response()->json([
+            'message' => 'Status do candidato atualizado com sucesso!',
+            'vaga' => $vaga->fresh()
+        ]);
     }
 
     public function verCandidatos($id_vagas)

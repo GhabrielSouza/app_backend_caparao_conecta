@@ -20,6 +20,8 @@ use App\Http\Controllers\HabilidadeController;
 
 use Illuminate\Support\Facades\Route;
 
+use Illuminate\Http\Request;
+
 Route::get('/status', function () {
     return response()->json(
         [
@@ -86,7 +88,6 @@ Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, '
 Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
 //Route da pessoa fisica + vagas (relação N pra N)
-Route::post('/vagas/{id_vagas}/candidatar', [VagaController::class, 'candidatarPessoas'])->middleware('auth:sanctum');
 Route::get('/vagas/{id_vagas}/candidatos', [VagaController::class, 'verCandidatos']);
 Route::patch('/vagas/{vaga}/candidatos/{pessoaFisica}', [VagaController::class, 'atualizarStatusCandidato']);
 
@@ -113,6 +114,20 @@ Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);
 //Route update sobre de pessoas
 Route::patch('/pessoas/{id}/sobre', [PessoaController::class, 'updateSobre']);
 
-//login e logout
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::middleware('web')->group(function () {
+
+    Route::post('/login', [AuthController::class, 'login']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/user', function (Request $request) {
+            return $request->user();
+        });
+        Route::post('/logout', [AuthController::class, 'logout']);
+    });
+
+    Route::post('/vagas/{id_vagas}/candidatar', [VagaController::class, 'candidatarPessoas'])
+        ->middleware('auth:sanctum');
+
+});
+
+
