@@ -40,7 +40,6 @@ class PessoaController extends Controller
                 'nome' => 'required|string|max:255',
                 'telefone' => 'required|string|max:20',
                 'sobre' => 'string',
-                'imagem' => 'string|max:255',
 
                 'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
 
@@ -71,7 +70,6 @@ class PessoaController extends Controller
                 'nome' => 'required|string|max:255',
                 'telefone' => 'required|string|max:20',
                 'sobre' => 'string',
-                'imagem' => 'string|max:255',
                 'id_areas_atuacao' => 'integer',
                 'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
                 'data_de_nascimento' => 'required|date',
@@ -117,7 +115,6 @@ class PessoaController extends Controller
             'nome' => $request->nome,
             'telefone' => $request->telefone,
             'sobre' => $request->sobre,
-            'imagem' => $request->imagem,
         ]);
 
         $request->merge(['id_pessoas' => $pessoa->id_pessoas]);
@@ -184,6 +181,37 @@ class PessoaController extends Controller
             ], 200);
         }
 
+    }
+
+    //upload de imagem
+    public function uploadImagem(Request $request, string $id_pessoas)
+    {
+        $validator = Validator::make($request->all(), [
+            'imagem' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $pessoa = Pessoa::findOrFail($id_pessoas);
+
+        if ($request->hasFile('imagem')) {
+            $requestImage = $request->file('imagem');
+
+            $extension = $requestImage->extension();
+            $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . '.' . $extension;
+
+            $requestImage->move(public_path('img/pessoas'), $imageName);
+
+            $pessoa->imagem = $imageName;
+            $pessoa->save();
+        }
+
+        return response()->json([
+            'message' => 'Imagem atualizada com sucesso',
+            'pessoa' => $pessoa
+        ], 200);
     }
 
     /**

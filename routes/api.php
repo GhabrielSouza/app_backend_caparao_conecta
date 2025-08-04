@@ -128,6 +128,9 @@ Route::middleware('web')->group(function () {
     Route::post('/vagas/{id_vagas}/candidatar', [VagaController::class, 'candidatarPessoas'])
         ->middleware('auth:sanctum');
 
+    Route::post('/pessoas/{id_pessoas}/imagem', [PessoaController::class, 'uploadImagem'])
+        ->middleware('auth:sanctum');
+
 });
 
 
