@@ -107,6 +107,7 @@ Route::get('/enderecoShowAll', [EnderecoController::class, 'showAll']);
 
 //Route de pessoas
 Route::post('/cadPessoas', [PessoaController::class, 'store']);
+Route::get('/pessoas', [PessoaController::class, 'index']);
 Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']);
 Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']);
 Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);
