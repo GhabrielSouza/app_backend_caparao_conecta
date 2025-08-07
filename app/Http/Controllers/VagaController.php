@@ -145,7 +145,9 @@ class VagaController extends Controller
                 $query->whereIn('id_empresas', $id_empresa);
             })
             ->when(!empty($atuacao), function ($query) use ($atuacao) {
-                $query->whereIn('atuacao', $atuacao);
+                $query->whereHas('areaAtuacao', function ($subQuery) use ($atuacao) {
+                    $subQuery->whereIn('id_areas_atuacao', $atuacao);
+                });
             })
             ->get();
 
