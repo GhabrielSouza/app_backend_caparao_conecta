@@ -9,6 +9,7 @@ use App\Models\Rede_Social;
 use App\Models\Usuario;
 use App\Models\Cidade;
 use App\Models\Vaga;
+use DB;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -39,154 +40,86 @@ class PessoaController extends Controller
      */
     public function store(Request $request)
     {
+        $commonRules = [
+            'nome' => 'required|string|max:255',
+            'telefone' => 'required|string|max:20',
+            'sobre' => 'nullable|string',
+            'email' => 'required|string|max:255|email:rfc,dns,spoof|unique:usuarios,email',
+            'password' => 'required|string|min:8',
+            'estado' => 'required|string|max:255',
+            'cidade' => 'required|string|max:50',
+        ];
 
-        if ($request->id_tipo_usuarios == 3) {
-            $rules = [
-
-                'nome' => 'required|string|max:255',
-                'telefone' => 'required|string|max:20',
-                'sobre' => 'string',
-
-                'cnpj' => 'required|string|max:20|unique:App\Models\Empresa,cnpj',
-
-                'email' => 'required|string|max:255|email:rfc,dns,spoof',
-                'password' => 'required|string|max:512',
-
-                'estado' => 'required|string|max:255',
-                'cidade' => 'required|string|max:50',
-
-            ];
-
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-
-                return response()->json([
-                    'error' => $validator->errors()
-                ], 422);
-
-            }
-
-        }
-
-        if ($request->id_tipo_usuarios == 2) {
-
-            $rules = [
-
-                'nome' => 'required|string|max:255',
-                'telefone' => 'required|string|max:20',
-                'sobre' => 'string',
-                'id_areas_atuacao' => 'integer',
-                'cpf' => 'required|string|max:20|unique:App\Models\PessoasFisica,cpf',
-                'data_de_nascimento' => 'required|date',
+        $specificRules = [];
+        if ($request->input('id_tipo_usuarios') == 2) {
+            $specificRules = [
+                'cpf' => 'required|string|max:20|unique:pessoas_fisicas,cpf',
+                'data_de_nascimento' => 'required|date_format:d/m/Y',
                 'sobrenome' => 'required|string|max:255',
-                'cad_unico' => 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
                 'genero' => 'required|string|max:45',
-
-                'email' => 'required|string|max:255|email:rfc,dns,spoof',
-                'password' => 'required|string|max:512',
-
-                'estado' => 'required|string|max:255',
-
-                'cidade' => 'required|string|max:50',
-
+                'id_areas_atuacao' => 'nullable|integer|exists:areas_atuacao,id_areas_atuacao',
             ];
-
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-
-                return response()->json([
-                    'error' => $validator->errors()
-                ], 422);
-
-            }
-
+        } else if ($request->input('id_tipo_usuarios') == 3) {
+            $specificRules = [
+                'cnpj' => 'required|string|max:20|unique:empresas,cnpj',
+            ];
         }
 
-        $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
+        $validator = Validator::make($request->all(), array_merge($commonRules, $specificRules));
 
-        if (!$cidade) {
-
-            // Cria a cidade se ela ainda não existir
-            $cidade = Cidade::create([
-                'nome_cidade' => $request->cidade,
-                'id_pais' => 1,
-            ]);
-
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
-        // Cria a pessoa
-        $pessoa = Pessoa::create([
-            'nome' => $request->nome,
-            'telefone' => $request->telefone,
-            'sobre' => $request->sobre,
-        ]);
+        try {
+            $pessoa = DB::transaction(function () use ($request) {
 
-        $request->merge(['id_pessoas' => $pessoa->id_pessoas]);
+                $pessoa = Pessoa::create($request->only(['nome', 'telefone', 'sobre']));
 
-        // Cria o usuário
-        $usuario = Usuario::create([
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'id_pessoas' => $pessoa->id_pessoas,
-            'id_tipo_usuarios' => $request->id_tipo_usuarios
-        ]);
+                $pessoa->usuario()->create([
+                    'email' => $request->input('email'),
+                    'password' => Hash::make($request->input('password')),
+                    'id_tipo_usuarios' => $request->input('id_tipo_usuarios'),
+                ]);
 
-        $rede_social = Rede_Social::create([
-            'instagram' => $request->instagram,
-            'github' => $request->github,
-            'linkedin' => $request->linkedin,
-            'curriculo_lattes' => $request->lattes,
-            'id_pessoas' => $pessoa->id_pessoas
-        ]);
+                $cidade = Cidade::firstOrCreate(
+                    ['nome_cidade' => $request->input('cidade')],
+                    ['id_pais' => 1]
+                );
 
-        // Cria o endereço com o ID da cidade
-        $endereco = Endereco::create([
-            'estado' => $request->estado,
-            'id_cidades' => $cidade->id_cidades,
-            'id_pessoas' => $pessoa->id_pessoas
-        ]);
+                $pessoa->endereco()->create([
+                    'estado' => $request->input('estado'),
+                    'id_cidades' => $cidade->id_cidades,
+                ]);
 
-        if ($request->id_tipo_usuarios == 3) {
-            $empresa = Empresa::create([
-                'id_pessoas' => $pessoa->id_pessoas,
-                'cnpj' => $request->cnpj,
-            ]);
+                $pessoa->redeSocial()->create($request->only(['instagram', 'github', 'linkedin', 'lattes']));
+
+                if ($request->input('id_tipo_usuarios') == 2) { // Candidato
+                    $pessoa->pessoasFisica()->create([
+                        'cpf' => $request->input('cpf'),
+                        'data_de_nascimento' => Carbon::createFromFormat('d/m/Y', $request->input('data_de_nascimento'))->format('Y-m-d'),
+                        'sobrenome' => $request->input('sobrenome'),
+                        'id_areas_atuacao' => $request->input('id_areas_atuacao'),
+                        'cad_unico' => $request->input('cad_unico'),
+                        'genero' => $request->input('genero'),
+                    ]);
+                } else if ($request->input('id_tipo_usuarios') == 3) { // Empresa
+                    $pessoa->empresa()->create($request->only(['cnpj']));
+                }
+
+                return $pessoa;
+            });
+
+            $pessoa->load(['usuario', 'endereco.cidade', 'redeSocial', 'pessoasFisica', 'empresa']);
 
             return response()->json([
-                'mensagem' => 'Pessoa, empresa, cidade, endereço e usuário cadastrados com sucesso',
-                'data - pessoa' => $pessoa,
-                'data - redes sociais' => $rede_social,
-                'data - cidade' => $cidade,
-                'data - endereço' => $endereco,
-                'data - empresa' => $empresa,
-                'data - usuário' => $usuario
-            ], 200);
+                'message' => 'Usuário cadastrado com sucesso!',
+                'data' => $pessoa
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Ocorreu um erro durante o cadastro.', 'error' => $e->getMessage()], 500);
         }
-
-        if ($request->id_tipo_usuarios == 2) {
-            $pessoaFisica = PessoasFisica::create([
-                'id_pessoas' => $pessoa->id_pessoas,
-                'cpf' => $request->cpf,
-                'data_de_nascimento' => Carbon::createFromFormat('d/m/Y', $request->data_de_nascimento)->format('Y-m-d'),
-                'sobrenome' => $request->sobrenome,
-                'id_areas_atuacao' => $request->id_areas_atuacao,
-                'cad_unico' => $request->cad_unico,
-                'genero' => $request->genero,
-            ]);
-
-            return response()->json([
-                'mensagem' => 'Pessoa, pessoa física, cidade, endereço e usuário cadastrados com sucesso',
-                'data - pessoa' => $pessoa,
-                'data - redes sociais' => $rede_social,
-                'data - cidade' => $cidade,
-                'data - endereço' => $endereco,
-                'data - pessoa física' => $pessoaFisica,
-                'data - usuário' => $usuario
-            ], 200);
-        }
-
     }
 
     //upload de imagem
@@ -256,167 +189,80 @@ class PessoaController extends Controller
      */
     public function update(Request $request, string $id_pessoas)
     {
+        $commonRules = [
+            'nome' => 'required|string|max:255',
+            'telefone' => 'required|string|max:20',
+            'email' => 'required|string|max:255|email:rfc,dns,spoof',
+            'estado' => 'required|string|max:255',
+            'cidade' => 'required|string|max:50',
+        ];
 
-        if ($request->id_tipo_usuarios == 3) {
-
-            $rules = [
-
-                'nome' => 'required|string|max:255',
-                'telefone' => 'required|string|max:20',
-                'sobre' => 'string',
-                'imagem' => 'string|max:255',
-
-
-
-                'email' => 'required|string|max:255|email:rfc,dns,spoof',
-
-                'estado' => 'required|string|max:255',
-
-                'cidade' => 'required|string|max:50',
-
-            ];
-
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-
-                return response()->json([
-                    'error' => $validator->errors()
-                ], 422);
-
-            }
-
-        }
-
-        if ($request->id_tipo_usuarios == 2) {
-
-            $rules = [
-
-                'nome' => 'required|string|max:255',
-                'telefone' => 'required|string|max:20',
-                'sobre' => 'string',
-                'imagem' => 'string|max:255',
-                'id_areas_atuacao' => 'integer',
-
-                'data_de_nascimento' => 'required|date',
+        $specificRules = [];
+        if ($request->input('id_tipo_usuarios') == 2) {
+            $specificRules = [
+                'data_de_nascimento' => 'required|date_format:Y-m-d',
                 'sobrenome' => 'required|string|max:255',
-                'cad_unico' => 'string|max:12|unique:App\Models\PessoasFisica,cad_unico',
                 'genero' => 'required|string|max:45',
-
-                'email' => 'required|string|max:255|email:rfc,dns,spoof',
-
-                'estado' => 'required|string|max:255',
-
-                'cidade' => 'required|string|max:50',
-
+                'id_areas_atuacao' => 'nullable|integer|exists:areas_atuacao,id_areas_atuacao',
             ];
-
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-
-                return response()->json([
-                    'error' => $validator->errors()
-                ], 422);
-
-            }
-
         }
 
-        // Atualiza ou cria a cidade
-        $cidade = Cidade::where('nome_cidade', $request->cidade)->first();
+        $validator = Validator::make($request->all(), array_merge($commonRules, $specificRules));
 
-        if (!$cidade) {
-            $cidade = Cidade::create([
-                'nome_cidade' => $request->cidade,
-                'id_pais' => 1,
-            ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
-        // Atualiza a pessoa
-        $pessoa = Pessoa::find($id_pessoas);
-        if (!$pessoa) {
-            return response()->json(['mensagem' => 'Pessoa não encontrada'], 404);
-        }
-        $pessoa->update([
-            'nome' => $request->nome,
-            'telefone' => $request->telefone,
+        try {
+            DB::transaction(function () use ($request, $id_pessoas) {
+                $pessoa = Pessoa::findOrFail($id_pessoas);
 
-        ]);
+                $pessoa->update($request->only(['nome', 'telefone']));
 
-        $rede_social = Rede_Social::find($id_pessoas);
-        if (!$rede_social) {
-            return response()->json(['mensagem' => 'Rede social não encontrada'], 404);
-        }
-        $rede_social->update([
-            'instagram' => $request->instagram,
-            'github' => $request->github,
-            'linkedin' => $request->linkedin,
-            'curriculo_lattes' => $request->lattes,
-        ]);
+                $pessoa->usuario()->update($request->only(['email']));
 
-        // Atualiza o usuário
-        $usuario = Usuario::find($id_pessoas);
-        if (!$usuario) {
-            return response()->json(['mensagem' => 'Usuário não encontrado'], 404);
-        }
-        $usuario->update([
-            'email' => $request->email,
-        ]);
+                $cidade = Cidade::firstOrCreate(
+                    ['nome_cidade' => $request->input('cidade')],
+                    ['id_pais' => 1]
+                );
 
-        // Atualiza o endereço
-        $endereco = Endereco::where('id_pessoas', $id_pessoas)->first();
-        if (!$endereco) {
-            return response()->json(['mensagem' => 'Endereço não encontrado'], 404);
-        }
-        $endereco->update([
-            'estado' => $request->estado,
-            'id_cidades' => $cidade->id_cidades
-        ]);
+                $pessoa->endereco()->update([
+                    'estado' => $request->input('estado'),
+                    'id_cidades' => $cidade->id_cidades,
+                ]);
 
-        if ($request->id_tipo_usuarios == 3) {
-            $empresa = Empresa::find($id_pessoas);
-            if (!$empresa) {
-                return response()->json(['mensagem' => 'Empresa não encontrada'], 404);
-            }
+                $pessoa->redeSocial()->update([
+                    'instagram' => $request->input('instagram'),
+                    'github' => $request->input('github'),
+                    'linkedin' => $request->input('linkedin'),
+                    'curriculo_lattes' => $request->input('lattes'),
+                ]);
 
+                if ($request->input('id_tipo_usuarios') == 2) {
+                    $pessoa->pessoasFisica()->update([
+                        'data_de_nascimento' => $request->input('data_de_nascimento'),
+                        'sobrenome' => $request->input('sobrenome'),
+                        'genero' => $request->input('genero'),
+                        'id_areas_atuacao' => $request->input('id_areas_atuacao'),
+                    ]);
+                }
+            });
+
+            $pessoaAtualizada = Pessoa::with([
+                'usuario',
+                'endereco.cidade',
+                'redeSocial',
+                'pessoasFisica.areaAtuacao'
+            ])->find($id_pessoas);
 
             return response()->json([
-                'mensagem' => 'Dados atualizados com sucesso',
-                'pessoa' => $pessoa,
-                'rede social' => $rede_social,
-                'cidade' => $cidade,
-                'endereço' => $endereco,
-                'empresa' => $empresa,
-                'usuário' => $usuario
+                'message' => 'Dados atualizados com sucesso',
+                'data' => $pessoaAtualizada
             ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Ocorreu um erro ao atualizar os dados.', 'error' => $e->getMessage()], 500);
         }
-
-        if ($request->id_tipo_usuarios == 2) {
-            $pessoaFisica = PessoasFisica::find($id_pessoas);
-            if (!$pessoaFisica) {
-                return response()->json(['mensagem' => 'Pessoa física não encontrada'], 404);
-            }
-            $pessoaFisica->update([
-                'data_de_nascimento' => Carbon::createFromFormat('d/m/Y', $request->data_de_nascimento)->format('Y-m-d'),
-                'sobrenome' => $request->sobrenome,
-                'cad_unico' => $request->cad_unico,
-                'id_areas_atuacao' => $request->id_areas_atuacao,
-                'genero' => $request->genero,
-            ]);
-
-            return response()->json([
-                'mensagem' => 'Dados atualizados com sucesso',
-                'pessoa' => $pessoa,
-                'rede social' => $rede_social,
-                'cidade' => $cidade,
-                'endereço' => $endereco,
-                'pessoa_fisica' => $pessoaFisica,
-                'usuário' => $usuario
-            ], 200);
-        }
-
-        return response()->json(['mensagem' => 'Tipo de usuário inválido'], 400);
     }
 
     public function updateSobre(Request $request, string $id_pessoas)
