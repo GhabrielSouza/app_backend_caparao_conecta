@@ -132,6 +132,10 @@ Route::middleware('web')->group(function () {
     Route::post('/pessoas/{id_pessoas}/imagem', [PessoaController::class, 'uploadImagem'])
         ->middleware('auth:sanctum');
 
+
+    Route::post('/vagas/{id_vagas}/visualizar', [VagaController::class, 'visualizarVaga'])
+        ->middleware('auth:sanctum');
+
 });
 
 
