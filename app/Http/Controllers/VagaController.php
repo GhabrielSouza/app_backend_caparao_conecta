@@ -366,6 +366,29 @@ class VagaController extends Controller
         return response()->json($candidatos, 200);
     }
 
+    public function registrarVisualizacao(Request $request, Vaga $vaga)
+    {
+        $usuario = $request->user();
+
+        if ($usuario->id_pessoas === $vaga->id_empresas) {
+            return response()->json(['message' => 'Visualização do proprietário não contabilizada.'], 200);
+        }
+
+        $pessoaFisica = $usuario->pessoa->pessoasFisica;
+        if (!$pessoaFisica) {
+            return response()->json(['message' => 'Perfil de candidato não encontrado.'], 404);
+        }
+
+        $resultado = $pessoaFisica->vagasVisualizadas()->syncWithoutDetaching([$vaga->id_vagas]);
+
+        if (!empty($resultado['attached'])) {
+            $vaga->increment('visualizacoes');
+            return response()->json(['message' => 'Visualização registrada com sucesso.'], 200);
+        }
+
+        return response()->json(['message' => 'Visualização já registrada.'], 200);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

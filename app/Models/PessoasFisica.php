@@ -59,4 +59,10 @@ class PessoasFisica extends Model
     {
         return $this->hasMany('App\Models\Experiencia', 'id_pessoasFisicas', 'id_pessoas');
     }
+
+    public function vagasVisualizadas()
+    {
+        return $this->belongsToMany(Vaga::class, 'vaga_visualizacoes', 'id_pessoas', 'id_vagas')
+            ->withTimestamps();
+    }
 }

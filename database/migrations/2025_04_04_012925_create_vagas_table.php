@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->integer('qtd_vaga');
             $table->boolean('prorrogavel')->default(true);
             $table->integer('qtd_vagas_preenchidas')->nullable();
+            $table->integer('visualizacoes')->default(0);
             $table->string('modalidade_da_vaga', 255);
             $table->foreignId('id_empresas')->constrained('empresas', 'id_pessoas');
 

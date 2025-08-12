@@ -51,4 +51,10 @@ class Vaga extends Model
     {
         return $this->belongsToMany(Curso::class, 'vagas_cursos', 'id_vagas', 'id_cursos')->withTimestamps();
     }
+
+    public function visualizadores()
+    {
+        return $this->belongsToMany(PessoasFisica::class, 'vaga_visualizacoes', 'id_vagas', 'id_pessoas')
+            ->withTimestamps();
+    }
 }
