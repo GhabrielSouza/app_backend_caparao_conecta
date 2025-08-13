@@ -16,9 +16,9 @@ return new class extends Migration {
 
             $table->foreignId('id_pessoas')->constrained('pessoas_fisicas', 'id_pessoas')->cascadeOnDelete();
 
-            $table->timestamp('created_at')->useCurrent();
-
             $table->primary(['id_vagas', 'id_pessoas']);
+
+            $table->timestamps();
         });
     }
 

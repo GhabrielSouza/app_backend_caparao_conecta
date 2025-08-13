@@ -10,6 +10,7 @@ use App\Models\Usuario;
 use App\Models\Cidade;
 use App\Models\Vaga;
 use DB;
+use Illuminate\Support\Facades\Hash;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,7 +18,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\Pessoa;
-use Mockery\Undefined;
 
 class PessoaController extends Controller
 {

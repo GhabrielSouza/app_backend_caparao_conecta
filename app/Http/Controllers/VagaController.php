@@ -137,7 +137,7 @@ class VagaController extends Controller
         $atuacao = $request->input('atuacao') ? explode(",", $request->input('atuacao')) : [];
 
         $vagas = Vaga::query()
-            ->with(['habilidades', 'curso', 'areaAtuacao:id_areas_atuacao,nome_area', 'empresa.pessoa'])
+            ->with(['habilidades', 'curso', 'areaAtuacao:id_areas_atuacao,nome_area', 'empresa.pessoa', 'candidato'])
             ->when(!empty($modalidade), function ($query) use ($modalidade) {
                 $query->whereIn('modalidade_da_vaga', $modalidade);
             })

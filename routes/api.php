@@ -133,7 +133,7 @@ Route::middleware('web')->group(function () {
         ->middleware('auth:sanctum');
 
 
-    Route::post('/vagas/{id_vagas}/visualizar', [VagaController::class, 'visualizarVaga'])
+    Route::post('/vagas/{vaga}/visualizar', [VagaController::class, 'registrarVisualizacao'])
         ->middleware('auth:sanctum');
 
 });
