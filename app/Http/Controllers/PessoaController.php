@@ -26,7 +26,7 @@ class PessoaController extends Controller
      */
     public function index()
     {
-        $pessoas = Pessoa::with(['endereco.cidade', 'empresa'])->get();
+        $pessoas = Pessoa::with(['endereco.cidade', 'empresa', 'usuario:id_pessoas,id_tipo_usuarios'])->get();
 
         if ($pessoas->isEmpty()) {
             return response()->json(['message' => 'Nenhuma pessoa encontrada'], 404);
