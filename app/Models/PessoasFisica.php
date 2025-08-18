@@ -65,4 +65,9 @@ class PessoasFisica extends Model
         return $this->belongsToMany(Vaga::class, 'vaga_visualizacoes', 'id_pessoas', 'id_vagas')
             ->withTimestamps();
     }
+
+    public function vagasFavoritas()
+    {
+        return $this->belongsToMany(Vaga::class, 'favoritos', 'id_pessoas', 'id_vagas');
+    }
 }

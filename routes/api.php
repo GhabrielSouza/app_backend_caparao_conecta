@@ -136,6 +136,10 @@ Route::middleware('web')->group(function () {
     Route::post('/vagas/{vaga}/visualizar', [VagaController::class, 'registrarVisualizacao'])
         ->middleware('auth:sanctum');
 
+    Route::post('/vagas/{vaga}/favoritar', [VagaController::class, 'toggleFavorito']);
+
+    Route::get('/favoritos', [VagaController::class, 'listarFavoritos']);
+
 });
 
 

@@ -389,6 +389,27 @@ class VagaController extends Controller
         return response()->json(['message' => 'Visualização já registrada.'], 200);
     }
 
+    public function toggleFavorito(Request $request, Vaga $vaga)
+    {
+        $usuario = $request->user();
+        $pessoaFisica = $usuario->pessoa->pessoasFisica;
+
+        $pessoaFisica->vagasFavoritas()->toggle($vaga->id_vagas);
+
+        return response()->json(['message' => 'Status de favorito atualizado com sucesso.']);
+    }
+
+    public function listarFavoritos(Request $request)
+    {
+        $usuario = $request->user();
+        $pessoaFisica = $usuario->pessoa->pessoasFisica;
+
+        $favoritos = $pessoaFisica->vagasFavoritas()->with('empresa.pessoa')->get();
+
+        return response()->json($favoritos);
+    }
+
+
     /**
      * Remove the specified resource from storage.
      */
