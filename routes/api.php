@@ -74,7 +74,7 @@ Route::get('/cursos/por-instituicao/{id}', [CursoController::class, 'listarPorIn
 //Route de vagas
 Route::post('/cadVagas', [VagaController::class, 'store']);
 Route::get('/vagas/{id_vagas}', [VagaController::class, 'show']);
-Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
+
 Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
 Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
 Route::patch('/vagas/reativar', [VagaController::class, 'updateReativar']);
@@ -136,9 +136,12 @@ Route::middleware('web')->group(function () {
     Route::post('/vagas/{vaga}/visualizar', [VagaController::class, 'registrarVisualizacao'])
         ->middleware('auth:sanctum');
 
-    Route::post('/vagas/{vaga}/favoritar', [VagaController::class, 'toggleFavorito']);
+    Route::post('/vagas/{vaga}/favoritar', [VagaController::class, 'toggleFavorito'])->middleware('auth:sanctum');
+    Route::get('/vagas/candidaturas', [VagaController::class, 'minhasCandidaturas'])->middleware('auth:sanctum');
 
     Route::get('/favoritos', [VagaController::class, 'listarFavoritos']);
+
+    Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
 
 });
 

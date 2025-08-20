@@ -9,6 +9,7 @@ use App\Models\PessoasFisica;
 use App\Models\Vaga;
 use Carbon\Carbon;
 use Carbon\Traits\Timestamp;
+use Illuminate\Cache\Repository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
@@ -136,8 +137,27 @@ class VagaController extends Controller
         $id_empresa = $request->input('id_empresa') ? explode(",", $request->input('id_empresa')) : [];
         $atuacao = $request->input('atuacao') ? explode(",", $request->input('atuacao')) : [];
 
-        $vagas = Vaga::query()
-            ->with(['habilidades', 'curso', 'areaAtuacao:id_areas_atuacao,nome_area', 'empresa.pessoa', 'candidato'])
+        $usuario = $request->user();
+
+        $vagasQuery = Vaga::query()
+            ->with([
+                'habilidades',
+                'curso',
+                'areaAtuacao:id_areas_atuacao,nome_area',
+                'empresa.pessoa',
+                'candidato'
+            ]);
+
+        if ($usuario && $usuario->pessoa && $usuario->pessoa->pessoasFisica) {
+            $pessoaFisicaId = $usuario->pessoa->pessoasFisica->id_pessoas;
+            $vagasQuery->with([
+                'favoritadoPor' => function ($query) use ($pessoaFisicaId) {
+                    $query->where('pessoas_fisicas.id_pessoas', $pessoaFisicaId);
+                }
+            ]);
+        }
+
+        $vagas = $vagasQuery
             ->when(!empty($modalidade), function ($query) use ($modalidade) {
                 $query->whereIn('modalidade_da_vaga', $modalidade);
             })
@@ -150,6 +170,7 @@ class VagaController extends Controller
                 });
             })
             ->get();
+
 
         return response()->json($vagas, 200);
     }
@@ -364,6 +385,21 @@ class VagaController extends Controller
         $candidatos = $vaga->candidato;
 
         return response()->json($candidatos, 200);
+    }
+
+    public function minhasCandidaturas(Request $request)
+    {
+        $usuario = $request->user();
+
+        if (!$usuario || !$usuario->pessoa || !$usuario->pessoa->pessoasFisica) {
+            return response()->json(['message' => 'Perfil de candidato não encontrado.'], 404);
+        }
+
+        $pessoaFisica = $usuario->pessoa->pessoasFisica;
+
+        $vagas = $pessoaFisica->candidato()->with('empresa.pessoa')->get();
+
+        return response()->json($vagas, 200);
     }
 
     public function registrarVisualizacao(Request $request, Vaga $vaga)

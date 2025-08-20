@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Vaga extends Model
 {
     use SoftDeletes;
-    protected $filable = [
+    protected $fillable = [
         'id_vagas',
         'titulo_vaga',
         'descricao',
@@ -24,6 +25,17 @@ class Vaga extends Model
     ];
 
     protected $primaryKey = 'id_vagas';
+
+    protected $appends = ['is_favorita'];
+
+    protected function isFavorita(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                return $this->relationLoaded('favoritadoPor') && $this->favoritadoPor->isNotEmpty();
+            }
+        );
+    }
 
 
 
