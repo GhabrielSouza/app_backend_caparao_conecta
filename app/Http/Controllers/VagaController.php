@@ -397,6 +397,7 @@ class VagaController extends Controller
 
         $pessoaFisica = $usuario->pessoa->pessoasFisica;
 
+
         $vagas = $pessoaFisica->candidato()->with('empresa.pessoa')->get();
 
         return response()->json($vagas, 200);

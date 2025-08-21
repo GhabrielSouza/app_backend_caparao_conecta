@@ -137,7 +137,7 @@ Route::middleware('web')->group(function () {
         ->middleware('auth:sanctum');
 
     Route::post('/vagas/{vaga}/favoritar', [VagaController::class, 'toggleFavorito'])->middleware('auth:sanctum');
-    Route::get('/vagas/candidaturas', [VagaController::class, 'minhasCandidaturas'])->middleware('auth:sanctum');
+    Route::get('/candidaturas', [VagaController::class, 'minhasCandidaturas'])->middleware('auth:sanctum');
 
     Route::get('/favoritos', [VagaController::class, 'listarFavoritos']);
 
