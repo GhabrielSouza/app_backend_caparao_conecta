@@ -38,7 +38,7 @@ class PessoasFisica extends Model
 
     public function candidato()
     {
-        return $this->belongsToMany('App\Models\Vaga', 'candidaturas', 'id_pessoasFisicas', 'id_vagas')->withTimestamps();
+        return $this->belongsToMany('App\Models\Vaga', 'candidaturas', 'id_pessoasFisicas', 'id_vagas')->withPivot('status');
     }
 
     public function habilidades()

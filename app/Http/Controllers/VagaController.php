@@ -439,9 +439,21 @@ class VagaController extends Controller
     public function listarFavoritos(Request $request)
     {
         $usuario = $request->user();
+
+        if (!$usuario || !$usuario->pessoa || !$usuario->pessoa->pessoasFisica) {
+            return response()->json([], 200);
+        }
+
         $pessoaFisica = $usuario->pessoa->pessoasFisica;
 
-        $favoritos = $pessoaFisica->vagasFavoritas()->with('empresa.pessoa')->get();
+        $favoritos = $pessoaFisica->vagasFavoritas()
+            ->with('empresa.pessoa', 'curso', 'habilidades')
+            ->with([
+                'favoritadoPor' => function ($query) use ($pessoaFisica) {
+                    $query->where('pessoas_fisicas.id_pessoas', $pessoaFisica->id_pessoas);
+                }
+            ])
+            ->get();
 
         return response()->json($favoritos);
     }
