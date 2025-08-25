@@ -162,7 +162,13 @@ class PessoaController extends Controller
 
         if ($usuario->id_tipo_usuarios == 3) {
 
-            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'empresa', 'redeSocial'])->find($id_pessoas);
+            $pessoa = Pessoa::with([
+                'usuario.tipoUsuario',
+                'endereco.cidade',
+                'pessoasFisica.areaAtuacao',
+                'redeSocial',
+                'empresa'
+            ])->find($id_pessoas);
 
             return response()->json(
                 $pessoa,
@@ -174,6 +180,17 @@ class PessoaController extends Controller
         if ($usuario->id_tipo_usuarios == 2) {
 
             $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica', 'redeSocial', 'pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area'])->find($id_pessoas);
+
+            return response()->json(
+                $pessoa,
+                200
+            );
+
+        }
+
+        if ($usuario->id_tipo_usuarios == 1) {
+
+            $pessoa = Pessoa::with(['endereco.cidade', 'redeSocial',])->find($id_pessoas);
 
             return response()->json(
                 $pessoa,
