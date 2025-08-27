@@ -90,7 +90,7 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $pessoa_fisica->cursosOnPessoasFisicas()->attach($curso->id_cursos, [
+        $pessoa_fisica->cursos()->attach($curso->id_cursos, [
             'certificado_curso' => $request->certificado_curso,
             'data_conclusao' => $request->data_conclusao,
         ]);
