@@ -54,7 +54,7 @@ class PessoaController extends Controller
         if ($request->input('id_tipo_usuarios') == 2) {
             $specificRules = [
                 'cpf' => 'required|string|max:20|unique:pessoas_fisicas,cpf',
-                'data_de_nascimento' => 'required|date_format:d/m/Y',
+                'data_de_nascimento' => 'required',
                 'sobrenome' => 'required|string|max:255',
                 'genero' => 'required|string|max:45',
                 'id_areas_atuacao' => 'nullable|integer|exists:areas_atuacao,id_areas_atuacao',
@@ -97,7 +97,7 @@ class PessoaController extends Controller
                 if ($request->input('id_tipo_usuarios') == 2) { // Candidato
                     $pessoa->pessoasFisica()->create([
                         'cpf' => $request->input('cpf'),
-                        'data_de_nascimento' => Carbon::createFromFormat('d/m/Y', $request->input('data_de_nascimento'))->format('Y-m-d'),
+                        'data_de_nascimento' => $request->input('data_de_nascimento'),
                         'sobrenome' => $request->input('sobrenome'),
                         'id_areas_atuacao' => $request->input('id_areas_atuacao'),
                         'cad_unico' => $request->input('cad_unico'),

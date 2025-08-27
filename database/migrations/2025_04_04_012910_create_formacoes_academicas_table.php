@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->boolean('diploma_formacao');
             $table->boolean('conclusao_formacao');
             $table->date('data_emissao');
-            $table->date('data_conclusao');
+            $table->date('data_conclusao')->nullable();
             $table->unsignedBigInteger('id_pessoasFisicas');
             $table->foreignId('id_instituicoes')->constrained('instituicoes', 'id_instituicoes')->onDelete('cascade');
             $table->timestamps();
