@@ -17,6 +17,7 @@ use App\Http\Controllers\PessoasFisicaController;
 
 use App\Http\Controllers\VagaController;
 use App\Http\Controllers\HabilidadeController;
+use App\Http\Controllers\NotificacaoController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -142,6 +143,11 @@ Route::middleware('web')->group(function () {
     Route::get('/favoritos', [VagaController::class, 'listarFavoritos']);
 
     Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
+
+
+    Route::get('/notificacoes', [NotificacaoController::class, 'index']);
+    Route::post('/notificacoes/marcar-como-lidas', [NotificacaoController::class, 'marcarTodasComoLidas']);
+
 
 });
 

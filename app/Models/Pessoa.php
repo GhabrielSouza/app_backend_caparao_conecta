@@ -44,4 +44,9 @@ class Pessoa extends Model
     { // uma pessoa tem N endereços
         return $this->hasOne('App\Models\Rede_Social', 'id_pessoas', 'id_pessoas');
     }
+
+    public function notificacoes()
+    {
+        return $this->hasMany(Notificacao::class, 'id_pessoas_destinatario', 'id_pessoas');
+    }
 }

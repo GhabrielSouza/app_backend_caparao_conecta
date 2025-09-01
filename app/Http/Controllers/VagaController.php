@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NovaCandidatura;
+use App\Events\NovaVagaPublicada;
 use App\Models\Curso;
 use App\Models\Habilidade;
 use App\Models\Pessoa;
@@ -75,6 +77,8 @@ class VagaController extends Controller
         if ($request->has('cursos')) {
             $vaga->curso()->sync($request->cursos);
         }
+
+        NovaVagaPublicada::dispatch($vaga);
 
         return response()->json([
             'mensagem' => 'Vaga, habilidades e cursos cadastrados com sucesso!',
@@ -313,6 +317,7 @@ class VagaController extends Controller
         }
 
         $pessoaFisica->candidato()->attach($vaga->id_vagas);
+        NovaCandidatura::dispatch($vaga, $pessoaFisica);
 
         return response()->json([
             'message' => 'Candidatura realizada com sucesso!',
