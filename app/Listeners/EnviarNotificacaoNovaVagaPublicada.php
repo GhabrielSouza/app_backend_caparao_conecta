@@ -32,8 +32,8 @@ class EnviarNotificacaoNovaVagaPublicada
             $notificacao->tipo = 'nova_vaga';
             $notificacao->titulo = 'Nova Vaga Publicada';
             $notificacao->dados = [
-                'vaga_id' => $vaga->id,
-                'vaga_titulo' => $vaga->titulo,
+                'id_vagas' => $vaga->id_vagas,
+                'titulo_vaga' => $vaga->titulo_vaga,
             ];
             $notificacao->id_pessoas_destinatario = $candidato->id_pessoas;
             $notificacao->data_leitura = null;

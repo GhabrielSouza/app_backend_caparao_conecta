@@ -32,8 +32,8 @@ class EnviarNotificacaoNovaCandidatura
             $notificacao->tipo = 'nova_candidatura';
             $notificacao->titulo = 'Nova Candidatura Recebida';
             $notificacao->dados = [
-                'vaga_id' => $vaga->id,
-                'vaga_titulo' => $vaga->titulo,
+                'id_vagas' => $vaga->id_vagas,
+                'titulo_vaga' => $vaga->titulo_vaga,
                 'candidato_id' => $candidato->id_pessoas,
                 'candidato_nome' => $candidato->pessoa->nome . ' ' . $candidato->sobrenome,
             ];
