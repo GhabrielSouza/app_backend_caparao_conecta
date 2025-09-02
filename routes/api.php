@@ -147,7 +147,7 @@ Route::middleware('web')->group(function () {
 
     Route::get('/notificacoes', [NotificacaoController::class, 'index']);
     Route::post('/notificacoes/marcar-como-lidas', [NotificacaoController::class, 'marcarTodasComoLidas']);
-
+    Route::put('/notificacoes/{id}/marcar-como-lida', [NotificacaoController::class, 'marcarComoLida']);
 
 });
 

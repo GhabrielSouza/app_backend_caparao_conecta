@@ -40,7 +40,7 @@ class VagaController extends Controller
             'titulo_vaga' => 'required|string|max:255',
             'descricao' => 'nullable|string',
             'salario' => 'required',
-            'data_fechamento' => 'required|date',
+            'data_fechamento' => 'required|date_format:d/m/Y',
             'qtd_vaga' => 'required|integer',
             'modalidade_da_vaga' => 'required|string|max:255',
             'id_empresas' => 'required|integer|exists:empresas,id_pessoas',
@@ -63,7 +63,7 @@ class VagaController extends Controller
         $vaga->status = $request->status;
         $vaga->id_areas_atuacao = $request->id_areas_atuacao;
         $vaga->data_criacao = Carbon::now();
-        $vaga->data_fechamento = $request->data_fechamento;
+        $vaga->data_fechamento = Carbon::createFromFormat('d/m/Y', $request->data_fechamento)->format('Y-m-d');
         $vaga->qtd_vaga = $request->qtd_vaga;
         $vaga->qtd_vagas_preenchidas = 0;
         $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
@@ -201,7 +201,7 @@ class VagaController extends Controller
             'salario' => 'required',
             'status' => 'string|max:255',
             'id_areas_atuacao' => 'integer',
-            'data_fechamento' => 'required|date',
+            'data_fechamento' => 'required|date_format:d/m/Y',
             'qtd_vaga' => 'required|integer',
             'qtd_vagas_preenchidas' => 'integer',
             'modalidade_da_vaga' => 'required|string|max:255',
@@ -234,7 +234,7 @@ class VagaController extends Controller
         $vaga->status = $request->status;
         $vaga->id_areas_atuacao = $request->id_areas_atuacao;
         $vaga->data_criacao = Carbon::now();
-        $vaga->data_fechamento = Carbon::parse($request->input('data_fechamento'));
+        $vaga->data_fechamento = Carbon::createFromFormat('d/m/Y', $request->data_fechamento)->format('Y-m-d');
         $vaga->qtd_vaga = $request->qtd_vaga;
         $vaga->qtd_vagas_preenchidas = $request->qtd_vagas_preenchidas;
         $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;

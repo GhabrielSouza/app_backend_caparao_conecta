@@ -25,7 +25,7 @@ class EnviarNotificacaoNovaVagaPublicada
     {
         $vaga = $event->vaga;
 
-        $candidatosDaArea = PessoasFisica::where('area_id', $vaga->area_id)->get();
+        $candidatosDaArea = PessoasFisica::where('id_areas_atuacao', $vaga->id_areas_atuacao)->get();
 
         foreach ($candidatosDaArea as $candidato) {
             $notificacao = new Notificacao();
