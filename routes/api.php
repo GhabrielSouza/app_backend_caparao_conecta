@@ -116,6 +116,10 @@ Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);
 //Route update sobre de pessoas
 Route::patch('/pessoas/{id}/sobre', [PessoaController::class, 'updateSobre']);
 
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+// Rota para enviar a nova senha com o token
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
 Route::middleware('web')->group(function () {
 
     Route::post('/login', [AuthController::class, 'login']);
