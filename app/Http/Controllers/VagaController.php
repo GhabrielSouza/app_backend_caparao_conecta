@@ -44,6 +44,7 @@ class VagaController extends Controller
             'qtd_vaga' => 'required|integer',
             'modalidade_da_vaga' => 'required|string|max:255',
             'id_empresas' => 'required|integer|exists:empresas,id_pessoas',
+            'criado_por_usuario_id' => 'integer|exists:pessoas,id_pessoas',
             'id_areas_atuacao' => 'integer',
             'habilidades' => 'nullable|array',
             'cursos' => 'nullable|array',
@@ -68,6 +69,7 @@ class VagaController extends Controller
         $vaga->qtd_vagas_preenchidas = 0;
         $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
         $vaga->id_empresas = $request->id_empresas;
+        $vaga->criado_por_usuario_id = Auth::id();
         $vaga->save();
 
         if ($request->has('habilidades')) {
@@ -206,6 +208,7 @@ class VagaController extends Controller
             'qtd_vagas_preenchidas' => 'integer',
             'modalidade_da_vaga' => 'required|string|max:255',
             'id_empresas' => 'required|integer|exists:App\Models\Empresa,id_pessoas',
+            'criado_por_usuario_id' => 'integer|exists:usuarios,id',
 
         ];
 
@@ -226,7 +229,6 @@ class VagaController extends Controller
             ], 200);
 
         }
-
 
         $vaga->titulo_vaga = $request->titulo_vaga;
         $vaga->descricao = $request->descricao;
