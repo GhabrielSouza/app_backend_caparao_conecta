@@ -113,6 +113,7 @@ Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']);
 Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']);
 Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);
 
+
 //Route update sobre de pessoas
 Route::patch('/pessoas/{id}/sobre', [PessoaController::class, 'updateSobre']);
 
@@ -147,6 +148,10 @@ Route::middleware('web')->group(function () {
     Route::get('/favoritos', [VagaController::class, 'listarFavoritos']);
 
     Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
+
+    //visualização de perfil
+    Route::get('/pessoas/{id}/visualizacao', [PessoaController::class, 'visualizarPerfil']);
+
 
 
     Route::get('/notificacoes', [NotificacaoController::class, 'index']);

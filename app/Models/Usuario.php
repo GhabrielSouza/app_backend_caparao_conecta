@@ -27,6 +27,7 @@ class Usuario extends Authenticatable
 
     protected $with = [
         'pessoa.pessoasFisica',
+        'pessoa.empresa.vaga',
         'pessoa.endereco.cidade',
         'pessoa.redeSocial',
         'pessoa.pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area',

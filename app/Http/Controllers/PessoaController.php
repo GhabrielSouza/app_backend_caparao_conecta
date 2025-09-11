@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PerfilVisualizadoPorEmpresa;
 use App\Models\Empresa;
 use App\Models\Endereco;
 use App\Models\PessoasFisica;
@@ -199,6 +200,44 @@ class PessoaController extends Controller
 
         }
 
+    }
+
+    public function visualizarPerfil(Request $request, string $id)
+    {
+
+        $usuario = $request->user();
+
+        $pessoa = Pessoa::with([
+            'usuario.tipoUsuario',
+            'endereco.cidade',
+            'pessoasFisica.areaAtuacao',
+            'redeSocial',
+            'empresa',
+            'pessoasFisica.formacaoAcademica.instituicao',
+            'pessoasFisica.experiencia',
+            'pessoasFisica.habilidades',
+            'pessoasFisica.cursos'
+        ])->find($id);
+
+        if ($usuario && $usuario->tipoUsuario->nome === "EMPRESA" && $pessoa->pessoasFisica && $usuario->id_pessoas !== $pessoa->id_pessoas) {
+            PerfilVisualizadoPorEmpresa::dispatch($pessoa->pessoasFisica, $usuario->pessoa->empresa);
+        }
+
+        if ($usuario && $usuario->tipoUsuario->nome === "EMPRESA") {
+            $empresa = $usuario->pessoa->empresa;
+
+            if ($empresa->vaga()->exists()) {
+                $pessoa->telefone = 'Acesso Restrito';
+                $pessoa->usuario->email = 'Acesso Restrito';
+                $pessoa->unsetRelation('redeSocial');
+            }
+        }
+
+        if (!$pessoa) {
+            return response()->json(['message' => 'Pessoa não encontrada'], 404);
+        }
+
+        return response()->json($pessoa, 200);
     }
 
     /**
