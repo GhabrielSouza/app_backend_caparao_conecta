@@ -173,7 +173,7 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $pessoa_fisica->cursosOnPessoasFisicas()->detach($curso->id);
+        $pessoa_fisica->cursos()->detach($curso->id);
 
         return response()->json([
             'message' => 'Curso removido com sucesso',

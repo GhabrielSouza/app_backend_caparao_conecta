@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\PerfilVisualizadoPorEmpresa;
 use App\Models\Empresa;
 use App\Models\Endereco;
+use App\Models\Notificacao;
 use App\Models\PessoasFisica;
 use App\Models\Rede_Social;
 use App\Models\Usuario;
@@ -220,7 +221,17 @@ class PessoaController extends Controller
         ])->find($id);
 
         if ($usuario && $usuario->tipoUsuario->nome === "EMPRESA" && $pessoa->pessoasFisica && $usuario->id_pessoas !== $pessoa->id_pessoas) {
-            PerfilVisualizadoPorEmpresa::dispatch($pessoa->pessoasFisica, $usuario->pessoa->empresa);
+            $empresaAtual = $usuario->pessoa->empresa;
+
+            // Verifica se já existe uma notificação para o mesmo usuário e empresa
+            $notificacaoExistente = Notificacao::where('id_pessoas_destinatario', $pessoa->pessoasFisica->id_pessoas)
+                ->where('tipo', 'perfil_visualizado')
+                ->where('id_empresas', $empresaAtual->id_empresas)
+                ->exists();
+
+            if (!$notificacaoExistente) {
+                PerfilVisualizadoPorEmpresa::dispatch($pessoa->pessoasFisica, $empresaAtual);
+            }
         }
 
         if ($usuario && $usuario->tipoUsuario->nome === "EMPRESA") {
