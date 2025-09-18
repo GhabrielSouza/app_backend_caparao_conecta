@@ -223,13 +223,13 @@ class PessoaController extends Controller
         if ($usuario && $usuario->tipoUsuario->nome === "EMPRESA" && $pessoa->pessoasFisica && $usuario->id_pessoas !== $pessoa->id_pessoas) {
             $empresaAtual = $usuario->pessoa->empresa;
 
-            // Verifica se já existe uma notificação para o mesmo usuário e empresa
-            $notificacaoExistente = Notificacao::where('id_pessoas_destinatario', $pessoa->pessoasFisica->id_pessoas)
+            $notificacaoRecenteExiste = Notificacao::where('id_pessoas_destinatario', $pessoa->pessoasFisica->id_pessoas)
                 ->where('tipo', 'perfil_visualizado')
-                ->where('id_empresas', $empresaAtual->id_empresas)
+                ->whereJsonContains('dados->id_empresa', $empresaAtual->id_pessoas)
+                ->where('created_at', '>=', now()->subDay())
                 ->exists();
 
-            if (!$notificacaoExistente) {
+            if (!$notificacaoRecenteExiste) {
                 PerfilVisualizadoPorEmpresa::dispatch($pessoa->pessoasFisica, $empresaAtual);
             }
         }

@@ -150,7 +150,7 @@ class VagaController extends Controller
                 'habilidades',
                 'curso',
                 'areaAtuacao:id_areas_atuacao,nome_area',
-                'empresa.pessoa',
+                'empresa.pessoa.endereco.cidade',
                 'candidato'
             ]);
 
