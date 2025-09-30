@@ -70,7 +70,7 @@ class PessoaController extends Controller
         $validator = Validator::make($request->all(), array_merge($commonRules, $specificRules));
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
+            return response()->json(['error' => $validator->errors(), 'message' => 'Algum campo está inválido, por favor verifique e tente novamente.'], 422);
         }
 
         try {
