@@ -268,6 +268,8 @@ class VagaController extends Controller
         ], 200);
     }
 
+    // Em VagaController.php
+
     public function updateReativar(Request $request)
     {
         $request->validate([
@@ -276,10 +278,17 @@ class VagaController extends Controller
             'status' => 'required|string',
         ]);
 
-        Vaga::whereIn('id_vagas', $request->ids)
-            ->update(['status' => $request->status]);
+        $duracaoPadrao = 20;
 
-        return response()->json(['message' => 'Status das vagas atualizado com sucesso.']);
+        $novaDataFechamento = now()->addDays($duracaoPadrao);
+
+        Vaga::whereIn('id_vagas', $request->ids)
+            ->update([
+                'status' => $request->status,
+                'data_fechamento' => $novaDataFechamento
+            ]);
+
+        return response()->json(['message' => 'Status e data de fechamento das vagas atualizados com sucesso.']);
     }
 
     public function verHabilidades($id_vagas)
