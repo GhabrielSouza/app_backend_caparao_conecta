@@ -377,15 +377,22 @@ class VagaController extends Controller
             'status' => $novoStatus
         ]);
 
+
+
         if ($novoStatus === 'Contratado') {
+            $vaga->qtd_vagas_preenchidas = $vaga->candidato()
+                ->wherePivot('status', 'Contratado')
+                ->count();
+
             $totalContratadosAgora = $vaga->candidato()
                 ->wherePivot('status', 'Contratado')
                 ->count();
 
             if ($totalContratadosAgora >= $vaga->qtd_vaga) {
                 $vaga->status = 'FINALIZADO';
-                $vaga->save();
             }
+
+            $vaga->save();
         }
 
         return response()->json([

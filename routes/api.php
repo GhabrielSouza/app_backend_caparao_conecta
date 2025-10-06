@@ -127,7 +127,20 @@ Route::middleware('web')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user', function (Request $request) {
-            return $request->user();
+
+            $user = $request->user();
+
+
+            $user->load([
+                'pessoa.pessoasFisica',
+                'pessoa.empresa.vaga',
+                'pessoa.endereco.cidade',
+                'pessoa.redeSocial',
+                'pessoa.pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area',
+                'tipoUsuario:id_tipo_usuarios,nome',
+            ]);
+
+            return $user;
         });
         Route::post('/logout', [AuthController::class, 'logout']);
     });
@@ -150,7 +163,7 @@ Route::middleware('web')->group(function () {
     Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
 
     //visualização de perfil
-    Route::get('/pessoas/{id}/visualizacao', [PessoaController::class, 'visualizarPerfil']);
+    Route::get('/pessoas/{id}/visualizacao', [PessoaController::class, 'visualizarPerfilCandidato']);
 
 
 

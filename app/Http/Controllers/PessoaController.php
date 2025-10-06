@@ -13,6 +13,7 @@ use App\Models\Cidade;
 use App\Models\Vaga;
 use DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class PessoaController extends Controller
      */
     public function index()
     {
-        $pessoas = Pessoa::with(['endereco.cidade', 'empresa', 'usuario:id_pessoas,id_tipo_usuarios'])->get();
+        $pessoas = Pessoa::with(['endereco.cidade', 'empresa', 'usuario.tipoUsuario'])->get();
 
         if ($pessoas->isEmpty()) {
             return response()->json(['message' => 'Nenhuma pessoa encontrada'], 404);
@@ -160,95 +161,68 @@ class PessoaController extends Controller
      */
     public function show(string $id_pessoas)
     {
-        $usuario = Usuario::find($id_pessoas);
+        $pessoa = Pessoa::with('usuario.tipoUsuario')->findOrFail($id_pessoas);
 
-        if ($usuario->id_tipo_usuarios == 3) {
+        $role = $pessoa->usuario->tipoUsuario->nome;
 
-            $pessoa = Pessoa::with([
-                'usuario.tipoUsuario',
-                'endereco.cidade',
-                'pessoasFisica.areaAtuacao',
-                'redeSocial',
-                'empresa'
-            ])->find($id_pessoas);
+        $pessoa->load(['endereco.cidade', 'redeSocial']);
 
-            return response()->json(
-                $pessoa,
-                200
-            );
-
+        if ($role === 'CANDIDATO') {
+            $pessoa->load('pessoasFisica.areaAtuacao', 'pessoasFisica.experiencia', 'pessoasFisica.formacaoAcademica.instituicao', 'pessoasFisica.habilidades', 'pessoasFisica.cursos');
+        } else if ($role === 'EMPRESA') {
+            $pessoa->load('empresa.vaga');
         }
 
-        if ($usuario->id_tipo_usuarios == 2) {
-
-            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica', 'redeSocial', 'pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area'])->find($id_pessoas);
-
-            return response()->json(
-                $pessoa,
-                200
-            );
-
+        $usuarioLogado = Auth::user();
+        if (
+            $usuarioLogado &&
+            $usuarioLogado->tipo_usuario?->nome === 'EMPRESA' &&
+            $usuarioLogado->id_pessoas != $pessoa->id_pessoas &&
+            $pessoa->pessoasFisica
+        ) {
+            event(new PerfilVisualizadoPorEmpresa($pessoa->pessoasFisica, $usuarioLogado->pessoa->empresa));
         }
 
-        if ($usuario->id_tipo_usuarios == 1) {
-
-            $pessoa = Pessoa::with(['endereco.cidade', 'redeSocial',])->find($id_pessoas);
-
-            return response()->json(
-                $pessoa,
-                200
-            );
-
-        }
-
+        return response()->json($pessoa, 200);
     }
 
-    public function visualizarPerfil(Request $request, string $id)
+    public function visualizarPerfilCandidato(Request $request, string $id_pessoas)
     {
+        $empresaLogada = $request->user()->pessoa->empresa;
 
-        $usuario = $request->user();
+        if (!$empresaLogada->vaga()->exists()) {
+            return response()->json([
+                'message' => 'Para visualizar perfis de candidatos, a sua empresa precisa de ter pelo menos uma vaga cadastrada.'
+            ], 403);
+        }
 
-        $pessoa = Pessoa::with([
+        if ($empresaLogada) {
+            $vagas = $empresaLogada->vaga()->select('id_vagas', 'status')
+                ->get();
+
+            foreach ($vagas as $vaga) {
+                if ($vaga->status != 'EM_ANDAMENTO') {
+                    return response()->json([
+                        'message' => 'Para visualizar perfis de candidatos, a sua empresa precisa de ter pelo menos uma vaga com status EM ANDAMENTO.'
+                    ], 403);
+                }
+            }
+        }
+
+        $candidato = Pessoa::with([
             'usuario.tipoUsuario',
             'endereco.cidade',
             'pessoasFisica.areaAtuacao',
             'redeSocial',
-            'empresa',
             'pessoasFisica.formacaoAcademica.instituicao',
             'pessoasFisica.experiencia',
             'pessoasFisica.habilidades',
             'pessoasFisica.cursos'
-        ])->find($id);
+        ])->findOrFail($id_pessoas);
 
-        if ($usuario && $usuario->tipoUsuario->nome === "EMPRESA" && $pessoa->pessoasFisica && $usuario->id_pessoas !== $pessoa->id_pessoas) {
-            $empresaAtual = $usuario->pessoa->empresa;
+        event(new PerfilVisualizadoPorEmpresa($candidato->pessoasFisica, $empresaLogada));
 
-            $notificacaoRecenteExiste = Notificacao::where('id_pessoas_destinatario', $pessoa->pessoasFisica->id_pessoas)
-                ->where('tipo', 'perfil_visualizado')
-                ->whereJsonContains('dados->id_empresa', $empresaAtual->id_pessoas)
-                ->where('created_at', '>=', now()->subDay())
-                ->exists();
-
-            if (!$notificacaoRecenteExiste) {
-                PerfilVisualizadoPorEmpresa::dispatch($pessoa->pessoasFisica, $empresaAtual);
-            }
-        }
-
-        if ($usuario && $usuario->tipoUsuario->nome === "EMPRESA") {
-            $empresa = $usuario->pessoa->empresa;
-
-            if ($empresa->vaga()->exists()) {
-                $pessoa->telefone = 'Acesso Restrito';
-                $pessoa->usuario->email = 'Acesso Restrito';
-                $pessoa->unsetRelation('redeSocial');
-            }
-        }
-
-        if (!$pessoa) {
-            return response()->json(['message' => 'Pessoa não encontrada'], 404);
-        }
-
-        return response()->json($pessoa, 200);
+        return response()->json($candidato);
     }
 
     /**

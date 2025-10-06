@@ -17,11 +17,21 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            // Inicia uma sessão segura para o usuário.
+
             $request->session()->regenerate();
 
-            // Retorna os dados do usuário, sem nenhum token.
-            return response()->json(Auth::user());
+            $user = Auth::user();
+
+            $user->load([
+                'pessoa.pessoasFisica',
+                'pessoa.empresa.vaga',
+                'pessoa.endereco.cidade',
+                'pessoa.redeSocial',
+                'pessoa.pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area',
+                'tipoUsuario:id_tipo_usuarios,nome',
+            ]);
+
+            return response()->json($user);
         }
 
         return response()->json([

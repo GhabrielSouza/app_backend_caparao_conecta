@@ -25,14 +25,14 @@ class Usuario extends Authenticatable
 
     public $timestamps = false;
 
-    protected $with = [
-        'pessoa.pessoasFisica',
-        'pessoa.empresa.vaga',
-        'pessoa.endereco.cidade',
-        'pessoa.redeSocial',
-        'pessoa.pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area',
-        'tipoUsuario:id_tipo_usuarios,nome',
-    ];
+    // protected $with = [
+    //     'pessoa.pessoasFisica',
+    //     'pessoa.empresa.vaga',
+    //     'pessoa.endereco.cidade',
+    //     'pessoa.redeSocial',
+    //     'pessoa.pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area',
+    //     'tipoUsuario:id_tipo_usuarios,nome',
+    // ];
 
     public function pessoa()
     {
