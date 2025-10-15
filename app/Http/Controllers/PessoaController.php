@@ -47,7 +47,7 @@ class PessoaController extends Controller
             'nome' => 'required|string|max:255',
             'telefone' => 'required|string|max:20',
             'sobre' => 'nullable|string',
-            'email' => 'required|string|max:255|email:rfc,dns,spoof|unique:usuarios,email',
+            'email' => 'required|string|max:255|email:rfc,dns|unique:usuarios,email',
             'password' => 'required|string|min:8',
             'estado' => 'required|string|max:255',
             'cidade' => 'required|string|max:50',
@@ -200,12 +200,11 @@ class PessoaController extends Controller
             $vagas = $empresaLogada->vaga()->select('id_vagas', 'status')
                 ->get();
 
-            foreach ($vagas as $vaga) {
-                if ($vaga->status != 'EM_ANDAMENTO') {
-                    return response()->json([
-                        'message' => 'Para visualizar perfis de candidatos, a sua empresa precisa de ter pelo menos uma vaga com status EM ANDAMENTO.'
-                    ], 403);
-                }
+
+            if (!$vagas->contains('status', 'EM_ANDAMENTO')) {
+                return response()->json([
+                    'message' => 'Para visualizar perfis de candidatos, a sua empresa precisa de ter pelo menos uma vaga com status EM ANDAMENTO.'
+                ], 403);
             }
         }
 
@@ -233,7 +232,7 @@ class PessoaController extends Controller
         $commonRules = [
             'nome' => 'required|string|max:255',
             'telefone' => 'required|string|max:20',
-            'email' => 'required|string|max:255|email:rfc,dns,spoof',
+            'email' => 'required|string|max:255|email:rfc,dns',
             'estado' => 'required|string|max:255',
             'cidade' => 'required|string|max:50',
         ];

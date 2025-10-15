@@ -61,7 +61,7 @@ class VagaController extends Controller
         $vaga->titulo_vaga = $request->titulo_vaga;
         $vaga->descricao = $request->descricao;
         $vaga->salario = $request->salario;
-        $vaga->status = $request->status;
+        $vaga->status = 'EM_ANDAMENTO';
         $vaga->id_areas_atuacao = $request->id_areas_atuacao;
         $vaga->data_criacao = Carbon::now();
         $vaga->data_fechamento = Carbon::createFromFormat('d/m/Y', $request->data_fechamento)->format('Y-m-d');
@@ -114,7 +114,7 @@ class VagaController extends Controller
         $vaga = Vaga::find($id_vaga);
 
         return response()->json([
-            'mensagem' => 'Habilidade colocada na vaga com sucesso!',
+            'mensagem' => 'Curso colocado na vaga com sucesso!',
             'curso' => $curso,
             'vaga' => $vaga
         ]);
@@ -201,7 +201,6 @@ class VagaController extends Controller
             'titulo_vaga' => 'required|string|max:255',
             'descricao' => 'string',
             'salario' => 'required',
-            'status' => 'string|max:255',
             'id_areas_atuacao' => 'integer',
             'data_fechamento' => 'required|date_format:d/m/Y',
             'qtd_vaga' => 'required|integer',
