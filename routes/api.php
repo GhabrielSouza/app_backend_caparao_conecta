@@ -17,6 +17,7 @@ use App\Http\Controllers\PessoasFisicaController;
 
 use App\Http\Controllers\VagaController;
 use App\Http\Controllers\HabilidadeController;
+use App\Http\Controllers\NotificacaoController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -112,8 +113,13 @@ Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']);
 Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']);
 Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);
 
+
 //Route update sobre de pessoas
 Route::patch('/pessoas/{id}/sobre', [PessoaController::class, 'updateSobre']);
+
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+// Rota para enviar a nova senha com o token
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware('web')->group(function () {
 
@@ -121,7 +127,20 @@ Route::middleware('web')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user', function (Request $request) {
-            return $request->user();
+
+            $user = $request->user();
+
+
+            $user->load([
+                'pessoa.pessoasFisica',
+                'pessoa.empresa.vaga',
+                'pessoa.endereco.cidade',
+                'pessoa.redeSocial',
+                'pessoa.pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area',
+                'tipoUsuario:id_tipo_usuarios,nome',
+            ]);
+
+            return $user;
         });
         Route::post('/logout', [AuthController::class, 'logout']);
     });
@@ -142,6 +161,15 @@ Route::middleware('web')->group(function () {
     Route::get('/favoritos', [VagaController::class, 'listarFavoritos']);
 
     Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
+
+    //visualização de perfil
+    Route::get('/pessoas/{id}/visualizacao', [PessoaController::class, 'visualizarPerfilCandidato']);
+
+
+
+    Route::get('/notificacoes', [NotificacaoController::class, 'index']);
+    Route::post('/notificacoes/marcar-como-lidas', [NotificacaoController::class, 'marcarTodasComoLidas']);
+    Route::put('/notificacoes/{id}/marcar-como-lida', [NotificacaoController::class, 'marcarComoLida']);
 
 });
 

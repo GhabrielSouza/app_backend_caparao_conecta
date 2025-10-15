@@ -12,6 +12,9 @@ return new class extends Migration {
             $table->foreignId('id_cidades')->constrained('cidades', 'id_cidades')->onDelete('cascade');
             $table->unsignedBigInteger('id_pessoas');
             $table->string('estado', 255);
+            $table->string('cep', 9)->nullable();
+            $table->string('bairro', 255)->nullable();
+            $table->string('endereco', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();
 

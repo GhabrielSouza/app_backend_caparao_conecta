@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Notifications\CustomResetPasswordNotification;
 
 class Usuario extends Authenticatable
 {
@@ -24,13 +25,14 @@ class Usuario extends Authenticatable
 
     public $timestamps = false;
 
-    protected $with = [
-        'pessoa.pessoasFisica',
-        'pessoa.endereco.cidade',
-        'pessoa.redeSocial',
-        'pessoa.pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area',
-        'tipoUsuario:id_tipo_usuarios,nome',
-    ];
+    // protected $with = [
+    //     'pessoa.pessoasFisica',
+    //     'pessoa.empresa.vaga',
+    //     'pessoa.endereco.cidade',
+    //     'pessoa.redeSocial',
+    //     'pessoa.pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area',
+    //     'tipoUsuario:id_tipo_usuarios,nome',
+    // ];
 
     public function pessoa()
     {
@@ -42,4 +44,10 @@ class Usuario extends Authenticatable
         return $this->belongsTo(TipoUsuario::class, 'id_tipo_usuarios', 'id_tipo_usuarios');
     }
 
+
+    public function sendPasswordResetNotification($token)
+    {
+        // 2. Diz ao Laravel para usar a sua notificação personalizada
+        $this->notify(new CustomResetPasswordNotification($token));
+    }
 }

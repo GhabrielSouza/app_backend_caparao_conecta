@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\AreaAtuacao;
 use Illuminate\Http\Request;
+use Validator;
 
 class AreaAtuacaoController extends Controller
 {
@@ -17,17 +18,6 @@ class AreaAtuacaoController extends Controller
         return response()->json($areas, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $rules = [
@@ -63,17 +53,6 @@ class AreaAtuacaoController extends Controller
         return response()->json($areas, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $rules = [

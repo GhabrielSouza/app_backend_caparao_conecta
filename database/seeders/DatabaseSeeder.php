@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             Instituicoes::class,
             AreaAtuacaoSeeder::class,
             AdminUserSeeder::class,
+            HabilidadesSeeder::class,
+            CursosSeeder::class,
         ]);
     }
 }

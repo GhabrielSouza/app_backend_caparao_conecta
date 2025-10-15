@@ -20,12 +20,12 @@ class Empresa extends Model
 
     public function pessoa()
     {
-        return $this->belongsTo('App\Models\Pessoa','id_pessoas', 'id_pessoas');
+        return $this->belongsTo('App\Models\Pessoa', 'id_pessoas', 'id_pessoas');
     }
 
     public function vaga()
     {
-        return $this->hasMany('App\Models\Vaga');
+        return $this->hasMany('App\Models\Vaga', 'id_empresas', 'id_pessoas');
     }
 
 }

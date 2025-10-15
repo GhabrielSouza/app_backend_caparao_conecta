@@ -12,18 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+
+        // Adiciona o middleware do Sanctum ao grupo 'api'
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
-
-
-        //
-    })
-    ->withMiddleware(function (Middleware $middleware) {
+        // Adiciona a exceção do CSRF para as rotas de API
         $middleware->validateCsrfTokens(except: [
             'api/*',
         ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

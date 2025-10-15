@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NovaCandidatura;
+use App\Events\NovaVagaPublicada;
 use App\Models\Curso;
 use App\Models\Habilidade;
 use App\Models\Pessoa;
@@ -38,10 +40,11 @@ class VagaController extends Controller
             'titulo_vaga' => 'required|string|max:255',
             'descricao' => 'nullable|string',
             'salario' => 'required',
-            'data_fechamento' => 'required|date',
+            'data_fechamento' => 'required|date_format:d/m/Y',
             'qtd_vaga' => 'required|integer',
             'modalidade_da_vaga' => 'required|string|max:255',
             'id_empresas' => 'required|integer|exists:empresas,id_pessoas',
+            'criado_por_usuario_id' => 'integer|exists:pessoas,id_pessoas',
             'id_areas_atuacao' => 'integer',
             'habilidades' => 'nullable|array',
             'cursos' => 'nullable|array',
@@ -58,14 +61,15 @@ class VagaController extends Controller
         $vaga->titulo_vaga = $request->titulo_vaga;
         $vaga->descricao = $request->descricao;
         $vaga->salario = $request->salario;
-        $vaga->status = $request->status;
+        $vaga->status = 'EM_ANDAMENTO';
         $vaga->id_areas_atuacao = $request->id_areas_atuacao;
         $vaga->data_criacao = Carbon::now();
-        $vaga->data_fechamento = $request->data_fechamento;
+        $vaga->data_fechamento = Carbon::createFromFormat('d/m/Y', $request->data_fechamento)->format('Y-m-d');
         $vaga->qtd_vaga = $request->qtd_vaga;
         $vaga->qtd_vagas_preenchidas = 0;
         $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
         $vaga->id_empresas = $request->id_empresas;
+        $vaga->criado_por_usuario_id = Auth::id();
         $vaga->save();
 
         if ($request->has('habilidades')) {
@@ -75,6 +79,8 @@ class VagaController extends Controller
         if ($request->has('cursos')) {
             $vaga->curso()->sync($request->cursos);
         }
+
+        NovaVagaPublicada::dispatch($vaga);
 
         return response()->json([
             'mensagem' => 'Vaga, habilidades e cursos cadastrados com sucesso!',
@@ -108,7 +114,7 @@ class VagaController extends Controller
         $vaga = Vaga::find($id_vaga);
 
         return response()->json([
-            'mensagem' => 'Habilidade colocada na vaga com sucesso!',
+            'mensagem' => 'Curso colocado na vaga com sucesso!',
             'curso' => $curso,
             'vaga' => $vaga
         ]);
@@ -144,7 +150,7 @@ class VagaController extends Controller
                 'habilidades',
                 'curso',
                 'areaAtuacao:id_areas_atuacao,nome_area',
-                'empresa.pessoa',
+                'empresa.pessoa.endereco.cidade',
                 'candidato'
             ]);
 
@@ -195,13 +201,13 @@ class VagaController extends Controller
             'titulo_vaga' => 'required|string|max:255',
             'descricao' => 'string',
             'salario' => 'required',
-            'status' => 'string|max:255',
             'id_areas_atuacao' => 'integer',
-            'data_fechamento' => 'required|date',
+            'data_fechamento' => 'required|date_format:d/m/Y',
             'qtd_vaga' => 'required|integer',
             'qtd_vagas_preenchidas' => 'integer',
             'modalidade_da_vaga' => 'required|string|max:255',
             'id_empresas' => 'required|integer|exists:App\Models\Empresa,id_pessoas',
+            'criado_por_usuario_id' => 'integer|exists:usuarios,id',
 
         ];
 
@@ -223,14 +229,13 @@ class VagaController extends Controller
 
         }
 
-
         $vaga->titulo_vaga = $request->titulo_vaga;
         $vaga->descricao = $request->descricao;
         $vaga->salario = $request->salario;
         $vaga->status = $request->status;
         $vaga->id_areas_atuacao = $request->id_areas_atuacao;
         $vaga->data_criacao = Carbon::now();
-        $vaga->data_fechamento = Carbon::parse($request->input('data_fechamento'));
+        $vaga->data_fechamento = Carbon::createFromFormat('d/m/Y', $request->data_fechamento)->format('Y-m-d');
         $vaga->qtd_vaga = $request->qtd_vaga;
         $vaga->qtd_vagas_preenchidas = $request->qtd_vagas_preenchidas;
         $vaga->modalidade_da_vaga = $request->modalidade_da_vaga;
@@ -262,6 +267,8 @@ class VagaController extends Controller
         ], 200);
     }
 
+    // Em VagaController.php
+
     public function updateReativar(Request $request)
     {
         $request->validate([
@@ -270,10 +277,17 @@ class VagaController extends Controller
             'status' => 'required|string',
         ]);
 
-        Vaga::whereIn('id_vagas', $request->ids)
-            ->update(['status' => $request->status]);
+        $duracaoPadrao = 20;
 
-        return response()->json(['message' => 'Status das vagas atualizado com sucesso.']);
+        $novaDataFechamento = now()->addDays($duracaoPadrao);
+
+        Vaga::whereIn('id_vagas', $request->ids)
+            ->update([
+                'status' => $request->status,
+                'data_fechamento' => $novaDataFechamento
+            ]);
+
+        return response()->json(['message' => 'Status e data de fechamento das vagas atualizados com sucesso.']);
     }
 
     public function verHabilidades($id_vagas)
@@ -313,6 +327,7 @@ class VagaController extends Controller
         }
 
         $pessoaFisica->candidato()->attach($vaga->id_vagas);
+        NovaCandidatura::dispatch($vaga, $pessoaFisica);
 
         return response()->json([
             'message' => 'Candidatura realizada com sucesso!',
@@ -361,15 +376,22 @@ class VagaController extends Controller
             'status' => $novoStatus
         ]);
 
+
+
         if ($novoStatus === 'Contratado') {
+            $vaga->qtd_vagas_preenchidas = $vaga->candidato()
+                ->wherePivot('status', 'Contratado')
+                ->count();
+
             $totalContratadosAgora = $vaga->candidato()
                 ->wherePivot('status', 'Contratado')
                 ->count();
 
             if ($totalContratadosAgora >= $vaga->qtd_vaga) {
                 $vaga->status = 'FINALIZADO';
-                $vaga->save();
             }
+
+            $vaga->save();
         }
 
         return response()->json([

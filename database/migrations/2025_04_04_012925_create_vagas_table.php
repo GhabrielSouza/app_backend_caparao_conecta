@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->integer('visualizacoes')->default(0);
             $table->string('modalidade_da_vaga', 255);
             $table->foreignId('id_empresas')->constrained('empresas', 'id_pessoas');
-
+            $table->integer('criado_por_usuario_id');
             $table->foreignId('id_areas_atuacao')->nullable()->constrained('areas_atuacao', 'id_areas_atuacao');
 
             $table->timestamps();

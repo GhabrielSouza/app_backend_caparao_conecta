@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PerfilVisualizadoPorEmpresa;
 use App\Models\Empresa;
 use App\Models\Endereco;
+use App\Models\Notificacao;
 use App\Models\PessoasFisica;
 use App\Models\Rede_Social;
 use App\Models\Usuario;
@@ -11,6 +13,7 @@ use App\Models\Cidade;
 use App\Models\Vaga;
 use DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -26,7 +29,7 @@ class PessoaController extends Controller
      */
     public function index()
     {
-        $pessoas = Pessoa::with(['endereco.cidade', 'empresa', 'usuario:id_pessoas,id_tipo_usuarios'])->get();
+        $pessoas = Pessoa::with(['endereco.cidade', 'empresa', 'usuario.tipoUsuario'])->get();
 
         if ($pessoas->isEmpty()) {
             return response()->json(['message' => 'Nenhuma pessoa encontrada'], 404);
@@ -44,7 +47,7 @@ class PessoaController extends Controller
             'nome' => 'required|string|max:255',
             'telefone' => 'required|string|max:20',
             'sobre' => 'nullable|string',
-            'email' => 'required|string|max:255|email:rfc,dns,spoof|unique:usuarios,email',
+            'email' => 'required|string|max:255|email:rfc,dns|unique:usuarios,email',
             'password' => 'required|string|min:8',
             'estado' => 'required|string|max:255',
             'cidade' => 'required|string|max:50',
@@ -68,7 +71,7 @@ class PessoaController extends Controller
         $validator = Validator::make($request->all(), array_merge($commonRules, $specificRules));
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
+            return response()->json(['error' => $validator->errors(), 'message' => 'Algum campo está inválido, por favor verifique e tente novamente.'], 422);
         }
 
         try {
@@ -158,47 +161,67 @@ class PessoaController extends Controller
      */
     public function show(string $id_pessoas)
     {
-        $usuario = Usuario::find($id_pessoas);
+        $pessoa = Pessoa::with('usuario.tipoUsuario')->findOrFail($id_pessoas);
 
-        if ($usuario->id_tipo_usuarios == 3) {
+        $role = $pessoa->usuario->tipoUsuario->nome;
 
-            $pessoa = Pessoa::with([
-                'usuario.tipoUsuario',
-                'endereco.cidade',
-                'pessoasFisica.areaAtuacao',
-                'redeSocial',
-                'empresa'
-            ])->find($id_pessoas);
+        $pessoa->load(['endereco.cidade', 'redeSocial']);
 
-            return response()->json(
-                $pessoa,
-                200
-            );
-
+        if ($role === 'CANDIDATO') {
+            $pessoa->load('pessoasFisica.areaAtuacao', 'pessoasFisica.experiencia', 'pessoasFisica.formacaoAcademica.instituicao', 'pessoasFisica.habilidades', 'pessoasFisica.cursos');
+        } else if ($role === 'EMPRESA') {
+            $pessoa->load('empresa.vaga');
         }
 
-        if ($usuario->id_tipo_usuarios == 2) {
-
-            $pessoa = Pessoa::with(['usuario', 'endereco.cidade', 'pessoasFisica', 'redeSocial', 'pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area'])->find($id_pessoas);
-
-            return response()->json(
-                $pessoa,
-                200
-            );
-
+        $usuarioLogado = Auth::user();
+        if (
+            $usuarioLogado &&
+            $usuarioLogado->tipo_usuario?->nome === 'EMPRESA' &&
+            $usuarioLogado->id_pessoas != $pessoa->id_pessoas &&
+            $pessoa->pessoasFisica
+        ) {
+            event(new PerfilVisualizadoPorEmpresa($pessoa->pessoasFisica, $usuarioLogado->pessoa->empresa));
         }
 
-        if ($usuario->id_tipo_usuarios == 1) {
+        return response()->json($pessoa, 200);
+    }
 
-            $pessoa = Pessoa::with(['endereco.cidade', 'redeSocial',])->find($id_pessoas);
+    public function visualizarPerfilCandidato(Request $request, string $id_pessoas)
+    {
+        $empresaLogada = $request->user()->pessoa->empresa;
 
-            return response()->json(
-                $pessoa,
-                200
-            );
-
+        if (!$empresaLogada->vaga()->exists()) {
+            return response()->json([
+                'message' => 'Para visualizar perfis de candidatos, a sua empresa precisa de ter pelo menos uma vaga cadastrada.'
+            ], 403);
         }
 
+        if ($empresaLogada) {
+            $vagas = $empresaLogada->vaga()->select('id_vagas', 'status')
+                ->get();
+
+
+            if (!$vagas->contains('status', 'EM_ANDAMENTO')) {
+                return response()->json([
+                    'message' => 'Para visualizar perfis de candidatos, a sua empresa precisa de ter pelo menos uma vaga com status EM ANDAMENTO.'
+                ], 403);
+            }
+        }
+
+        $candidato = Pessoa::with([
+            'usuario.tipoUsuario',
+            'endereco.cidade',
+            'pessoasFisica.areaAtuacao',
+            'redeSocial',
+            'pessoasFisica.formacaoAcademica.instituicao',
+            'pessoasFisica.experiencia',
+            'pessoasFisica.habilidades',
+            'pessoasFisica.cursos'
+        ])->findOrFail($id_pessoas);
+
+        event(new PerfilVisualizadoPorEmpresa($candidato->pessoasFisica, $empresaLogada));
+
+        return response()->json($candidato);
     }
 
     /**
@@ -209,7 +232,7 @@ class PessoaController extends Controller
         $commonRules = [
             'nome' => 'required|string|max:255',
             'telefone' => 'required|string|max:20',
-            'email' => 'required|string|max:255|email:rfc,dns,spoof',
+            'email' => 'required|string|max:255|email:rfc,dns',
             'estado' => 'required|string|max:255',
             'cidade' => 'required|string|max:50',
         ];
