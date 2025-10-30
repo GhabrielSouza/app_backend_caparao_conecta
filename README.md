@@ -1,66 +1,96 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Backend Caparaó Conecta (API Laravel)
+Este diretório contém a aplicação backend para o projeto Caparaó Conecta, desenvolvida com o framework Laravel. A aplicação serve como uma API RESTful para gerir utilizadores (candidatos e empresas), vagas, candidaturas e outras funcionalidades da plataforma.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Funcionalidades Principais
+Autenticação Segura: Sistema de login, registo e recuperação de senha utilizando o Laravel Sanctum para autenticação de SPA (Single Page Application) baseada em cookies.
 
-## About Laravel
+Gestão de Perfis: Endpoints para criar, ler, atualizar e apagar perfis de candidatos e empresas.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sistema de Vagas: CRUD completo para vagas, incluindo publicação, edição, finalização e prorrogação.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Matching de Candidatos: Lógica para filtrar e recomendar vagas com base na área de atuação.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Sistema de Notificações: Event-driven, para notificar utilizadores sobre novas candidaturas, vagas recomendadas, etc.
 
-## Learning Laravel
+Upload de Ficheiros: Rota segura para upload de imagens de perfil.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Tarefas Agendadas (Scheduler): Processo automático para finalizar vagas expiradas.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Requisitos
+PHP >= 8.2
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Composer
 
-## Laravel Sponsors
+MySQL >= 8.0
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Docker e Docker Compose (para o ambiente de produção/homologação)
 
-### Premium Partners
+Instalação e Execução com Docker (Ambiente de Produção/Homologação)
+Esta é a forma recomendada para correr a aplicação num ambiente de produção ou homologação, garantindo consistência e isolamento.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+1. Configurar o Ficheiro de Ambiente
+   Antes de iniciar, é necessário criar o ficheiro .env para o backend.
 
-## Contributing
+# Na pasta raiz do projeto completo (ex: caparaoconecta1/)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Copie o ficheiro de exemplo para criar o seu ficheiro de configuração local
 
-## Code of Conduct
+cp backend/.env.example backend/.env
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Abra o ficheiro backend/.env e configure as variáveis de ambiente, especialmente as de conexão com a base de dados (DB_DATABASE, DB_USERNAME, DB_PASSWORD), que devem corresponder às que estão definidas no docker-compose.yml.
 
-## Security Vulnerabilities
+2. Construir e Iniciar os Contentores
+   Na pasta raiz do projeto (onde está o docker-compose.yml), execute os seguintes comandos:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 1. Construir as imagens do Docker
 
-## License
+docker-compose build
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 2. Iniciar todos os serviços em segundo plano
+
+docker-compose up -d
+
+3. Finalizar a Instalação (Dentro do Contentor)
+   Após os contentores estarem a correr, precisamos de executar os comandos do Laravel.
+
+# 1. Gerar a chave da aplicação
+
+docker-compose exec app_backend php artisan key:generate
+
+# 2. Executar as migrações (criar as tabelas) e os seeders (popular os dados iniciais)
+
+docker-compose exec app_backend php artisan migrate --seed
+
+# 3. Criar o link simbólico para o storage (para as imagens de perfil)
+
+docker-compose exec app_backend php artisan storage:link
+
+Acesso
+Frontend da Aplicação: http://localhost:4200
+
+API do Backend: http://localhost:8000
+
+Desenvolvimento Local (Sem Docker)
+Para desenvolver e testar o backend localmente, siga estes passos.
+
+1. Navegar para a Pasta do Backend
+   cd backend
+
+2. Instalar Dependências
+   composer install
+
+3. Configurar o Ficheiro de Ambiente
+   cp .env.example .env
+
+Edite o ficheiro .env com as configurações da sua base de dados local.
+
+4. Gerar a Chave da Aplicação
+   php artisan key:generate
+
+5. Executar as Migrações e Seeders
+   php artisan migrate --seed
+
+6. Iniciar o Servidor de Desenvolvimento
+   php artisan serve
+
+A sua API estará agora a correr em http://localhost:8000.

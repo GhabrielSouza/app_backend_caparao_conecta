@@ -347,7 +347,7 @@ class VagaController extends Controller
             'data_fechamento' => 'required|date|after_or_equal:today',
         ]);
 
-        $vaga->data_fechamento = Carbon::parse($request->data_fechamento);
+        $vaga->data_fechamento = Carbon::parse($request->data_fechamento)->addDays(5);
         $vaga->prorrogavel = false;
         $vaga->save();
 
