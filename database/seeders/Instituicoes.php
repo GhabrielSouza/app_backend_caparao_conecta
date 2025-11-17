@@ -14,10 +14,22 @@ class Instituicoes extends Seeder
     public function run(): void
     {
         DB::table("instituicoes")->insert([
-
-            'nome' => 'Instituto Federal do Rio Grande do Sul',
-            'id_cidades' => 1,
-
+            [
+                'nome' => 'Instituto Federal do Espírito Santo (IFES)',
+                'id_cidades' => 1, // Adapte o ID da cidade conforme necessário
+            ],
+            [
+                'nome' => 'Universidade Federal do Espírito Santo (UFES)',
+                'id_cidades' => 1, // Adapte o ID da cidade conforme necessário
+            ],
+            [
+                'nome' => 'SENAI',
+                'id_cidades' => 1, // Adapte o ID da cidade conforme necessário
+            ],
+            [
+                'nome' => 'SENAC',
+                'id_cidades' => 1, // Adapte o ID da cidade conforme necessário
+            ],
         ]);
     }
 }

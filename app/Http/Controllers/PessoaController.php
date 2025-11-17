@@ -48,7 +48,7 @@ class PessoaController extends Controller
             'telefone' => 'required|string|max:20',
             'sobre' => 'nullable|string',
             'email' => 'required|string|max:255|email:rfc,dns|unique:usuarios,email',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:6',
             'estado' => 'required|string|max:255',
             'cidade' => 'required|string|max:50',
         ];
@@ -60,6 +60,7 @@ class PessoaController extends Controller
                 'data_de_nascimento' => 'required',
                 'sobrenome' => 'required|string|max:255',
                 'genero' => 'required|string|max:45',
+                'cadUnico' => 'nullable|string|max:20',
                 'id_areas_atuacao' => 'nullable|integer|exists:areas_atuacao,id_areas_atuacao',
             ];
         } else if ($request->input('id_tipo_usuarios') == 3) {
@@ -103,7 +104,7 @@ class PessoaController extends Controller
                         'data_de_nascimento' => $request->input('data_de_nascimento'),
                         'sobrenome' => $request->input('sobrenome'),
                         'id_areas_atuacao' => $request->input('id_areas_atuacao'),
-                        'cad_unico' => $request->input('cad_unico'),
+                        'cad_unico' => $request->input('cadUnico'),
                         'genero' => $request->input('genero'),
                     ]);
                 } else if ($request->input('id_tipo_usuarios') == 3) { // Empresa
