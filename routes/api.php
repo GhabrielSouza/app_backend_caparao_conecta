@@ -33,10 +33,11 @@ Route::get('/status', function () {
     );
 });
 
+//Rotas de areas de atuação
+Route::resource('/areas', AreaAtuacaoController::class);
 
 Route::middleware('role:ADMIN')->group(function () {
-    //Rotas de areas de atuação
-    Route::resource('/areas', AreaAtuacaoController::class);
+
     //Rotas de formacoes academicas
     Route::resource('/formacoes_academicas', Formacao_AcademicaController::class);
     //Rotas de experiencias
@@ -46,7 +47,6 @@ Route::middleware('role:ADMIN')->group(function () {
 
     //Rotas de cursos
     Route::get('/cursos', [CursoController::class, 'index']);
-    Route::get('/showAllCursos', [CursoController::class, 'showAll']);
     Route::get('/cursos/{id_curso}', [CursoController::class, 'show']);
     Route::post('/cursos', [CursoController::class, 'store']);
     Route::put('/cursos/{id_curso}', [CursoController::class, 'update']);
@@ -54,7 +54,6 @@ Route::middleware('role:ADMIN')->group(function () {
     Route::post('/cursos/{id}/toggle-status', [CursoController::class, 'toggleStatus']);
 
     //Rotas de habilidades
-    Route::get('/showAllHabilidades', [HabilidadeController::class, 'showAll']);
     Route::get('/habilidades', [HabilidadeController::class, 'index']);
     Route::get('/habilidades/{id_habilidade}', [HabilidadeController::class, 'show']);
     Route::post('/habilidades', [HabilidadeController::class, 'store']);
@@ -63,6 +62,10 @@ Route::middleware('role:ADMIN')->group(function () {
     Route::post('/habilidades/{id}/toggle-status', [HabilidadeController::class, 'toggleStatus']);
 });
 
+Route::middleware('role:ADMIN, EMPRESA')->group(function () {
+    Route::get('/showAllCursos', [CursoController::class, 'showAll']);
+    Route::get('/showAllHabilidades', [HabilidadeController::class, 'showAll']);
+});
 
 Route::middleware('role:EMPRESA, ADMIN')->group(function () {
 
@@ -192,11 +195,10 @@ Route::middleware('web')->group(function () {
     //visualização de perfil
     Route::get('/pessoas/{id}/visualizacao', [PessoaController::class, 'visualizarPerfilCandidato']);
 
-    Route::middleware('role:EMPRESA, CANDIDATO')->group(function(){
-        Route::get('/notificacoes', [NotificacaoController::class, 'index']);
-        Route::post('/notificacoes/marcar-como-lidas', [NotificacaoController::class, 'marcarTodasComoLidas']);
-        Route::put('/notificacoes/{id}/marcar-como-lida', [NotificacaoController::class, 'marcarComoLida']);
-    });
+
+    Route::get('/notificacoes', [NotificacaoController::class, 'index']);
+    Route::post('/notificacoes/marcar-como-lidas', [NotificacaoController::class, 'marcarTodasComoLidas']);
+    Route::put('/notificacoes/{id}/marcar-como-lida', [NotificacaoController::class, 'marcarComoLida']);
 
 });
 

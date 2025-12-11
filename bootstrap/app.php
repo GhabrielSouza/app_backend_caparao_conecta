@@ -18,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
+        $middleware->alias([
+            'role' => \App\Http\Middleware\CheckRole::class,
+        ]);
+
         // Adiciona a exceção do CSRF para as rotas de API
         $middleware->validateCsrfTokens(except: [
             'api/*',

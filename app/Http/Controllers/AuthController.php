@@ -31,7 +31,7 @@ class AuthController extends Controller
                 'tipoUsuario:id_tipo_usuarios,nome',
             ]);
 
-            return response()->json($user);
+            return response()->json([$user, $request->session()->token()]);
         }
 
         return response()->json([
