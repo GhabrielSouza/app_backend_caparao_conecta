@@ -36,7 +36,7 @@ Route::get('/status', function () {
 //Rotas de areas de atuação
 Route::resource('/areas', AreaAtuacaoController::class);
 
-Route::middleware('role:ADMIN')->group(function () {
+Route::middleware(['auth:sanctum', 'role:ADMIN'])->group(function () {
 
     //Rotas de formacoes academicas
     Route::resource('/formacoes_academicas', Formacao_AcademicaController::class);
@@ -62,12 +62,12 @@ Route::middleware('role:ADMIN')->group(function () {
     Route::post('/habilidades/{id}/toggle-status', [HabilidadeController::class, 'toggleStatus']);
 });
 
-Route::middleware('role:ADMIN, EMPRESA')->group(function () {
+Route::middleware(['auth:sanctum','role:ADMIN,EMPRESA'])->group(function () {
     Route::get('/showAllCursos', [CursoController::class, 'showAll']);
     Route::get('/showAllHabilidades', [HabilidadeController::class, 'showAll']);
 });
 
-Route::middleware('role:EMPRESA, ADMIN')->group(function () {
+Route::middleware(['auth:sanctum','role:EMPRESA,ADMIN'])->group(function () {
 
     //Rotas de vagas
     Route::post('/cadVagas', [VagaController::class, 'store']);
@@ -94,7 +94,7 @@ Route::middleware('role:EMPRESA, ADMIN')->group(function () {
 
 });
 
-Route::middleware('role:CANDIDATO, ADMIN')->group(function () {
+Route::middleware(['auth:sanctum','role:CANDIDATO,ADMIN'])->group(function () {
 
     //Rotas de cursos para pessoas fisicas adicionarem seus cursos
     Route::post('/cursosOnPessoaFisica', [CursoController::class, 'adicionarCurso']);
@@ -126,7 +126,7 @@ Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']);
 Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']);
 Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);
 
-Route::middleware('role:CANDIDATO')->group(function () {
+Route::middleware(['auth:sanctum','role:CANDIDATO'])->group(function () {
     //Route de pessoas fisicas
     Route::post('/cadPessoasFisica', [PessoasFisicaController::class, 'store']);
     Route::get('/pessoasFisica/{id_pessoas}', [PessoasFisicaController::class, 'show']);
@@ -134,7 +134,7 @@ Route::middleware('role:CANDIDATO')->group(function () {
     Route::delete('/pessoasFisica/{id_pessoas}', [PessoasFisicaController::class, 'destroy']);
 });
 
-Route::middleware('role:EMPRESA')->group(function () {
+Route::middleware(['auth:sanctum','role:EMPRESA'])->group(function () {
     //Route de pessoas fisicas
     Route::post('/cadEmpresa', [PessoasFisicaController::class, 'store']);
     Route::get('/empresa/{id_pessoas}', [PessoasFisicaController::class, 'show']);
@@ -173,7 +173,7 @@ Route::middleware('web')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 
-    Route::middleware('role:CANDIDATO')->group(function () {
+    Route::middleware(['auth:sanctum','role:CANDIDATO'])->group(function () {
 
         Route::post('/vagas/{id_vagas}/candidatar', [VagaController::class, 'candidatarPessoas'])
             ->middleware('auth:sanctum');
