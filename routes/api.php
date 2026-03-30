@@ -36,66 +36,79 @@ Route::get('/status', function () {
 //Rotas de areas de atuação
 Route::resource('/areas', AreaAtuacaoController::class);
 
-//Rotas de Instituição
-Route::resource('/instituicoes', InstituicaoController::class);
+Route::middleware(['auth:sanctum', 'role:ADMIN,CANDIDATO'])->group(function () {
 
-//Rotas de formacoes academicas
-Route::resource('/formacoes_academicas', Formacao_AcademicaController::class);
+    //Rotas de formacoes academicas
+    Route::resource('/formacoes_academicas', Formacao_AcademicaController::class);
+    //Rotas de experiencias
+    Route::resource('/experiencias', ExperienciaController::class);
+    //Rotas de Instituição
+    Route::resource('/instituicoes', InstituicaoController::class);
 
-//Rotas de experiencias
-Route::resource('/experiencias', ExperienciaController::class);
+    //Rotas de cursos
+    Route::get('/cursos', [CursoController::class, 'index']);
+    Route::get('/cursos/{id_curso}', [CursoController::class, 'show']);
+    Route::post('/cursos', [CursoController::class, 'store']);
+    Route::put('/cursos/{id_curso}', [CursoController::class, 'update']);
+    Route::delete('/cursos/{id_cursos}', [CursoController::class, 'destroy']);
+    Route::post('/cursos/{id}/toggle-status', [CursoController::class, 'toggleStatus']);
 
+    //Rotas de habilidades
+    Route::get('/habilidades', [HabilidadeController::class, 'index']);
+    Route::get('/habilidades/{id_habilidade}', [HabilidadeController::class, 'show']);
+    Route::post('/habilidades', [HabilidadeController::class, 'store']);
+    Route::put('/habilidades/{id_habilidade}', [HabilidadeController::class, 'update']);
+    Route::delete('/habilidades/{id_habilidade}', [HabilidadeController::class, 'destroy']);
+    Route::post('/habilidades/{id}/toggle-status', [HabilidadeController::class, 'toggleStatus']);
+});
 
-Route::get('/cursos', [CursoController::class, 'index']);
-Route::get('/showAllCursos', [CursoController::class, 'showAll']);
-Route::get('/cursos/{id_curso}', [CursoController::class, 'show']);
-Route::post('/cursos', [CursoController::class, 'store']);
-Route::put('/cursos/{id_curso}', [CursoController::class, 'update']);
-Route::delete('/cursos/{id_cursos}', [CursoController::class, 'destroy']);
-Route::post('/cursos/{id}/toggle-status', [CursoController::class, 'toggleStatus']);
+Route::middleware(['auth:sanctum', 'role:ADMIN,EMPRESA,CANDIDATO'])->group(function () {
+    Route::get('/showAllCursos', [CursoController::class, 'showAll']);
+    Route::get('/showAllHabilidades', [HabilidadeController::class, 'showAll']);
+});
 
-Route::get('/showAllHabilidades', [HabilidadeController::class, 'showAll']);
-Route::get('/habilidades', [HabilidadeController::class, 'index']);
-Route::get('/habilidades/{id_habilidade}', [HabilidadeController::class, 'show']);
-Route::post('/habilidades', [HabilidadeController::class, 'store']);
-Route::put('/habilidades/{id_habilidade}', [HabilidadeController::class, 'update']);
-Route::delete('/habilidades/{id_habilidade}', [HabilidadeController::class, 'destroy']);
-Route::post('/habilidades/{id}/toggle-status', [HabilidadeController::class, 'toggleStatus']);
+Route::middleware(['auth:sanctum', 'role:EMPRESA,ADMIN'])->group(function () {
 
+    //Rotas de vagas
+    Route::post('/cadVagas', [VagaController::class, 'store']);
+    Route::get('/vagas/{id_vagas}', [VagaController::class, 'show']);
 
-Route::post('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'adicionarCursoVaga']);
-Route::get('/cursosOnVaga/{id_vagas}', [CursoController::class, 'verCursosVaga']);
-Route::delete('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'removerCursoVaga']);
+    Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
+    Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
+    Route::patch('/vagas/reativar', [VagaController::class, 'updateReativar']);
+    Route::patch('/vagas/{id_vagas}', [VagaController::class, 'updateStatusFinalizar']);
+    Route::patch('/vagas/{id}/prorrogar', [VagaController::class, 'prorrogarVaga']);
 
-Route::post('/cursosOnPessoaFisica', [CursoController::class, 'adicionarCurso']);
-Route::get('/cursosOnPessoaFisica/{id_pessoas}', [CursoController::class, 'verCursos']);
-Route::put('/cursosOnPessoaFisica/{id}', [CursoController::class, 'updateCurso']);
-Route::delete('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'removerCurso']);
-Route::get('/cursos/por-instituicao/{id}', [CursoController::class, 'listarPorInstituicao']);
-//Route de vagas
-Route::post('/cadVagas', [VagaController::class, 'store']);
-Route::get('/vagas/{id_vagas}', [VagaController::class, 'show']);
+    //Rotas de cursos para vagas
+    Route::post('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'adicionarCursoVaga']);
+    Route::get('/cursosOnVaga/{id_vagas}', [CursoController::class, 'verCursosVaga']);
+    Route::delete('/cursosOnVaga/{id_cursos}/{id_vagas}', [CursoController::class, 'removerCursoVaga']);
 
-Route::delete('/vagas/{id_vagas}', [VagaController::class, 'destroy']);
-Route::put('/vagas/{id_vagas}', [VagaController::class, 'update']);
-Route::patch('/vagas/reativar', [VagaController::class, 'updateReativar']);
-Route::patch('/vagas/{id_vagas}', [VagaController::class, 'updateStatusFinalizar']);
-Route::patch('/vagas/{id}/prorrogar', [VagaController::class, 'prorrogarVaga']);
+    //Route da habilidades para vagas
+    Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']);
+    Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
 
+    //Route da pessoa fisica candidata para vagas
+    Route::get('/vagas/{id_vagas}/candidatos', [VagaController::class, 'verCandidatos']);
+    Route::patch('/vagas/{vaga}/candidatos/{pessoaFisica}', [VagaController::class, 'atualizarStatusCandidato']);
 
-//Route da habilidades + vagas (relação N pra N)
-Route::post('/habOnVagas/{id_habilidades}/{id_vagas}', [VagaController::class, 'adicionarHabilidades']);
+});
 
-Route::get('/habOnVagas/{id_vagas}', [VagaController::class, 'verHabilidades']);
+Route::middleware(['auth:sanctum', 'role:CANDIDATO,ADMIN'])->group(function () {
 
-//Route da pessoa fisica + vagas (relação N pra N)
-Route::get('/vagas/{id_vagas}/candidatos', [VagaController::class, 'verCandidatos']);
-Route::patch('/vagas/{vaga}/candidatos/{pessoaFisica}', [VagaController::class, 'atualizarStatusCandidato']);
+    //Rotas de cursos para pessoas fisicas adicionarem seus cursos
+    Route::post('/cursosOnPessoaFisica', [CursoController::class, 'adicionarCurso']);
+    Route::get('/cursosOnPessoaFisica/{id_pessoas}', [CursoController::class, 'verCursos']);
+    Route::put('/cursosOnPessoaFisica/{id}', [CursoController::class, 'updateCurso']);
+    Route::delete('/cursosOnPessoaFisica/{id_cursos}/{id_pessoas}', [CursoController::class, 'removerCurso']);
+    Route::get('/cursos/por-instituicao/{id}', [CursoController::class, 'listarPorInstituicao']);
 
-//Relação de habilidades com pessoas físicas N pra N
-Route::post('/habOnCandidato', [PessoasFisicaController::class, 'adicionarHabilidades']);
-Route::delete('/habOnCandidato', [PessoasFisicaController::class, 'removerHabilidades']);
-Route::get('/habOnCandidato/{id_pessoas}', [PessoasFisicaController::class, 'verHabilidades']);
+    //Rotas de habilidades para pessoas fisicas adicionatem suas habilidades
+    Route::post('/habOnCandidato', [PessoasFisicaController::class, 'adicionarHabilidades']);
+    Route::delete('/habOnCandidato', [PessoasFisicaController::class, 'removerHabilidades']);
+    Route::get('/habOnCandidato/{id_pessoas}', [PessoasFisicaController::class, 'verHabilidades']);
+
+});
 
 //Route de cidades
 Route::post('/cadCidades', [CidadeController::class, 'store']);
@@ -113,6 +126,21 @@ Route::get('/pessoas/{id_pessoas}', [PessoaController::class, 'show']);
 Route::delete('/pessoas/{id_pessoas}', [PessoaController::class, 'destroy']);
 Route::put('/pessoas/{id_pessoas}', [PessoaController::class, 'update']);
 
+Route::middleware(['auth:sanctum', 'role:CANDIDATO'])->group(function () {
+    //Route de pessoas fisicas
+    Route::post('/cadPessoasFisica', [PessoasFisicaController::class, 'store']);
+    Route::get('/pessoasFisica/{id_pessoas}', [PessoasFisicaController::class, 'show']);
+    Route::put('/pessoasFisica/{id_pessoas}', [PessoasFisicaController::class, 'update']);
+    Route::delete('/pessoasFisica/{id_pessoas}', [PessoasFisicaController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum', 'role:EMPRESA'])->group(function () {
+    //Route de pessoas fisicas
+    Route::post('/cadEmpresa', [PessoasFisicaController::class, 'store']);
+    Route::get('/empresa/{id_pessoas}', [PessoasFisicaController::class, 'show']);
+    Route::put('/empresa/{id_pessoas}', [PessoasFisicaController::class, 'update']);
+    Route::delete('/empresa/{id_pessoas}', [PessoasFisicaController::class, 'destroy']);
+});
 
 //Route update sobre de pessoas
 Route::patch('/pessoas/{id}/sobre', [PessoaController::class, 'updateSobre']);
@@ -130,7 +158,6 @@ Route::middleware('web')->group(function () {
 
             $user = $request->user();
 
-
             $user->load([
                 'pessoa.pessoasFisica',
                 'pessoa.empresa.vaga',
@@ -142,29 +169,31 @@ Route::middleware('web')->group(function () {
 
             return $user;
         });
+
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 
-    Route::post('/vagas/{id_vagas}/candidatar', [VagaController::class, 'candidatarPessoas'])
-        ->middleware('auth:sanctum');
+    Route::middleware(['auth:sanctum', 'role:CANDIDATO'])->group(function () {
 
-    Route::post('/pessoas/{id_pessoas}/imagem', [PessoaController::class, 'uploadImagem'])
-        ->middleware('auth:sanctum');
+        Route::post('/vagas/{id_vagas}/candidatar', [VagaController::class, 'candidatarPessoas'])
+            ->middleware('auth:sanctum');
 
+        Route::post('/pessoas/{id_pessoas}/imagem', [PessoaController::class, 'uploadImagem'])
+            ->middleware('auth:sanctum');
 
-    Route::post('/vagas/{vaga}/visualizar', [VagaController::class, 'registrarVisualizacao'])
-        ->middleware('auth:sanctum');
+        Route::post('/vagas/{vaga}/visualizar', [VagaController::class, 'registrarVisualizacao'])
+            ->middleware('auth:sanctum');
 
-    Route::post('/vagas/{vaga}/favoritar', [VagaController::class, 'toggleFavorito'])->middleware('auth:sanctum');
-    Route::get('/candidaturas', [VagaController::class, 'minhasCandidaturas'])->middleware('auth:sanctum');
+        Route::post('/vagas/{vaga}/favoritar', [VagaController::class, 'toggleFavorito'])->middleware('auth:sanctum');
+        Route::get('/candidaturas', [VagaController::class, 'minhasCandidaturas'])->middleware('auth:sanctum');
 
-    Route::get('/favoritos', [VagaController::class, 'listarFavoritos']);
+        Route::get('/favoritos', [VagaController::class, 'listarFavoritos']);
+    });
 
     Route::get('/vagasShowAll', [VagaController::class, 'showAll']);
 
     //visualização de perfil
     Route::get('/pessoas/{id}/visualizacao', [PessoaController::class, 'visualizarPerfilCandidato']);
-
 
 
     Route::get('/notificacoes', [NotificacaoController::class, 'index']);

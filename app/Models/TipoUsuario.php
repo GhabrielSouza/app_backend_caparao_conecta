@@ -12,4 +12,9 @@ class TipoUsuario extends Model
     ];
 
     protected $primaryKey = 'id_tipo_usuarios';
+
+    public function usuarios()
+    {
+        return $this->hasMany(Usuario::class, 'id_tipo_usuarios', 'id_tipo_usuarios');
+    }
 }

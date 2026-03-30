@@ -25,15 +25,6 @@ class Usuario extends Authenticatable
 
     public $timestamps = false;
 
-    // protected $with = [
-    //     'pessoa.pessoasFisica',
-    //     'pessoa.empresa.vaga',
-    //     'pessoa.endereco.cidade',
-    //     'pessoa.redeSocial',
-    //     'pessoa.pessoasFisica.areaAtuacao:id_areas_atuacao,nome_area',
-    //     'tipoUsuario:id_tipo_usuarios,nome',
-    // ];
-
     public function pessoa()
     {
         return $this->belongsTo('App\Models\Pessoa', 'id_pessoas', 'id_pessoas');
@@ -43,7 +34,6 @@ class Usuario extends Authenticatable
     {
         return $this->belongsTo(TipoUsuario::class, 'id_tipo_usuarios', 'id_tipo_usuarios');
     }
-
 
     public function sendPasswordResetNotification($token)
     {
